@@ -1,6 +1,6 @@
 // src/clientAgent.ts
 import { OracleAgent } from './oracleAgent.js';
-import type { AgentResponse } from '../types/index.js';
+import type { AgentResponse } from './types'; // ✅ Removed .js for TS compatibility
 
 export class ClientAgent {
   clientId: string;
@@ -28,7 +28,7 @@ export class ClientAgent {
         clientId: this.clientId,
         personalized: true
       },
-      routingPath: [...baseResponse.routingPath, `client-${this.clientId}`]
+      routingPath: [...(baseResponse.routingPath ?? []), `client-${this.clientId}`]
     };
 
     return customizedResponse;

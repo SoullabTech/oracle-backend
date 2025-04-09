@@ -2,7 +2,7 @@
 // Import modules from your core folder
 import { detectElement, adjustGuidance } from './core/elementalFramework';
 import { MainOracleAgent } from './core/mainOracleAgent';
-import { ClientAgent } from './clientAgent';
+import { ClientAgent } from './core/clientAgent';
 import { GuideAgent } from './core/guideAgent';
 import { MentorAgent } from './core/mentorAgent';
 // Test the Elemental Framework
@@ -14,14 +14,14 @@ async function testElementalFramework() {
         "I crave clarity, and my thoughts are like a cool breeze.",
         "I sense something mystical and spiritual about the cosmos."
     ];
-    queries.forEach(query => {
+    for (const query of queries) {
         const element = detectElement(query);
         const guidance = adjustGuidance(query, "Your guidance:");
         console.log(`Query: "${query}"`);
         console.log(`Detected Element: ${element}`);
         console.log(`Adjusted Guidance: ${guidance}`);
         console.log('---------------------------');
-    });
+    }
 }
 // Test the Main Oracle Agent
 async function testMainOracleAgent() {
