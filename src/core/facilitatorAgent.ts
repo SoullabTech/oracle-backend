@@ -1,4 +1,5 @@
 import { retrieveMemory } from './persistentMemory';
+import { MemoryItem } from '../types'; // Make sure the path is correct
 
 export class FacilitatorAgent {
   /**
@@ -11,7 +12,7 @@ export class FacilitatorAgent {
     const allMemories = await retrieveMemory();
     
     // Filter memory items for the specified client
-    const clientMemories = allMemories.filter(memory => memory.clientId === clientId);
+    const clientMemories = allMemories.filter((memory: MemoryItem) => memory.clientId === clientId);
     
     // Determine intervention based on the count of memory items
     const count = clientMemories.length;

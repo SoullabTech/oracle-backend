@@ -1,21 +1,16 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 // src/routes/memoryRoutes.ts
-const express_1 = __importDefault(require("express"));
-const multer_1 = __importDefault(require("multer"));
-const memoryController_1 = require("../controllers/memoryController");
-const router = express_1.default.Router();
+import express from 'express';
+import multer from 'multer';
+import { storeMemory, getMemoryInsights } from '../controllers/memoryController';
+const router = express.Router();
 // Set up multer for file uploads (for audio)
-const upload = (0, multer_1.default)({ dest: 'uploads/' });
+const upload = multer({ dest: 'uploads/' });
 // POST /api/memory/upload: handle both text and audio uploads
 router.post('/upload', upload.single('file'), async (req, res) => {
     try {
         if (req.file) {
             // Handle audio file upload
-            const result = await (0, memoryController_1.storeMemory)({
+            const result = await storeMemory({
                 id: `mem-${Date.now()}`,
                 content: req.file.path, // In production, you might process the file or store a URL
                 type: 'audio',
@@ -26,7 +21,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         }
         else if (req.body.content) {
             // Handle text upload
-            const result = await (0, memoryController_1.storeMemory)({
+            const result = await storeMemory({
                 id: `mem-${Date.now()}`,
                 content: req.body.content,
                 type: 'text',
@@ -47,7 +42,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 // GET /api/memory/insights: return memory insights
 router.get('/insights', async (req, res) => {
     try {
-        const insights = await (0, memoryController_1.getMemoryInsights)();
+        const insights = await getMemoryInsights();
         res.json({ insights });
     }
     catch (error) {
@@ -55,4 +50,4 @@ router.get('/insights', async (req, res) => {
         res.status(500).json({ error: 'Server error retrieving insights' });
     }
 });
-exports.default = router;
+export default router;

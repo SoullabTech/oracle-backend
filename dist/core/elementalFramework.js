@@ -1,7 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.detectElement = detectElement;
-exports.adjustGuidance = adjustGuidance;
 // Define keywords for each element
 const elementKeywords = {
     fire: ['fire', 'ignite', 'flame', 'burn', 'spark'],
@@ -15,7 +11,7 @@ const elementKeywords = {
  * @param query The user query to analyze.
  * @returns The detected element.
  */
-function detectElement(query) {
+export function detectElement(query) {
     const lowerQuery = query.toLowerCase();
     let bestElement = 'aether';
     let bestCount = 0;
@@ -36,7 +32,7 @@ function detectElement(query) {
  * @param baseGuidance The base guidance text.
  * @returns An adjusted guidance string.
  */
-function adjustGuidance(query, baseGuidance) {
+export function adjustGuidance(query, baseGuidance) {
     const element = detectElement(query);
     let adjustment = '';
     switch (element) {

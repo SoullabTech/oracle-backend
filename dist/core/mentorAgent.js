@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MentorAgent = void 0;
-const oracleAgent_1 = require("./oracleAgent");
-class MentorAgent extends oracleAgent_1.OracleAgent {
+import { OracleAgent } from './oracleAgent';
+export class MentorAgent extends OracleAgent {
     /**
      * Processes a query with added long-term mentoring advice.
      * @param query The user's query.
@@ -27,4 +24,3 @@ class MentorAgent extends oracleAgent_1.OracleAgent {
         return finalResponse;
     }
 }
-exports.MentorAgent = MentorAgent;

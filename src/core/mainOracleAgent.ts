@@ -3,12 +3,9 @@ import { OracleAgent } from './oracleAgent.js';
 import { detectElement, adjustGuidance } from './elementalFramework.js';
 import { retrieveMemory } from '../memory/persistentMemory.js';
 import { storeInsightMemory } from './unifiedMemory.js';
-import { enhanceResponseWithMemory } from '../core/agent/memoryManager.ts';  // Correct import path
+import { enhanceResponseWithMemory } from '../core/agent/memoryManager';  // ✅ removed `.ts`
 import { selectLLM, callLLM } from './dualLLMRouting.js';
-import { runLangChain, triggerPrefectFlow } from './orchestrator.js';
-import type { AgentResponse } from '../types.ts';  // Correct import path
-
-// src/core/mainOracleAgent.ts
+import type { AgentResponse } from '../types';  // ✅ removed `.ts`
 
 export class MainOracleAgent {
   oracleAgent: OracleAgent;
@@ -35,15 +32,11 @@ export class MainOracleAgent {
     let finalResponse: AgentResponse = {
       ...baseResponse,
       response: adjusted,
-      metadata: baseResponse.metadata ?? {},  // Ensure metadata is initialized if it's undefined
+      metadata: baseResponse.metadata ?? {},
       routingPath: [...(baseResponse.routingPath ?? []), 'mainOracleAgent'],
-      confidence: 0.85  // Example confidence value, modify as necessary
+      confidence: 0.85
     };
 
-    // Add additional steps (LLM, memory enhancement, etc.) here...
-
-    // Ensure we return the finalResponse object at the end
-    return finalResponse;  // <-- Add return here
+    return finalResponse;
   }
 }
-

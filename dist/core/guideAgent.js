@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GuideAgent = void 0;
-const oracleAgent_1 = require("./oracleAgent");
-class GuideAgent extends oracleAgent_1.OracleAgent {
+import { OracleAgent } from './oracleAgent';
+export class GuideAgent extends OracleAgent {
     /**
      * Processes a user query by extending the base OracleAgent logic with
      * additional insights and guidance.
@@ -26,4 +23,3 @@ class GuideAgent extends oracleAgent_1.OracleAgent {
         };
     }
 }
-exports.GuideAgent = GuideAgent;

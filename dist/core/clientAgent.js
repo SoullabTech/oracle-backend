@@ -1,12 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientAgent = void 0;
 // src/clientAgent.ts
-const oracleAgent_js_1 = require("./oracleAgent.js");
-class ClientAgent {
+import { OracleAgent } from './oracleAgent.js';
+export class ClientAgent {
+    clientId;
+    oracleAgent;
     constructor(clientId, debug = false) {
         this.clientId = clientId;
-        this.oracleAgent = new oracleAgent_js_1.OracleAgent({ debug });
+        this.oracleAgent = new OracleAgent({ debug });
     }
     /**
      * Processes a user query and customizes the OracleAgent's response.
@@ -29,4 +28,3 @@ class ClientAgent {
         return customizedResponse;
     }
 }
-exports.ClientAgent = ClientAgent;
