@@ -1,5 +1,5 @@
 import { OracleAgent } from './oracleAgent';
-import type { AgentResponse } from '../types';
+import type { AgentResponse } from './types';
 
 export class MentorAgent extends OracleAgent {
   /**

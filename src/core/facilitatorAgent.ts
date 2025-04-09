@@ -1,5 +1,5 @@
 import { retrieveMemory } from './persistentMemory';
-import { MemoryItem } from '../types'; // Make sure the path is correct
+import { MemoryItem } from './types'; // Make sure the path is correct
 
 export class FacilitatorAgent {
   /**

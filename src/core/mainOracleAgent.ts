@@ -5,7 +5,7 @@ import { retrieveMemory } from '../memory/persistentMemory.js';
 import { storeInsightMemory } from './unifiedMemory.js';
 import { enhanceResponseWithMemory } from '../core/agent/memoryManager';  // ✅ removed `.ts`
 import { selectLLM, callLLM } from './dualLLMRouting.js';
-import type { AgentResponse } from '../types';  // ✅ removed `.ts`
+import type { AgentResponse } from './types.js';  // ✅ removed `.ts`
 
 export class MainOracleAgent {
   oracleAgent: OracleAgent;

@@ -1,5 +1,5 @@
 // src/core/oracleAgent.ts
-import type { AgentResponse } from '../types';
+import type { AgentResponse } from './types';
 
 export class OracleAgent {
   debug: boolean;
