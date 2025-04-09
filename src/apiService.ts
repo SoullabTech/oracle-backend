@@ -1,4 +1,5 @@
-const BACKEND_URL = "http://localhost:5001"; // or your Render URL after deployment
+const BACKEND_URL = "https://my-oracle-backend.onrender.com";
+
 
 export const generatePrompt = async (query: string, userId: string) => {
   const res = await fetch(`${BACKEND_URL}/api/generate-prompt`, {
