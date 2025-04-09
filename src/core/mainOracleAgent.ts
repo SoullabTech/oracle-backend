@@ -29,12 +29,13 @@ export class MainOracleAgent {
     }
 
     // Construct and return the final response
+    // Using a default metadata object in case none is provided.
     const finalResponse: AgentResponse = {
       ...baseResponse,
       response: adjustedResponse,
       metadata: baseResponse.metadata ?? { timestamp: new Date().toISOString() },
       routingPath: [...(baseResponse.routingPath ?? []), 'mainOracleAgent'],
-      confidence: 0.85
+      confidence: 0.85,
     };
 
     return finalResponse;

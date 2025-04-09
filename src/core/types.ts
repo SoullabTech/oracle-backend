@@ -1,5 +1,3 @@
-// src/core/types.ts
-
 // ─────────────────────────────────────────────
 // Interface: Response from the Oracle Agent
 // ─────────────────────────────────────────────
@@ -33,13 +31,16 @@ export interface UserSettings {
 // Interface: Common Metadata Format
 // ─────────────────────────────────────────────
 export interface Metadata {
-  timestamp: string;           // ISO string when the data was generated
-  element?: string;            // Optional: Elemental classification (e.g., Fire, Water)
-  processedAt?: string;        // Optional: Processing timestamp
-  prefect?: any;               // Optional: Prefect-specific orchestration data
-  guide?: boolean;             // Optional: Indicates guide-specific enhancements
-  mentor?: boolean;            // Optional: Indicates mentor-specific enhancements
-  adviceType?: string;         // Optional: Added advice type for mentor agent responses
+  timestamp: string; // required
+  // other optional properties such as:
+  element?: string;
+  processedAt?: string;
+  prefect?: any;
+  guide?: boolean;
+  mentor?: boolean;
+  clientId?: string;
+  category?: string;
+  adviceType?: string;
 }
 
 // ─────────────────────────────────────────────
