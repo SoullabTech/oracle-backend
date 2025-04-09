@@ -1,5 +1,5 @@
 // src/core/persistentMemory.ts
-import type { MemoryItem } from '../types';
+import type { MemoryItem } from './types';
 
 // Simple in-memory store for memory items
 let memoryStore: MemoryItem[] = [];
