@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OracleAgent = void 0;
-class OracleAgent {
+export class OracleAgent {
+    debug;
     constructor(options = {}) {
         this.debug = options.debug || false;
     }
@@ -22,4 +20,3 @@ class OracleAgent {
         };
     }
 }
-exports.OracleAgent = OracleAgent;

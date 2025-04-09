@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 // src/routes/chatRoutes.ts
-const express_1 = __importDefault(require("express"));
-const mainOracleAgent_js_1 = require("../core/mainOracleAgent.js");
-const router = express_1.default.Router();
-const oracle = new mainOracleAgent_js_1.MainOracleAgent({ debug: true });
+import express from 'express';
+import { MainOracleAgent } from '../core/mainOracleAgent.js';
+const router = express.Router();
+const oracle = new MainOracleAgent({ debug: true });
 router.post('/process', async (req, res) => {
     try {
         const { query } = req.body;
@@ -22,4 +17,4 @@ router.post('/process', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-exports.default = router;
+export default router;

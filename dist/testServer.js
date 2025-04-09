@@ -1,23 +1,18 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 // src/server.ts
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const body_parser_1 = __importDefault(require("body-parser"));
-const chatRoutes_js_1 = __importDefault(require("./routes/chatRoutes.js"));
-const facilitatorRoutes_js_1 = __importDefault(require("./routes/facilitatorRoutes.js"));
-const app = (0, express_1.default)();
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import chatRoutes from './routes/chatRoutes.js';
+import facilitatorRoutes from './routes/facilitatorRoutes.js';
+const app = express();
 const PORT = process.env.PORT || 5001;
 // Middleware
-app.use((0, cors_1.default)());
-app.use(body_parser_1.default.json());
-app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
-app.use('/api/chat', chatRoutes_js_1.default);
-app.use('/api/facilitator', facilitatorRoutes_js_1.default);
+app.use('/api/chat', chatRoutes);
+app.use('/api/facilitator', facilitatorRoutes);
 app.get('/', (req, res) => {
     res.send('Welcome to the Oracle Backend');
 });

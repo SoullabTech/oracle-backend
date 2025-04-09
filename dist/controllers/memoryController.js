@@ -1,15 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.storeMemory = storeMemory;
-exports.getMemoryInsights = getMemoryInsights;
 // src/controllers/memoryController.ts
-async function storeMemory(memory) {
+export async function storeMemory(memory) {
     // For now, simply log and return the memory object.
     // Later, you can integrate a database call here.
     console.log('Storing memory:', memory);
     return memory;
 }
-async function getMemoryInsights() {
+export async function getMemoryInsights() {
     // For now, return some static insights.
     // Later, replace this with logic to analyze stored memories.
     return [

@@ -1,15 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.storeMemory = storeMemory;
-exports.retrieveMemory = retrieveMemory;
-exports.updateMemory = updateMemory;
-exports.deleteMemory = deleteMemory;
 let memoryStore = [];
 /**
  * Stores a memory item.
  * @param item The memory item to store.
  */
-async function storeMemory(item) {
+export async function storeMemory(item) {
     memoryStore.push(item);
     console.log(`Memory stored: ${item.id}`);
 }
@@ -17,7 +11,7 @@ async function storeMemory(item) {
  * Retrieves all memory items.
  * @returns An array of MemoryItem.
  */
-async function retrieveMemory() {
+export async function retrieveMemory() {
     return memoryStore;
 }
 /**
@@ -26,7 +20,7 @@ async function retrieveMemory() {
  * @param newContent The new content for the memory.
  * @returns True if the update succeeded, false otherwise.
  */
-async function updateMemory(id, newContent) {
+export async function updateMemory(id, newContent) {
     const index = memoryStore.findIndex(item => item.id === id);
     if (index !== -1) {
         memoryStore[index].content = newContent;
@@ -40,7 +34,7 @@ async function updateMemory(id, newContent) {
  * @param id The ID of the memory to delete.
  * @returns True if deletion succeeded, false otherwise.
  */
-async function deleteMemory(id) {
+export async function deleteMemory(id) {
     const initialLength = memoryStore.length;
     memoryStore = memoryStore.filter(item => item.id !== id);
     if (memoryStore.length < initialLength) {

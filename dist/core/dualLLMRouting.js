@@ -1,8 +1,4 @@
-"use strict";
 // src/core/dualLLMRouting.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectLLM = selectLLM;
-exports.callLLM = callLLM;
 /**
  * Selects an LLM provider based on simple keyword heuristics.
  * For example, if the query contains words related to feelings or spirituality, it selects 'claude';
@@ -11,7 +7,7 @@ exports.callLLM = callLLM;
  * @param query The user query.
  * @returns 'claude' if the query appears emotional or spiritual, otherwise 'gpt'.
  */
-function selectLLM(query) {
+export function selectLLM(query) {
     const lowerQuery = query.toLowerCase();
     if (lowerQuery.includes('feel') ||
         lowerQuery.includes('emotion') ||
@@ -30,7 +26,7 @@ function selectLLM(query) {
  * @param query The query to process.
  * @returns A simulated response string.
  */
-async function callLLM(provider, query) {
+export async function callLLM(provider, query) {
     // Simulated API call delay
     await new Promise(resolve => setTimeout(resolve, 500));
     if (provider === 'claude') {

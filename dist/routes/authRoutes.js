@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 // src/routes/authRoutes.ts
-const express_1 = __importDefault(require("express"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const supabaseClient_1 = require("../supabaseClient"); // Ensure this file is set up to initialize Supabase
-const router = express_1.default.Router();
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { supabase } from '../supabaseClient'; // Ensure this file is set up to initialize Supabase
+const router = express.Router();
 const secretKey = process.env.JWT_SECRET || 'your_default_secret_key';
 // POST /api/auth/login
 // This endpoint takes an email and password, verifies the credentials via Supabase,
@@ -18,16 +13,16 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required.' });
     }
     // Use Supabase Auth to sign in the user
-    const { error, session } = await supabaseClient_1.supabase.auth.signIn({ email, password });
+    const { error, session } = await supabase.auth.signIn({ email, password });
     if (error || !session) {
         return res.status(401).json({ error: error ? error.message : 'Authentication failed.' });
     }
     // Issue a JWT token containing the user's id, email, and role
-    const token = jsonwebtoken_1.default.sign({
+    const token = jwt.sign({
         id: session.user.id,
         email: session.user.email,
         role: session.user.user_metadata?.role || 'client' // default role is "client"
     }, secretKey, { expiresIn: '1h' });
     res.json({ token });
 });
-exports.default = router;
+export default router;
