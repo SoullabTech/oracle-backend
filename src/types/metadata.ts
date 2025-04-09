@@ -5,6 +5,6 @@ export interface Metadata {
     guide?: string;
     mentor?: string;
     category?: string;
-    adviceType?: string; // This line must be present
+    adviceType?: string;  // This must be present!
   }
   

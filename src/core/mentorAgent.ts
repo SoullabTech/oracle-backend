@@ -1,6 +1,6 @@
 // src/core/mentorAgent.ts
 import { OracleAgent } from './oracleAgent.js';
-import type { AgentResponse, Metadata } from './types.js';
+import type { AgentResponse, Metadata } from './types';
 
 export class MentorAgent extends OracleAgent {
   async processQuery(query: string): Promise<AgentResponse> {

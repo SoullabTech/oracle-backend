@@ -39,6 +39,7 @@ export interface Metadata {
   prefect?: any;               // Optional: Prefect-specific orchestration data
   guide?: boolean;             // Optional: Indicates guide-specific enhancements
   mentor?: boolean;            // Optional: Indicates mentor-specific enhancements
+  adviceType?: string;         // Optional: Added advice type for mentor agent responses
 }
 
 // ─────────────────────────────────────────────
