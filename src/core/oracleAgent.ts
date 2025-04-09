@@ -1,5 +1,6 @@
 // src/core/oracleAgent.ts
-import type { AgentResponse } from './types';
+import type { AgentResponse, Metadata } from './types';
+import { runLangChain } from './orchestrator.js'; // if you want to use LangChain in the future
 
 export class OracleAgent {
   debug: boolean;
@@ -12,17 +13,33 @@ export class OracleAgent {
     if (this.debug) {
       console.log("OracleAgent processing query:", query);
     }
-    // Simple logic: assign a category based on query content
-    const category = query.toLowerCase().includes('tech') ? 'technology' : 'general';
+    
+    // Example: Use runLangChain (if integrated) or fallback logic
+    // const llmResponse = await runLangChain(query);
+    // For now, we'll use a simple simulated response:
+    const simulatedResponse = `Processed query: ${query}`;
+    
+    const metadata: Metadata = {
+      timestamp: new Date().toISOString(),
+      element: this.detectElement(query),
+      processedAt: new Date().toISOString(),
+      prefect: { task: 'simulate', status: 'success' }
+    };
 
     return {
-      response: `Processed query: ${query}`,
+      response: simulatedResponse,
       confidence: 0.9,
-      metadata: {
-        category,
-        processingTime: Math.floor(Math.random() * 100)
-      },
-      routingPath: [category, 'core']
+      metadata,
+      routingPath: [this.detectElement(query), 'oracle-agent']
     };
+  }
+
+  private detectElement(text: string): string {
+    const lower = text.toLowerCase();
+    if (lower.includes('fire')) return 'Fire';
+    if (lower.includes('water')) return 'Water';
+    if (lower.includes('earth')) return 'Earth';
+    if (lower.includes('air')) return 'Air';
+    return 'Aether';
   }
 }

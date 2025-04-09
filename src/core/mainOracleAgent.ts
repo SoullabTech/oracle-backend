@@ -1,11 +1,8 @@
 // src/core/mainOracleAgent.ts
+
 import { OracleAgent } from './oracleAgent.js';
 import { detectElement, adjustGuidance } from './elementalFramework.js';
-import { retrieveMemory } from '../memory/persistentMemory.js';
-import { storeInsightMemory } from './unifiedMemory.js';
-import { enhanceResponseWithMemory } from '../core/agent/memoryManager';  // ✅ removed `.ts`
-import { selectLLM, callLLM } from './dualLLMRouting.js';
-import type { AgentResponse } from './types.js';  // ✅ removed `.ts`
+import type { AgentResponse } from './types.js';
 
 export class MainOracleAgent {
   oracleAgent: OracleAgent;
@@ -21,18 +18,21 @@ export class MainOracleAgent {
       console.log('[MainOracleAgent] Received query:', query);
     }
 
-    // Step 1: Get base response from OracleAgent
+    // Step 1: Get the base response from OracleAgent
     const baseResponse = await this.oracleAgent.processQuery(query);
 
-    // Step 2: Adjust response with elemental guidance
-    const adjusted = adjustGuidance(query, baseResponse.response);
+    // Step 2: Adjust the response with elemental guidance
+    const adjustedResponse = adjustGuidance(query, baseResponse.response);
     const element = detectElement(query);
+    if (this.debug) {
+      console.log('[MainOracleAgent] Detected element:', element);
+    }
 
-    // Initialize metadata if it's undefined
-    let finalResponse: AgentResponse = {
+    // Construct and return the final response
+    const finalResponse: AgentResponse = {
       ...baseResponse,
-      response: adjusted,
-      metadata: baseResponse.metadata ?? {},
+      response: adjustedResponse,
+      metadata: baseResponse.metadata ?? { timestamp: new Date().toISOString() },
       routingPath: [...(baseResponse.routingPath ?? []), 'mainOracleAgent'],
       confidence: 0.85
     };

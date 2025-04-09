@@ -1,25 +1,19 @@
-import { OracleAgent } from './oracleAgent';
+// src/core/guideAgent.ts
+import { OracleAgent } from './oracleAgent.js';
 export class GuideAgent extends OracleAgent {
-    /**
-     * Processes a user query by extending the base OracleAgent logic with
-     * additional insights and guidance.
-     * @param query The user's query.
-     * @returns A customized AgentResponse with extra guidance.
-     */
     async processQuery(query) {
-        // Call the base OracleAgent processQuery
         const baseResponse = await super.processQuery(query);
-        // Define additional guidance for deeper insight
-        const additionalInsight = "Consider reflecting deeply on this matter and jotting down your thoughts in a journal.";
-        // Return the enhanced response with extra metadata and updated routing path
+        const additionalInsight = " Consider reflecting deeply on this matter and jotting down your thoughts.";
+        const updatedMetadata = {
+            ...(baseResponse.metadata || {}),
+            guide: true, // Custom field for this agent
+            timestamp: new Date().toISOString() // ✅ Ensure required field exists
+        };
         return {
             ...baseResponse,
-            response: `${baseResponse.response} ${additionalInsight}`,
-            metadata: {
-                ...baseResponse.metadata,
-                guide: true
-            },
-            routingPath: [...baseResponse.routingPath, 'guideAgent']
+            response: `${baseResponse.response}${additionalInsight}`,
+            metadata: updatedMetadata,
+            routingPath: [...(baseResponse.routingPath ?? []), 'guideAgent']
         };
     }
 }

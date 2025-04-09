@@ -1,31 +1,25 @@
-import { OracleAgent } from './oracleAgent';
-import type { AgentResponse } from './types';
+// src/core/mentorAgent.ts
+import { OracleAgent } from './oracleAgent.js';
+import type { AgentResponse, Metadata } from './types.js';
 
 export class MentorAgent extends OracleAgent {
-  /**
-   * Processes a query with added long-term mentoring advice.
-   * @param query The user's query.
-   * @returns A customized AgentResponse including mentoring guidance.
-   */
   async processQuery(query: string): Promise<AgentResponse> {
-    // Get the base response from the OracleAgent
     const baseResponse = await super.processQuery(query);
 
-    // Add additional mentoring advice
     const mentoringAdvice = " As a mentor, I advise you to set clear long-term goals and periodically review your progress to stay on track.";
 
-    // Create a final response by merging the base response with mentoring advice
-    const finalResponse: AgentResponse = {
-      ...baseResponse,
-      response: `${baseResponse.response}${mentoringAdvice}`,
-      metadata: {
-        ...baseResponse.metadata,
-        mentor: true,
-        adviceType: "long-term coaching"
-      },
-      routingPath: [...baseResponse.routingPath, "mentorAgent"]
+    const updatedMetadata: Metadata = {
+      ...(baseResponse.metadata || {}),
+      mentor: true,
+      adviceType: "long-term coaching",
+      timestamp: baseResponse.metadata?.timestamp || new Date().toISOString()
     };
 
-    return finalResponse;
+    return {
+      ...baseResponse,
+      response: `${baseResponse.response}${mentoringAdvice}`,
+      metadata: updatedMetadata,
+      routingPath: [...(baseResponse.routingPath ?? []), "mentorAgent"]
+    };
   }
 }

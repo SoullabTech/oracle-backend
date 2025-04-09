@@ -1,0 +1,16 @@
+name: hello-deployment
+version: 1
+flow_name: hello_flow
+entrypoint: flows/my_flow.py:hello_flow
+
+# Optional fields
+tags: []
+schedule:
+  cron: "0 * * * *"
+
+# The work pool and infrastructure settings tell Prefect where/how to run your flow
+work_pool:
+  name: default-agent-pool
+infrastructure:
+  type: process
+  env: {}

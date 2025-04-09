@@ -1,6 +1,6 @@
-// src/clientAgent.ts
+// src/core/clientAgent.ts
+import type { AgentResponse } from './types';  // Use a leading './'
 import { OracleAgent } from './oracleAgent.js';
-import type { AgentResponse } from './types'; // ✅ Removed .js for TS compatibility
 
 export class ClientAgent {
   clientId: string;
@@ -11,26 +11,14 @@ export class ClientAgent {
     this.oracleAgent = new OracleAgent({ debug });
   }
 
-  /**
-   * Processes a user query and customizes the OracleAgent's response.
-   * @param query The user's query.
-   * @returns A personalized AgentResponse.
-   */
   async handleQuery(query: string): Promise<AgentResponse> {
     console.log(`[ClientAgent ${this.clientId}] Processing query: "${query}"`);
     const baseResponse = await this.oracleAgent.processQuery(query);
 
-    const customizedResponse: AgentResponse = {
+    return {
       ...baseResponse,
       response: `[Client ${this.clientId}] ${baseResponse.response}`,
-      metadata: {
-        ...baseResponse.metadata,
-        clientId: this.clientId,
-        personalized: true
-      },
       routingPath: [...(baseResponse.routingPath ?? []), `client-${this.clientId}`]
     };
-
-    return customizedResponse;
   }
 }

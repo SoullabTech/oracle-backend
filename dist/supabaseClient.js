@@ -1,15 +1,23 @@
 // src/supabaseClient.ts
-// Placeholder for Supabase client setup
-// Replace this with your actual Supabase initialization when ready
 export const supabase = {
     auth: {
-        signIn: async () => ({ user: null, error: null }),
+        signIn: async ({ email, password }) => {
+            console.log(`[Mock Supabase] signIn called with: ${email}, ${password}`);
+            return {
+                user: {
+                    id: 'mock-user-id',
+                    email,
+                    user_metadata: { role: 'client' }
+                },
+                error: null
+            };
+        },
         signOut: async () => ({ error: null }),
     },
-    from: () => ({
+    from: (table) => ({
         select: async () => ({ data: [], error: null }),
-        insert: async () => ({ data: [], error: null }),
-        update: async () => ({ data: [], error: null }),
+        insert: async (payload) => ({ data: [payload], error: null }),
+        update: async (changes) => ({ data: [changes], error: null }),
         delete: async () => ({ data: [], error: null }),
     }),
 };
