@@ -1,9 +1,9 @@
-cat > src/core/orchestrator.ts << 'EOF'
 // src/core/orchestrator.ts
 import { LLMChain } from 'langchain/chains';
-import { OpenAI } from 'langchain/llms/openai'; // Remove .js extension
-import { PromptTemplate } from 'langchain/prompts'; // Add import for PromptTemplate
+import { OpenAI } from 'langchain/llms/openai'; // ✅ Remove .js extension for TypeScript compatibility
+import { PromptTemplate } from 'langchain/prompts'; // ✅ Add import for PromptTemplate
 import axios from 'axios';
+
 /**
  * Uses LangChain to process the query.
  * This example uses OpenAI as the underlying LLM.
@@ -28,6 +28,7 @@ export async function runLangChain(query: string): Promise<string> {
   const result = await chain.call({ query });
   return result.text || '';
 }
+
 /**
  * Triggers a Prefect flow via its API.
  */
@@ -42,4 +43,3 @@ export async function triggerPrefectFlow(payload: any): Promise<any> {
     throw error;
   }
 }
-EOF
