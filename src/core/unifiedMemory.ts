@@ -1,6 +1,6 @@
 // src/core/unifiedMemory.ts
-import { storeMemory, retrieveMemory } from '../memory/persistentMemory';
-import type { MemoryItem } from '../memory/persistentMemory';
+import { storeMemory, retrieveMemory } from '../memory/persistentMemory.js';
+import type { MemoryItem } from '../memory/persistentMemory.js';
 
 /**
  * Stores a memory item with additional processing.
