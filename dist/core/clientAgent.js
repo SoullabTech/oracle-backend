@@ -1,18 +1,24 @@
 import { OracleAgent } from './oracleAgent.js';
-export class ClientAgent {
-    clientId;
-    oracleAgent;
-    constructor(clientId, debug = false) {
+export class ClientAgent extends OracleAgent {
+    constructor(clientId) {
+        super();
         this.clientId = clientId;
-        this.oracleAgent = new OracleAgent({ debug });
     }
-    async handleQuery(query) {
-        console.log(`[ClientAgent ${this.clientId}] Processing query: "${query}"`);
-        const baseResponse = await this.oracleAgent.processQuery(query);
+    async processQuery(query) {
+        const baseResponse = await super.processQuery(query);
+        console.log(`[ClientAgent] Processing response for client: ${this.clientId}`);
+        // Add client-specific personalization to the response
+        const personalizedResponse = `${baseResponse.response}\n\nTailored for you, valued client.`;
+        const updatedMetadata = {
+            ...(baseResponse.metadata || {}),
+            timestamp: new Date().toISOString(),
+            clientId: this.clientId
+        };
         return {
             ...baseResponse,
-            response: `[Client ${this.clientId}] ${baseResponse.response}`,
-            routingPath: [...(baseResponse.routingPath ?? []), `client-${this.clientId}`]
+            response: personalizedResponse,
+            metadata: updatedMetadata,
+            routingPath: [...(baseResponse.routingPath ?? []), 'clientAgent']
         };
     }
 }

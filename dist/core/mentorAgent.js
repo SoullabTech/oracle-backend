@@ -1,20 +1,20 @@
-// src/core/mentorAgent.ts
 import { OracleAgent } from './oracleAgent.js';
 export class MentorAgent extends OracleAgent {
     async processQuery(query) {
         const baseResponse = await super.processQuery(query);
-        const mentoringAdvice = " As a mentor, I advise you to set clear long-term goals and periodically review your progress to stay on track.";
+        console.log("[MentorAgent] Processing response");
+        // Add mentor-specific guidance to the response
+        const mentorResponse = `${baseResponse.response}\n\nMentor's wisdom: Apply this knowledge mindfully.`;
         const updatedMetadata = {
             ...(baseResponse.metadata || {}),
-            mentor: true,
-            adviceType: "long-term coaching",
-            timestamp: baseResponse.metadata?.timestamp || new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            mentor: true
         };
         return {
             ...baseResponse,
-            response: `${baseResponse.response}${mentoringAdvice}`,
+            response: mentorResponse,
             metadata: updatedMetadata,
-            routingPath: [...(baseResponse.routingPath ?? []), "mentorAgent"]
+            routingPath: [...(baseResponse.routingPath ?? []), 'mentorAgent']
         };
     }
 }

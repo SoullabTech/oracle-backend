@@ -1,5 +1,4 @@
 export class OracleAgent {
-    debug;
     constructor(options = {}) {
         this.debug = options.debug || false;
     }

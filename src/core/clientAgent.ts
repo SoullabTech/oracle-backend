@@ -1,24 +1,33 @@
-// src/core/clientAgent.ts
-import type { AgentResponse } from './types';  // Use a leading './'
 import { OracleAgent } from './oracleAgent.js';
+import type { AgentResponse, Metadata } from './types.js';
 
-export class ClientAgent {
-  clientId: string;
-  oracleAgent: OracleAgent;
+export class ClientAgent extends OracleAgent {
+  private clientId: string;
 
-  constructor(clientId: string, debug = false) {
+  constructor(clientId: string) {
+    super();
     this.clientId = clientId;
-    this.oracleAgent = new OracleAgent({ debug });
   }
 
-  async handleQuery(query: string): Promise<AgentResponse> {
-    console.log(`[ClientAgent ${this.clientId}] Processing query: "${query}"`);
-    const baseResponse = await this.oracleAgent.processQuery(query);
+  async processQuery(query: string): Promise<AgentResponse> {
+    const baseResponse = await super.processQuery(query);
+    
+    console.log(`[ClientAgent] Processing response for client: ${this.clientId}`);
+    
+    // Add client-specific personalization to the response
+    const personalizedResponse = `${baseResponse.response}\n\nTailored for you, valued client.`;
+    
+    const updatedMetadata: Metadata = {
+      ...(baseResponse.metadata || {}),
+      timestamp: new Date().toISOString(),
+      clientId: this.clientId
+    };
 
     return {
       ...baseResponse,
-      response: `[Client ${this.clientId}] ${baseResponse.response}`,
-      routingPath: [...(baseResponse.routingPath ?? []), `client-${this.clientId}`]
+      response: personalizedResponse,
+      metadata: updatedMetadata,
+      routingPath: [...(baseResponse.routingPath ?? []), 'clientAgent']
     };
   }
 }

@@ -1,6 +1,6 @@
 // src/core/oracleAgent.ts
 import type { AgentResponse, Metadata } from './types';
-import { runLangChain } from './orchestrator.js'; // if you want to use LangChain in the future
+import { runLangChain } from './orchestrator'; // if you want to use LangChain in the future
 
 export class OracleAgent {
   debug: boolean;

@@ -1,74 +1,45 @@
-import { LLMChain } from "langchain/chains";
-import { OpenAI } from "langchain/llms/openai";
-import { Anthropic } from "langchain/llms/anthropic";
-import { PromptTemplate } from "@langchain/core/prompts";
-import axios from "axios";
-
-export async function runLangChain(
-  query: string,
-  options?: {
-    userId?: string;
-    element?: string;
-    llmType?: "openai" | "anthropic";
-  }
-): Promise<string> {
-  try {
-    // Choose the LLM based on the provided option (default to OpenAI)
-    let llm;
-    if (options?.llmType === "anthropic") {
-      llm = new Anthropic({
-        anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
-        temperature: 0.7,
-      });
-    } else {
-      llm = new OpenAI({
-        openAIApiKey: process.env.OPENAI_API_KEY!,
-        temperature: 0.7,
-      });
-    }
-
-    const prompt = new PromptTemplate({
-      inputVariables: ["query"],
-      template: "You are a wise oracle. Provide a poetic and thoughtful response to: {query}",
-    });
-
-    const chain = new LLMChain({ llm, prompt });
-    const result = await chain.run({ query });
-
-    console.log(`[Oracle] Response for query "${query}":`, result);
-
-    if (options?.userId || options?.element) {
-      console.log(`[Oracle] Metadata:`, {
-        userId: options.userId,
-        element: options.element,
-      });
-    }
-
-    return result;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("[Oracle] LangChain error:", error.message);
-    } else {
-      console.error("[Oracle] Unexpected error:", error);
-    }
-    return "Oracle is silent... please try again later.";
-  }
+cat > src/core/orchestrator.ts << 'EOF'
+// src/core/orchestrator.ts
+import { LLMChain } from 'langchain/chains';
+import { OpenAI } from 'langchain/llms/openai'; // Remove .js extension
+import { PromptTemplate } from 'langchain/prompts'; // Add import for PromptTemplate
+import axios from 'axios';
+/**
+ * Uses LangChain to process the query.
+ * This example uses OpenAI as the underlying LLM.
+ */
+export async function runLangChain(query: string): Promise<string> {
+  // Create an instance of OpenAI LLM using your API key
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  // Create a proper PromptTemplate
+  const promptTemplate = new PromptTemplate({
+    template: "You are a wise oracle. Provide a poetic and thoughtful response to: {query}",
+    inputVariables: ["query"]
+  });
+  
+  // Create a simple chain with the prompt template
+  const chain = new LLMChain({
+    llm: openai,
+    prompt: promptTemplate
+  });
+  
+  // Run the chain and return its output
+  const result = await chain.call({ query });
+  return result.text || '';
 }
-
+/**
+ * Triggers a Prefect flow via its API.
+ */
 export async function triggerPrefectFlow(payload: any): Promise<any> {
-  const prefectApiUrl =
-    process.env.PREFECT_API_URL || "https://your-prefect-server/api/flows/trigger";
-
+  const prefectApiUrl = process.env.PREFECT_API_URL || 'https://your-prefect-server/api/flows/trigger';
+  
   try {
     const response = await axios.post(prefectApiUrl, payload);
-    console.log("[Oracle] Prefect flow triggered successfully:", response.data);
     return response.data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("[Oracle] Prefect flow error:", error.message);
-    } else {
-      console.error("[Oracle] Prefect flow unexpected error:", error);
-    }
+  } catch (error) {
+    console.error('Error triggering Prefect flow:', error);
     throw error;
   }
 }
+EOF
