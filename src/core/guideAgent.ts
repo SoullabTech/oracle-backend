@@ -1,10 +1,6 @@
-cat > src/core/guideAgent.ts << 'EOF'
 import { OracleAgent } from './oracleAgent';
 import type { AgentResponse } from './types';
-<<<<<<< HEAD
-=======
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 export class GuideAgent extends OracleAgent {
   /**
    * Processes a user query by extending the base OracleAgent logic with
@@ -32,4 +28,3 @@ export class GuideAgent extends OracleAgent {
     };
   }
 }
-EOF
