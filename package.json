@@ -8,15 +8,15 @@
     "dev": "ts-node-dev --esm src/server.ts"
   },
   "dependencies": {
+    "@langchain/anthropic": "^0.0.10",
+    "@langchain/core": "^0.1.0",
+    "@langchain/openai": "^0.0.10",
+    "@supabase/supabase-js": "^2.33.2",
     "axios": "^1.8.4",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "langchain": "^0.3.20", 
-    "@langchain/core": "^0.1.0",
-    "@langchain/openai": "^0.0.10",
-    "@langchain/anthropic": "^0.0.10",
-    "@supabase/supabase-js": "^2.33.2",
+    "langchain": "^0.3.20",
     "react-router-dom": "^7.5.0"
   },
   "devDependencies": {
