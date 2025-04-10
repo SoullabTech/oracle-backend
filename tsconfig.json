@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2015", 
+    "target": "ES6", 
     "module": "ESNext",
     "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,  // Enable this flag for proper default imports
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/flows/**/*.*"
   ],
   "exclude": [
     "node_modules",
