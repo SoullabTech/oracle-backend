@@ -1,28 +1,12 @@
 // src/index.ts
 
 // Import modules from your core folder
-<<<<<<< HEAD
-// Load environment variables from .env file
-import dotenv from 'dotenv';
-dotenv.config();
-=======
-import { detectElement, adjustGuidance } from './core/elementalFramework';
-import { MainOracleAgent } from './core/mainOracleAgent';
-import { ClientAgent } from './core/clientAgent';
-import { GuideAgent } from './core/guideAgent';
-import { MentorAgent } from './core/mentorAgent';
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
-
-// src/index.ts
-
-// Import modules from your core folder
 import { detectElement, adjustGuidance } from './core/elementalFramework.js';
 import { MainOracleAgent } from './core/mainOracleAgent.js';
 import { ClientAgent } from './core/clientAgent.js';
 import { GuideAgent } from './core/guideAgent.js';
 import { MentorAgent } from './core/mentorAgent.js';
 import { ChatOpenAI } from "langchain/chat_models/openai";
-
 
 /**
  * Test the Elemental Framework by processing several sample queries.
@@ -37,7 +21,6 @@ async function testElementalFramework() {
   ];
 
   for (const query of queries) {
-<<<<<<< HEAD
     try {
       const element = detectElement(query);
       const guidance = adjustGuidance(query, "Your guidance:");
@@ -48,14 +31,6 @@ async function testElementalFramework() {
     } catch (error) {
       console.error(`Error processing query "${query}":`, error);
     }
-=======
-    const element = detectElement(query);
-    const guidance = adjustGuidance(query, "Your guidance:");
-    console.log(`Query: "${query}"`);
-    console.log(`Detected Element: ${element}`);
-    console.log(`Adjusted Guidance: ${guidance}`);
-    console.log('---------------------------');
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
   }
 }
 
@@ -135,16 +110,10 @@ async function runTests() {
   await testMentorAgent();
 }
 
-<<<<<<< HEAD
 // Execute all tests
 runTests().catch((error) => {
   console.error("Unexpected error running tests:", error);
 });
 
 // Mark this file as a module
-=======
-runTests();
-
-// Mark this as a module
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 export {};
