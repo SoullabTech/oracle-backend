@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-cat > src/core/types.ts << 'EOF'
-// src/core/types.ts
-=======
 // src/core/types.ts
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 // ─────────────────────────────────────────────
 // Interface: Response from the Oracle Agent
 // ─────────────────────────────────────────────
@@ -14,10 +9,7 @@ export interface AgentResponse {
   routingPath?: string[];                    // Optional list of system modules traversed
   confidence?: number;                       // Optional confidence score (0 to 1 scale)
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 // ─────────────────────────────────────────────
 // Interface: Memory Item
 // ─────────────────────────────────────────────
@@ -27,10 +19,7 @@ export interface MemoryItem {
   timestamp: number;                         // Unix timestamp (ms) of creation/update
   clientId?: string;                         // Optional reference to client/user
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 // ─────────────────────────────────────────────
 // Interface: User or Session Settings
 // ─────────────────────────────────────────────
@@ -39,10 +28,7 @@ export interface UserSettings {
   language: string;                          // Language code (e.g., 'en', 'fr')
   notificationsEnabled: boolean;             // Whether to allow in-app notifications
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 // ─────────────────────────────────────────────
 // Interface: Common Metadata Format
 // ─────────────────────────────────────────────
@@ -51,17 +37,13 @@ export interface Metadata {
   element?: string;                          // Optional: Elemental classification (e.g., Fire, Water)
   processedAt?: string;                      // Optional: Processing timestamp
   prefect?: any;                             // Optional: Prefect-specific orchestration data
-<<<<<<< HEAD
   guide?: boolean;                           // Added for GuideAgent
   mentor?: boolean;                          // Added for MentorAgent
   clientId?: string;                         // Added for ClientAgent
   category?: string;                         // Added for OracleAgent
   adviceType?: string;                       // Additional field
 }
-=======
-}
 
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 // ─────────────────────────────────────────────
 // Interface: System Data & Environment
 // ─────────────────────────────────────────────
@@ -70,7 +52,3 @@ export interface SystemData {
   uptime: number;                            // Uptime in milliseconds
   environment: 'development' | 'production' | 'staging'; // Runtime environment
 }
-<<<<<<< HEAD
-EOF
-=======
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
