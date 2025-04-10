@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 // You can use express.json() directly instead of body-parser
@@ -5,6 +6,17 @@ import dotenv from 'dotenv';
 import { runLangChain, triggerPrefectFlow } from './core/orchestrator.js';
 
 dotenv.config();
+=======
+// src/server.ts
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+
+console.log('✅ Express, CORS, and body-parser loaded');
+>>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -12,6 +24,7 @@ const PORT = process.env.PORT || 5001;
 // Use built‑in JSON middleware
 app.use(express.json());
 
+<<<<<<< HEAD
 // Health-check endpoint
 app.get('/api/ping', (req: Request, res: Response) => {
   res.json({ message: 'Backend is live' });
@@ -48,3 +61,24 @@ app.post('/api/trigger-flow', async (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
+=======
+// Dynamically import chatRoutes with proper handling
+(async () => {
+  try {
+    const chatRoutes = await import('./routes/chatRoutes.js'); // Must use `.js` in ESM when dynamically importing
+    app.use('/api/chat', chatRoutes.default);
+    console.log('✅ Chat routes loaded');
+  } catch (err) {
+    console.error('❌ Error importing chatRoutes:', err);
+    process.exit(1); // Exit early on critical import failure
+  }
+
+  app.get('/', (req, res) => {
+    res.send('✅ Oracle backend is running!');
+  });
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Oracle backend running on port ${PORT}`);
+  });
+})();
+>>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
