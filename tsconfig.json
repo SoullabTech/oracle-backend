@@ -7,10 +7,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true
-    "start:prod": "pm2 start dist/server.js --name oracle-backend"
-    "langchain": "0.1.21"
-
-
   },
   "include": [
     "src/**/*.ts"
