@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { OracleAgent } from './oracleAgent.js';
-import type { AgentResponse, Metadata } from './types.js';
-=======
 import { OracleAgent } from './oracleAgent';
 import type { AgentResponse } from './types';
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 
 export class MentorAgent extends OracleAgent {
   async processQuery(query: string): Promise<AgentResponse> {
@@ -15,7 +10,7 @@ export class MentorAgent extends OracleAgent {
     // Add mentor-specific guidance to the response
     const mentorResponse = `${baseResponse.response}\n\nMentor's wisdom: Apply this knowledge mindfully.`;
     
-    const updatedMetadata: Metadata = {
+    const updatedMetadata = {
       ...(baseResponse.metadata || {}),
       timestamp: new Date().toISOString(),
       mentor: true
