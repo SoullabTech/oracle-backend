@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 cat > src / core / guideAgent.ts << 'EOF';
-=======
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 import { OracleAgent } from './oracleAgent';
 export class GuideAgent extends OracleAgent {
     /**
@@ -21,7 +18,6 @@ export class GuideAgent extends OracleAgent {
             response: `${baseResponse.response} ${additionalInsight}`,
             metadata: {
                 ...baseResponse.metadata,
-<<<<<<< HEAD
                 guide: true,
                 timestamp: new Date().toISOString() // Make sure timestamp is included
             },
@@ -30,11 +26,3 @@ export class GuideAgent extends OracleAgent {
     }
 }
 EOF;
-=======
-                guide: true
-            },
-            routingPath: [...baseResponse.routingPath, 'guideAgent']
-        };
-    }
-}
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973

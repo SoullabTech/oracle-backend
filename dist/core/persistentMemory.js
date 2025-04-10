@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Simple in-memory store for memory items
 let memoryStore = [];
 /**
@@ -45,6 +44,3 @@ export async function deleteMemory(id) {
     }
     return false;
 }
-=======
-"use strict";
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973

@@ -1,14 +1,8 @@
 {
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "ES2020",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-=======
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Node",
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -18,9 +12,4 @@
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
-<<<<<<< HEAD
 }
-=======
-}
-
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973

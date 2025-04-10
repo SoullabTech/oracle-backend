@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import express from 'express';
 import dotenv from 'dotenv';
 // You can use express.json() directly instead of body-parser
@@ -9,7 +8,6 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 // Use built‑in JSON middleware
 app.use(express.json());
-// Health-check endpoint
 app.get('/api/ping', (req, res) => {
     res.json({ message: 'Backend is live' });
 });
@@ -42,30 +40,4 @@ app.post('/api/trigger-flow', async (req, res) => {
 });
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
-=======
-// src/server.ts
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-console.log('✅ Express, CORS, and body-parser loaded');
-let chatRoutes;
-try {
-    chatRoutes = await import('./routes/chatRoutes.js'); // ✅ must use .js for ESM if importing dynamically
-    console.log('✅ Chat routes loaded');
-}
-catch (err) {
-    console.error('❌ Error importing chatRoutes:', err);
-    process.exit(1); // Exit early so we know
-}
-const app = express();
-const PORT = process.env.PORT || 5001;
-app.use(cors());
-app.use(bodyParser.json());
-app.use('/api/chat', chatRoutes.default);
-app.get('/', (req, res) => {
-    res.send('✅ Oracle backend is running!');
-});
-app.listen(PORT, () => {
-    console.log(`🚀 Oracle backend running on port ${PORT}`);
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 });
