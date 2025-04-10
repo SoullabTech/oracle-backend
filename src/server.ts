@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import express, { Request, Response } from 'express';
-import dotenv from 'dotenv';
-// You can use express.json() directly instead of body-parser
-// import bodyParser from 'body-parser';
-import { runLangChain, triggerPrefectFlow } from './core/orchestrator.js';
-
-dotenv.config();
-=======
 // src/server.ts
 import dotenv from 'dotenv';
 dotenv.config();
@@ -16,7 +7,6 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 
 console.log('✅ Express, CORS, and body-parser loaded');
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -24,14 +14,13 @@ const PORT = process.env.PORT || 5001;
 // Use built‑in JSON middleware
 app.use(express.json());
 
-<<<<<<< HEAD
 // Health-check endpoint
-app.get('/api/ping', (req: Request, res: Response) => {
+app.get('/api/ping', (req, res) => {
   res.json({ message: 'Backend is live' });
 });
 
 // Endpoint for generating prompts using LangChain
-app.post('/api/generate-prompt', async (req: Request, res: Response) => {
+app.post('/api/generate-prompt', async (req, res) => {
   const { query, userId } = req.body;
   if (!query || !userId) {
     return res.status(400).json({ error: 'Missing query or userId' });
@@ -47,7 +36,7 @@ app.post('/api/generate-prompt', async (req: Request, res: Response) => {
 });
 
 // Endpoint for triggering a Prefect flow
-app.post('/api/trigger-flow', async (req: Request, res: Response) => {
+app.post('/api/trigger-flow', async (req, res) => {
   const payload = req.body;
   try {
     const result = await triggerPrefectFlow(payload);
@@ -58,10 +47,6 @@ app.post('/api/trigger-flow', async (req: Request, res: Response) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-});
-=======
 // Dynamically import chatRoutes with proper handling
 (async () => {
   try {
@@ -81,4 +66,3 @@ app.listen(PORT, () => {
     console.log(`🚀 Oracle backend running on port ${PORT}`);
   });
 })();
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
