@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node16", 
-    "target": "ES2020", 
-    "module": "Node16",  // Updated this to Node16
+    "moduleResolution": "node16",
+    "target": "ES2020",
+    "module": "Node16", 
     "esModuleInterop": true,
     "strict": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true
   }
 }
