@@ -6,6 +6,7 @@ function greet(name: string): string {
 }
 
 // Testing the function
-const name = 'Alice';
+const userName = 'Alice';  // Renamed from 'name' to 'userName'
+
 console.log(greet(name));  // Output: Hello, Alice! Welcome to TypeScript.
 
