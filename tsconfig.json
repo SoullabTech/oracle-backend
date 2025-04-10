@@ -1,11 +1,12 @@
- % tsc
-
-tsconfig.json:5:15 - error TS5110: Option 'module' must be set to 'Node16' when option 'moduleResolution' is set to 'Node16'.
-
-5     "module": "ESNext",
-                ~~~~~~~~
-
-
-Found 1 error in tsconfig.json:5
-
-andreanezat@Andreas-MacBook-Pro oracle-backend % 
+{
+  "compilerOptions": {
+    "moduleResolution": "node16",
+    "target": "ES2020",
+    "module": "Node16",  // This needs to be set to Node16
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
