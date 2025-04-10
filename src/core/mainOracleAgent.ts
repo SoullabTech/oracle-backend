@@ -1,36 +1,10 @@
-import { OracleAgent } from './oracleAgent.js';
-<<<<<<< HEAD
-import type { AgentResponse, Metadata } from './types.js';
-
-export class MainOracleAgent extends OracleAgent {
-  async process(baseResponse: AgentResponse): Promise<AgentResponse> {
-    console.log("[MainOracleAgent] Processing response");
-    
-    // Add main oracle processing logic here
-    const enhancedResponse = `${baseResponse.response}\n\nThe Oracle has spoken.`;
-    
-    // Fix the metadata initialization with required timestamp
-    const updatedMetadata: Metadata = {
-      ...(baseResponse.metadata || {}),
-      timestamp: new Date().toISOString()
-    };
-    
-    return {
-      ...baseResponse,
-      response: enhancedResponse,
-      confidence: baseResponse.confidence ?? 0.9,
-      metadata: updatedMetadata,
-      routingPath: [...(baseResponse.routingPath ?? []), 'mainOracleAgent']
-    };
-  }
-}
-=======
-import { detectElement, adjustGuidance } from './elementalFramework.js';
-import { retrieveMemory } from '../memory/persistentMemory.js';
-import { storeInsightMemory } from './unifiedMemory.js';
+import { OracleAgent } from './oracleAgent';
+import { detectElement, adjustGuidance } from './elementalFramework';
+import { retrieveMemory } from '../memory/persistentMemory';
+import { storeInsightMemory } from './unifiedMemory';
 import { enhanceResponseWithMemory } from '../core/agent/memoryManager';  // ✅ removed `.ts`
-import { selectLLM, callLLM } from './dualLLMRouting.js';
-import type { AgentResponse } from './types.js';  // ✅ removed `.ts`
+import { selectLLM, callLLM } from './dualLLMRouting';
+import type { AgentResponse } from './types';
 
 export class MainOracleAgent {
   oracleAgent: OracleAgent;
@@ -65,4 +39,3 @@ export class MainOracleAgent {
     return finalResponse;
   }
 }
->>>>>>> 268cb604fe12a917c8e4d04e4a80dde66f880973
