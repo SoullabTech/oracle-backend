@@ -1,1 +1,20 @@
-tsc --project tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2015", 
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,  // Enable this flag for proper default imports
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "uploads"
+  ]
+}
