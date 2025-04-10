@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ESNext",                 // Set the output language level
-    "module": "ESNext",                 // Choose module system
-    "moduleResolution": "node",         // Specify how modules are resolved
-    "strict": true,                     // Enable strict type checking
-    "esModuleInterop": true,            // Allow interoperation between ES modules and CommonJS
-    "skipLibCheck": true,               // Skip library checking for faster build
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"                  // Specify output directory for compiled files
+    "outDir": "./dist"
   },
   "include": [
-    "src/**/*.ts"                       // Include TypeScript files in the src folder
+    "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules",                     // Exclude node_modules
-    "dist",                             // Exclude dist (the output directory)
-    "uploads"                           // Exclude uploads
+    "node_modules",
+    "dist",
+    "uploads"
   ]
 }
