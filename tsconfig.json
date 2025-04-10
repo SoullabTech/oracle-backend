@@ -7,14 +7,14 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"  // This specifies where the compiled files go
+    "outDir": "./dist"  // Ensure this is set correctly
   },
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist",  // Exclude dist to avoid compiling already compiled files
+    "dist",
     "uploads"
   ]
 }
