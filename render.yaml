@@ -1,0 +1,14 @@
+# render.yaml
+services:
+  - type: web
+    name: oracle-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    branches:
+      - main
+    # You can specify environment variables if needed
+    envVars:
+      - key: NODE_ENV
+        value: production
