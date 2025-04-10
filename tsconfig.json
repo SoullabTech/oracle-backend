@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node16", 
-    "target": "ES2020", 
-    "module": "ESNext", 
+    "moduleResolution": "node16",
+    "target": "ES2020",
+    "module": "Node16", // Change here to Node16
     "esModuleInterop": true,
     "strict": true,
     "resolveJsonModule": true,
