@@ -1,34 +1,37 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+// Your other imports...
+
+dotenv.config();
+
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5001;
 
-// Simple middleware to log requests
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
+// CORS configuration
+const allowedOrigins = [
+  'https://your-frontend-domain.onrender.com', // Your frontend domain on Render
+  'http://localhost:3000',                     // For local development
+  // Add any other domains that should be allowed to access your API
+];
 
-// Basic route
-app.get('/', (req, res) => {
-  res.send('Hello from Oracle Backend!');
-});
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and authentication headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
 
-// Health check endpoint
-app.get('/healthz', (req, res) => {
-  res.status(200).send('OK');
-});
+// Apply CORS with specific options
+app.use(cors(corsOptions));
 
-// Log environment information
-console.log('Environment variables:');
-console.log(`PORT: ${process.env.PORT}`);
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-
-// Wait a moment before starting the server
-console.log('Waiting 3 seconds before starting server...');
-setTimeout(() => {
-  // Use 0.0.0.0 to bind to all available network interfaces
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on http://0.0.0.0:${PORT}`);
-    console.log('Server is ready to accept connections');
-  });
-}, 3000);
+// The rest of your code...
