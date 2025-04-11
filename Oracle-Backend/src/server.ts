@@ -11,30 +11,60 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
+// Validate required environment variables
 if (!process.env.PORT) {
   console.error('Error: PORT environment variable is not set.');
   process.exit(1);  // Exit the process if the port is not set.
 }
 
-app.use(cors());
+// CORS configuration
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn(`Request from origin ${origin} blocked by CORS policy`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and authentication headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+// Apply CORS with specific options
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Basic application logging
+app.use((req, res, next) => {
+  if (LOG_LEVEL !== 'error') { // Only log requests if log level permits
+    console.log(`${new Date().toISOString()} [${req.method}] ${req.url}`);
+  }
+  next();
+});
 
 // Endpoint to test if the backend is live
 app.get('/api/ping', (_req: Request, res: Response) => {
-  res.json({ message: 'Backend is live' });
+  res.json({ 
+    message: 'Backend is live',
+    environment: NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Auth routes
+// Routes
 app.use('/api/auth', authRoutes);
-
-// Chat routes
 app.use('/api/chat', chatRoutes);
-
-// Memory routes
 app.use('/api/memory', memoryRoutes);
-
-// Facilitator routes
 app.use('/api/facilitator', facilitatorRoutes);
 
 // Generate prompt for LangChain
@@ -66,11 +96,20 @@ app.post('/api/trigger-flow', async (req: Request, res: Response): Promise<void>
   }
 });
 
+// Error handling middleware
+app.use((err: any, req: Request, res: Response, next: Function) => {
+  console.error(`Error: ${err.message}`);
+  res.status(500).json({ error: 'An unexpected error occurred' });
+});
+
+console.log(`Starting server in ${NODE_ENV} mode with log level: ${LOG_LEVEL}`);
 console.log(`Waiting 5 seconds before starting server...`);
+
 setTimeout(() => {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server is running on port ${PORT} and bound to all interfaces`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Environment: ${NODE_ENV}`);
     console.log(`Using PORT from environment: ${process.env.PORT || 'not set, using default 5001'}`);
+    console.log(`CORS allowed origins: ${allowedOrigins.join(', ')}`);
   });
 }, 5000); // 5-second delay
