@@ -66,6 +66,11 @@ app.post('/api/trigger-flow', async (req: Request, res: Response): Promise<void>
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-});
+console.log(`Waiting 5 seconds before starting server...`);
+setTimeout(() => {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server is running on port ${PORT} and bound to all interfaces`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Using PORT from environment: ${process.env.PORT || 'not set, using default 5001'}`);
+  });
+}, 5000); // 5-second delay
