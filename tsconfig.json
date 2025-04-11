@@ -9,7 +9,7 @@
     "strict": true
   },
   "include": [
-    "src/**/*.ts"  // This is the key part
+    "src/**/*.ts"  // This will match any .ts files in the src folder
   ],
   "exclude": [
     "node_modules",
