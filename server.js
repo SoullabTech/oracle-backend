@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 // Your other imports...
@@ -11,12 +11,12 @@ const PORT = process.env.PORT || 5001;
 // CORS configuration
 const allowedOrigins = [
   'https://your-frontend-domain.onrender.com', // Your frontend domain on Render
-  'http://localhost:3000',                     // For local development
+  'http://localhost:3000',                       // For local development
   // Add any other domains that should be allowed to access your API
 ];
 
 const corsOptions = {
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+  origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
