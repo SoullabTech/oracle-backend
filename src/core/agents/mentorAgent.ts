@@ -1,6 +1,5 @@
-import { OracleAgent } from './oracleAgent';
-import type { AgentResponse, Metadata } from '../../types';
-import { enhanceResponseWithMemory } from '../agent/memoryManager';
+import { OracleAgent } from './oracleAgent.js';
+import type { AgentResponse, Metadata } from './types.js';
 
 export class MentorAgent extends OracleAgent {
   async processQuery(query: string): Promise<AgentResponse> {
@@ -9,7 +8,6 @@ export class MentorAgent extends OracleAgent {
     console.log("[MentorAgent] Processing response");
     
     const mentorResponse = `${baseResponse.response}\n\nMentor's wisdom: Apply this knowledge mindfully.`;
-    const enhancedResponse = await enhanceResponseWithMemory(mentorResponse);
     
     const updatedMetadata: Metadata = {
       ...(baseResponse.metadata || {}),
@@ -19,10 +17,9 @@ export class MentorAgent extends OracleAgent {
 
     return {
       ...baseResponse,
-      response: enhancedResponse,
+      response: mentorResponse,
       metadata: updatedMetadata,
-      routingPath: [...(baseResponse.routingPath ?? []), 'mentorAgent'],
-      memoryEnhanced: true
+      routingPath: [...(baseResponse.routingPath ?? []), 'mentorAgent']
     };
   }
 }
