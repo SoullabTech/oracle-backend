@@ -1,122 +1,115 @@
-import 'dotenv/config';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv';
 import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import rateLimit from 'express-rate-limit';
-import router from './routes/index';
+import { runLangChain, triggerPrefectFlow } from './core/orchestrator.js';
+import authRoutes from './routes/authRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+import memoryRoutes from './routes/memoryRoutes.js';
+import facilitatorRoutes from './routes/facilitatorRoutes.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const isProduction = process.env.NODE_ENV === 'production';
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
-// Trust proxy - needed for Render and other proxy setups
-app.enable('trust proxy');
+// Validate required environment variables
+if (!process.env.PORT) {
+  console.error('Error: PORT environment variable is not set.');
+  process.exit(1);
+}
 
-// Rate limiting with better IP handling
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => req.path === '/health',
-  keyGenerator: (req) => {
-    const xForwardedFor = req.headers['x-forwarded-for'];
-    const ip = Array.isArray(xForwardedFor) 
-      ? xForwardedFor[0] 
-      : typeof xForwardedFor === 'string' 
-        ? xForwardedFor.split(',')[0].trim()
-        : req.ip || req.socket.remoteAddress || 'unknown';
-    return ip;
-  }
-});
+// CORS configuration
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
 
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: isProduction,
-  crossOriginEmbedderPolicy: isProduction,
-  crossOriginOpenerPolicy: isProduction,
-  crossOriginResourcePolicy: isProduction
-}));
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true,
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn(`Request from origin ${origin} blocked by CORS policy`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and authentication headers
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
 
-// Apply rate limiter after other middleware
-app.use(limiter);
+app.use(cors(corsOptions));
+app.use(express.json());
 
-// Utility middleware
-app.use(compression());
-app.use(morgan(process.env.MORGAN_FORMAT || 'combined', {
-  skip: (req) => req.path === '/health'
-}));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Basic application logging
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (LOG_LEVEL !== 'error') {
+    console.log(`${new Date().toISOString()} [${req.method}] ${req.url}`);
+  }
+  next();
+});
 
-// Routes
-app.use('/api', router);
-
-// Health check endpoint
-app.get('/health', (_req, res) => {
-  res.json({ 
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
+// Health-check endpoint for monitoring
+app.get('/api/ping', (_req: Request, res: Response) => {
+  res.json({
+    message: 'Backend is live',
+    environment: NODE_ENV,
+    timestamp: new Date().toISOString()
   });
 });
 
-// 404 handler
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Not Found' });
-});
+// Route definitions
+app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/memory', memoryRoutes);
+app.use('/api/facilitator', facilitatorRoutes);
 
-// Error handling middleware
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Error:', {
-    name: err.name,
-    message: err.message,
-    stack: isProduction ? undefined : err.stack
-  });
+// Generate prompt for LangChain
+app.post('/api/generate-prompt', async (req: Request, res: Response): Promise<void> => {
+  const { query, userId } = req.body;
+  if (!query || !userId) {
+    res.status(400).json({ error: 'Missing query or userId' });
+    return;
+  }
 
-  res.status(500).json({ 
-    error: isProduction ? 'Internal Server Error' : err.message 
-  });
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  if (isProduction) {
-    process.exit(1);
+  try {
+    const result = await runLangChain(query);
+    res.json({ prompt: result });
+  } catch (error) {
+    console.error('Error processing LangChain query:', error);
+    res.status(500).json({ error: 'Error processing LangChain query. Please try again later.' });
   }
 });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection:', err);
-  if (isProduction) {
-    process.exit(1);
+// Trigger Prefect Flow
+app.post('/api/trigger-flow', async (req: Request, res: Response): Promise<void> => {
+  const payload = req.body;
+  try {
+    const result = await triggerPrefectFlow(payload);
+    res.json(result);
+  } catch (error) {
+    console.error('Error triggering Prefect flow:', error);
+    res.status(500).json({ error: 'Error triggering Prefect flow. Please try again later.' });
   }
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+// Structured error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(`Error: ${err.message}`, { stack: err.stack });
+  res.status(500).json({ error: 'An unexpected error occurred' });
 });
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received. Performing graceful shutdown...');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
+// Start server after a brief delay to ensure environment readiness
+console.log(`Starting server in ${NODE_ENV} mode with log level: ${LOG_LEVEL}`);
+console.log(`Waiting 5 seconds before starting server...`);
+
+setTimeout(() => {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server is running on port ${PORT} and bound to all interfaces`);
+    console.log(`Environment: ${NODE_ENV}`);
+    console.log(`Using PORT from environment: ${process.env.PORT || 'not set, using default 5001'}`);
+    console.log(`CORS allowed origins: ${allowedOrigins.join(', ')}`);
   });
-});
-
-export default app;
+}, 5000);
