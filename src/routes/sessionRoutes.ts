@@ -1,58 +1,93 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware';
+import { authenticateToken } from '../middleware/auth';
+import { validate } from '../middleware/validate';
 import { SessionService } from '../services/sessionService';
+import { createSessionSchema, updateSessionSchema, getSessionStatsSchema } from '../schemas/session';
 import type { AuthenticatedRequest } from '../types';
+import logger from '../utils/logger';
 
 const router = Router();
 const sessionService = new SessionService();
 
-router.post('/start', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
-    const clientId = req.user?.id;
-    if (!clientId) {
-      return res.status(400).json({ error: 'Client ID is required.' });
+router.post(
+  '/start',
+  authenticateToken,
+  validate(createSessionSchema),
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const { metadata } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required.' });
+      }
+
+      const session = await sessionService.createSession(userId, metadata);
+      res.json(session);
+    } catch (error) {
+      logger.error('Failed to start session', { error });
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to start session' 
+      });
     }
-
-    const session = await sessionService.createSession(clientId);
-    res.json(session);
-  } catch (error) {
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to start session' 
-    });
   }
-});
+);
 
-router.post('/end/:sessionId', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
-    const { sessionId } = req.params;
-    const success = await sessionService.endSession(sessionId);
+router.post(
+  '/end/:id',
+  authenticateToken,
+  validate(updateSessionSchema),
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
 
-    if (!success) {
-      return res.status(404).json({ error: 'Session not found.' });
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required.' });
+      }
+
+      const success = await sessionService.endSession(id, userId);
+      if (success) {
+        res.json({ message: 'Session ended successfully' });
+      } else {
+        res.status(404).json({ error: 'Session not found' });
+      }
+    } catch (error) {
+      logger.error('Failed to end session', { error });
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to end session' 
+      });
     }
-
-    res.json({ message: 'Session ended successfully' });
-  } catch (error) {
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to end session' 
-    });
   }
-});
+);
 
-router.get('/stats', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
-    const clientId = req.user?.id;
-    if (!clientId) {
-      return res.status(400).json({ error: 'Client ID is required.' });
+router.get(
+  '/stats',
+  authenticateToken,
+  validate(getSessionStatsSchema),
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user?.id;
+      const { startDate, endDate } = req.query;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required.' });
+      }
+
+      const stats = await sessionService.getSessionStats(
+        userId,
+        startDate ? new Date(startDate as string) : undefined,
+        endDate ? new Date(endDate as string) : undefined
+      );
+      
+      res.json(stats);
+    } catch (error) {
+      logger.error('Failed to get session stats', { error });
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Failed to get session stats' 
+      });
     }
-
-    const stats = await sessionService.getSessionStats(clientId);
-    res.json(stats);
-  } catch (error) {
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to get session stats' 
-    });
   }
-});
+);
 
 export default router;

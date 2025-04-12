@@ -1,42 +1,44 @@
 import { Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import type { AuthenticatedRequest, UserPayload } from '../types';
+import { createClient } from '@supabase/supabase-js';
+import { config } from '../config/index.js';
+import { AuthenticationError } from '../utils/errors.js';
+import type { AuthenticatedRequest } from '../types';
+import logger from '../utils/logger.js';
 
-export function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-  // Get the JWT secret from environment variables
-  const jwtSecret = process.env.JWT_SECRET;
-  
-  // Check if JWT_SECRET is configured
-  if (!jwtSecret) {
-    console.error('JWT_SECRET environment variable not set');
-    res.status(500).json({ error: 'Server configuration error' });
-    return;
-  }
+const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
-  // Extract the token from the Authorization header
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  // If no token is provided, return 401 Unauthorized
-  if (!token) {
-    res.status(401).json({ error: 'Authentication required' });
-    return;
-  }
-
-  // Verify the token
+export async function authenticateToken(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
-    const decoded = jwt.verify(token, jwtSecret) as UserPayload;
-    req.user = decoded;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1];
+
+    if (!token) {
+      throw new AuthenticationError('No token provided');
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      throw new AuthenticationError('Invalid token');
+    }
+
+    req.user = {
+      id: user.id,
+      email: user.email || '',
+      role: user.role
+    };
+
     next();
   } catch (error) {
-    // Handle different types of JWT errors
-    if (error instanceof jwt.TokenExpiredError) {
-      res.status(401).json({ error: 'Token expired' });
-    } else if (error instanceof jwt.JsonWebTokenError) {
-      res.status(403).json({ error: 'Invalid token' });
+    logger.error('Authentication failed', { error });
+    if (error instanceof AuthenticationError) {
+      next(error);
     } else {
-      console.error('Authentication error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      next(new AuthenticationError('Authentication failed'));
     }
   }
 }

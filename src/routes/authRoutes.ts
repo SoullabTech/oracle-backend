@@ -1,81 +1,81 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
-import { supabase } from '../utils/mockSupabase';
-import type { AuthResponse } from '../types';
+import { createClient } from '@supabase/supabase-js';
+import { config } from '../config/index.js';
+import { validate } from '../middleware/validate.js';
+import { loginSchema, refreshTokenSchema } from '../schemas/auth.js';
+import logger from '../utils/logger.js';
 
 const router = Router();
-const secretKey = process.env.JWT_SECRET || 'your_default_secret_key';
-const refreshSecretKey = process.env.JWT_REFRESH_SECRET || 'your_refresh_secret_key';
+const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
-const generateRefreshToken = (userId: string): string => {
-  return jwt.sign({ userId }, refreshSecretKey, { expiresIn: '7d' });
-};
-
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required.' });
-  }
-
+router.post('/login', validate(loginSchema), async (req, res) => {
   try {
-    const { user, error, session } = await supabase.auth.signInWithPassword({ 
-      email, 
-      password 
-    }) as AuthResponse;
+    const { email, password } = req.body;
+    
+    const { data: { user, session }, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-    if (error || !session || !user) {
-      return res.status(401).json({ 
-        error: error?.message || 'Authentication failed.' 
-      });
+    if (error || !user || !session) {
+      return res.status(401).json({ error: error?.message || 'Authentication failed' });
     }
 
-    const accessToken = jwt.sign(
-      { 
-        id: user.id, 
-        email: user.email, 
-        role: user.user_metadata?.role ?? 'client' 
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email
       },
-      secretKey,
-      { expiresIn: '1h' }
-    );
-
-    const refreshToken = generateRefreshToken(user.id);
-
-    res.json({ accessToken, refreshToken });
+      session: {
+        accessToken: session.access_token,
+        refreshToken: session.refresh_token
+      }
+    });
   } catch (error) {
+    logger.error('Login failed', { error });
     res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'An unexpected error occurred' 
+      error: error instanceof Error ? error.message : 'Login failed' 
     });
   }
 });
 
-router.post('/refresh', (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(400).json({ error: 'Refresh token is required.' });
-  }
-
+router.post('/refresh', validate(refreshTokenSchema), async (req, res) => {
   try {
-    const decoded = jwt.verify(refreshToken, refreshSecretKey) as { userId: string };
-    const accessToken = jwt.sign(
-      { id: decoded.userId },
-      secretKey,
-      { expiresIn: '1h' }
-    );
+    const { refreshToken } = req.body;
+    
+    const { data: { session }, error } = await supabase.auth.refreshSession({
+      refresh_token: refreshToken
+    });
 
-    res.json({ accessToken });
+    if (error || !session) {
+      return res.status(401).json({ error: error?.message || 'Invalid refresh token' });
+    }
+
+    res.json({
+      session: {
+        accessToken: session.access_token,
+        refreshToken: session.refresh_token
+      }
+    });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid refresh token.' });
+    logger.error('Token refresh failed', { error });
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Token refresh failed' 
+    });
   }
 });
 
 router.post('/logout', async (req, res) => {
   try {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
+    logger.error('Logout failed', { error });
     res.status(500).json({ 
       error: error instanceof Error ? error.message : 'Logout failed' 
     });

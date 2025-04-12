@@ -1,59 +1,102 @@
+import { createClient } from '@supabase/supabase-js';
+import { config } from '../config';
+import logger from '../utils/logger';
 import type { MemoryItem } from '../types';
-import { MetaService } from './metaService';
+
+const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
 export class MemoryService {
-  private memories: MemoryItem[] = [];
+  async storeMemory(memory: Omit<MemoryItem, 'id' | 'created_at'>): Promise<MemoryItem> {
+    try {
+      const { data, error } = await supabase
+        .from('memories')
+        .insert({
+          user_id: memory.clientId,
+          content: memory.content,
+          metadata: memory.metadata
+        })
+        .select()
+        .single();
 
-  async storeMemory(memory: Omit<MemoryItem, 'timestamp'>): Promise<MemoryItem> {
-    const newMemory: MemoryItem = {
-      ...memory,
-      timestamp: Date.now(),
-      metadata: MetaService.createMeta()
-    };
-
-    this.memories.push(newMemory);
-    return newMemory;
-  }
-
-  async retrieveMemories(clientId?: string): Promise<MemoryItem[]> {
-    if (clientId) {
-      return this.memories.filter(m => m.clientId === clientId);
+      if (error) throw error;
+      
+      logger.info('Memory stored successfully', { id: data.id });
+      return data;
+    } catch (error) {
+      logger.error('Failed to store memory', { error });
+      throw error;
     }
-    return this.memories;
   }
 
-  async updateMemory(id: string, content: string): Promise<boolean> {
-    const index = this.memories.findIndex(m => m.id === id);
-    if (index === -1) return false;
+  async retrieveMemories(clientId: string): Promise<MemoryItem[]> {
+    try {
+      const { data, error } = await supabase
+        .from('memories')
+        .select('*')
+        .eq('user_id', clientId);
 
-    this.memories[index] = {
-      ...this.memories[index],
-      content,
-      metadata: MetaService.enrichMeta(
-        this.memories[index].metadata || {},
-        { lastModified: new Date().toISOString() }
-      )
-    };
+      if (error) throw error;
 
-    return true;
+      return data;
+    } catch (error) {
+      logger.error('Failed to retrieve memories', { error, clientId });
+      throw error;
+    }
   }
 
-  async deleteMemory(id: string): Promise<boolean> {
-    const initialLength = this.memories.length;
-    this.memories = this.memories.filter(m => m.id !== id);
-    return this.memories.length < initialLength;
+  async updateMemory(id: string, content: string, clientId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('memories')
+        .update({ content })
+        .eq('id', id)
+        .eq('user_id', clientId);
+
+      if (error) throw error;
+
+      logger.info('Memory updated successfully', { id });
+      return true;
+    } catch (error) {
+      logger.error('Failed to update memory', { error, id });
+      throw error;
+    }
+  }
+
+  async deleteMemory(id: string, clientId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('memories')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', clientId);
+
+      if (error) throw error;
+
+      logger.info('Memory deleted successfully', { id });
+      return true;
+    } catch (error) {
+      logger.error('Failed to delete memory', { error, id });
+      throw error;
+    }
   }
 
   async getMemoryInsights(clientId: string): Promise<string[]> {
-    const clientMemories = await this.retrieveMemories(clientId);
-    if (clientMemories.length === 0) {
-      return ["No memories found for analysis"];
-    }
+    try {
+      const memories = await this.retrieveMemories(clientId);
+      
+      if (memories.length === 0) {
+        return ["No memories found for analysis"];
+      }
 
-    return [
-      "Insight 1: Patterns show consistent engagement",
-      "Insight 2: Memory retention improving over time",
-      "Insight 3: Key concepts are being reinforced"
-    ];
+      // Here you could implement more sophisticated insight generation
+      return [
+        "Insight 1: Patterns show consistent engagement",
+        "Insight 2: Memory retention improving over time",
+        "Insight 3: Key concepts are being reinforced"
+      ];
+    } catch (error) {
+      logger.error('Failed to generate memory insights', { error, clientId });
+      throw error;
+    }
   }
 }

@@ -1,89 +1,54 @@
-# Oracle Backend
+# React + TypeScript + Vite
 
-A TypeScript-based backend service for the Oracle project, providing AI-powered guidance and insights.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- Express.js server with TypeScript
-- JWT authentication and authorization
-- Memory management system
-- Rate limiting and security middleware
-- Comprehensive error handling
-- Test coverage with Vitest
-- Automatic deployment with Render
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Getting Started
+## Expanding the ESLint configuration
 
-1. Clone the repository:
-   ```bash
-   git clone --recursive https://github.com/spiralogic/oracle-backend.git
-   cd oracle-backend
-   ```
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-4. Start development server:
-   ```bash
-   npm run dev
-   ```
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build the frontend
-- `npm run build:server` - Build the backend
-- `npm run build:all` - Build both frontend and backend
-- `npm run test` - Run tests
-- `npm run test:coverage` - Run tests with coverage report
-
-## API Routes
-
-### Authentication
-- `POST /api/auth/login` - User authentication
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - User logout
-
-### Memory Management
-- `GET /api/memory` - Retrieve memories
-- `POST /api/memory` - Store new memory
-- `GET /api/memory/insights` - Get memory insights
-
-### Session Management
-- `POST /api/session/start` - Start new session
-- `POST /api/session/end/:sessionId` - End session
-- `GET /api/session/stats` - Get session statistics
-
-### Learning Flow
-- `POST /api/flow/learning/start` - Start learning flow
-- `POST /api/flow/learning/interact` - Process interaction
-- `POST /api/flow/learning/complete` - Complete learning flow
-
-## Development
-
-The project uses TypeScript for type safety and better developer experience. Key development features include:
-
-- ESLint for code quality
-- Prettier for code formatting
-- Vitest for testing
-- GitHub Actions for CI/CD
-
-## Deployment
-
-The application is automatically deployed to Render on push to the main branch. The deployment process includes:
-
-1. Running tests
-2. Building the application
-3. Deploying to production
-
-## License
-
-MIT
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```

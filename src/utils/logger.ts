@@ -1,34 +1,31 @@
-import fs from 'node:fs';
+import winston from 'winston';
+import { config } from '../config';
 
-const LOG_FILE = 'updates.log';
+const logger = winston.createLogger({
+  level: config.logging.level,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      )
+    })
+  ]
+});
 
-export function logUpdate(message: string): void {
-  const timestamp = new Date().toLocaleString();
-  const logEntry = `[${timestamp}] ${message}\n`;
-  
-  try {
-    fs.appendFileSync(LOG_FILE, logEntry);
-    console.log('✅ Update logged successfully');
-  } catch (error) {
-    console.error('Error writing to log file:', error);
-  }
+// Add file transport in production
+if (config.server.env === 'production') {
+  logger.add(new winston.transports.File({ 
+    filename: 'error.log', 
+    level: 'error' 
+  }));
+  logger.add(new winston.transports.File({ 
+    filename: 'combined.log' 
+  }));
 }
 
-export function getLatestUpdates(count: number = 10): string[] {
-  try {
-    if (!fs.existsSync(LOG_FILE)) {
-      return ['No updates logged yet'];
-    }
-    
-    const content = fs.readFileSync(LOG_FILE, 'utf-8');
-    return content.split('\n')
-      .filter(line => line.trim())
-      .slice(-count);
-  } catch (error) {
-    console.error('Error reading log file:', error);
-    return ['Error reading updates'];
-  }
-}
-
-// Log initial creation of the log file
-logUpdate('Update logging system initialized');
+export default logger;
