@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+
 export interface User {
   id: string;
   email: string;
@@ -38,6 +40,7 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export * from './auth';
-export * from './memory';
-export * from './session';
+export * from './auth.js';
+export * from './memory.js';
+export * from './session.js';
+export * from './metadata.js';

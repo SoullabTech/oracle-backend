@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/index.js';
 import { AuthenticationError } from '../utils/errors.js';
-import type { AuthenticatedRequest } from '../types';
+import type { AuthenticatedRequest } from '../types/index.js';
 import logger from '../utils/logger.js';
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);

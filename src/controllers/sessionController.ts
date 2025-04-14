@@ -1,4 +1,4 @@
-import { createMeta } from '../routes/meta';
+import { createMeta } from '../routes/meta.js';
 
 interface Session {
     id: string;

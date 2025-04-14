@@ -5,10 +5,10 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import { config } from './config';
-import { errorHandler } from './middleware/errorHandler';
-import router from './routes';
-import logger from './utils/logger';
+import { config } from './config/index.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import router from './routes/index.js';
+import logger from './utils/logger.js';
 
 const app = express();
 

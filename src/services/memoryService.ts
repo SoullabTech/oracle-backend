@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { config } from '../config';
-import logger from '../utils/logger';
-import type { MemoryItem } from '../types';
+import { config } from '../config/index.js';
+import logger from '../utils/logger.js';
+import type { MemoryItem } from '../types/index.js';
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
@@ -13,7 +13,8 @@ export class MemoryService {
         .insert({
           user_id: memory.clientId,
           content: memory.content,
-          metadata: memory.metadata
+          metadata: memory.metadata,
+          timestamp: memory.timestamp
         })
         .select()
         .single();

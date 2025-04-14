@@ -1,4 +1,4 @@
-import type { MemoryItem } from '../types';
+import { MemoryItem } from "memory.js";
 
 export async function storeMemory(memory: MemoryItem): Promise<MemoryItem> {
     console.log('Storing memory:', memory);

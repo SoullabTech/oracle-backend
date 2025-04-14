@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { validate } from '../middleware/validate';
-import { SessionService } from '../services/sessionService';
-import { createSessionSchema, updateSessionSchema, getSessionStatsSchema } from '../schemas/session';
-import type { AuthenticatedRequest } from '../types';
-import logger from '../utils/logger';
+import { authenticateToken } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import { SessionService } from '../services/sessionService.js';
+import { createSessionSchema, updateSessionSchema, getSessionStatsSchema } from '../schemas/session.js';
+import type { AuthenticatedRequest } from '../types/index.js';
+import logger from '../utils/logger.js';
 
 const router = Router();
 const sessionService = new SessionService();

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import testRoutes from './testRoutes';
+import testRoutes from './testRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;

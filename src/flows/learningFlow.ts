@@ -1,5 +1,5 @@
-import type { Session, MemoryItem, SessionStats } from '../types';
-import { FlowManager } from './index';
+import type { Session, MemoryItem, SessionStats } from '../types/index.js';
+import { FlowManager } from './index.js';
 
 export class LearningFlow {
   private flowManager: FlowManager;

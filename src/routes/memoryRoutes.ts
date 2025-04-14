@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { validate } from '../middleware/validate';
-import { MemoryService } from '../services/memoryService';
-import { createMemorySchema, updateMemorySchema, deleteMemorySchema } from '../schemas/memory';
-import type { AuthenticatedRequest } from '../types';
-import logger from '../utils/logger';
+import { authenticateToken } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import { MemoryService } from '../services/memoryService.js';
+import { createMemorySchema, updateMemorySchema, deleteMemorySchema } from '../schemas/memory.js';
+import type { AuthenticatedRequest } from '../types/index.js';
+import logger from '../utils/logger.js';
 
 const router = Router();
 const memoryService = new MemoryService();
@@ -25,7 +25,8 @@ router.post(
       const memory = await memoryService.storeMemory({
         content,
         clientId,
-        metadata
+        metadata,
+        timestamp: new Date().getTime()
       });
 
       res.json(memory);

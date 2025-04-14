@@ -1,4 +1,5 @@
-import type { Metadata } from './metadata';
+import { Metadata } from "metadata.js";
+
 
 export interface MemoryItem {
   id: string;
