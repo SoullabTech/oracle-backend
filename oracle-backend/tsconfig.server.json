@@ -1,19 +1,14 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "dist",
-    "noEmit": false,
-    "allowImportingTsExtensions": false
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "dist/server",
+    "rootDir": "server",
+    "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/vite-env.d.ts",
-    "src/**/*.tsx",
-    "src/App.tsx",
-    "src/main.tsx"
-  ]
+  "include": ["server/**/*"],
+  "exclude": ["node_modules"]
 }

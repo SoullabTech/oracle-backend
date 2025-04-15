@@ -1,59 +1,166 @@
-import type { MemoryItem } from '../types';
-import { MetaService } from './metaService';
+import { supabase } from '../lib/supabase';
+import type { Database } from '../lib/database.types';
 
-export class MemoryService {
-  private memories: MemoryItem[] = [];
+export interface MemoryItem {
+  id?: string;
+  content: string;
+  element: string;
+  facet?: string;
+  sourceAgent: string;
+  userId?: string;
+  confidence?: number;
+  metadata?: Record<string, unknown>;
+}
 
-  async storeMemory(memory: Omit<MemoryItem, 'timestamp'>): Promise<MemoryItem> {
-    const newMemory: MemoryItem = {
-      ...memory,
-      timestamp: Date.now(),
-      metadata: MetaService.createMeta()
-    };
+export interface MemoryPattern {
+  id?: string;
+  patternName: string;
+  description?: string;
+  elements: string[];
+  facets: string[];
+  confidence: number;
+  metadata?: Record<string, unknown>;
+}
 
-    this.memories.push(newMemory);
-    return newMemory;
+export interface MemoryAggregation {
+  id?: string;
+  content: string;
+  sourcePatterns: string[];
+  elements: string[];
+  facets: string[];
+  confidence: number;
+  metadata?: Record<string, unknown>;
+}
+
+export async function storeMemoryItem(item: MemoryItem): Promise<string> {
+  const { data, error } = await supabase
+    .from('memory_items')
+    .insert({
+      content: item.content,
+      element: item.element,
+      facet: item.facet,
+      source_agent: item.sourceAgent,
+      user_id: item.userId,
+      confidence: item.confidence,
+      metadata: item.metadata,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error storing memory item:', error);
+    throw new Error('Failed to store memory item');
   }
 
-  async retrieveMemories(clientId?: string): Promise<MemoryItem[]> {
-    if (clientId) {
-      return this.memories.filter(m => m.clientId === clientId);
-    }
-    return this.memories;
+  return data.id;
+}
+
+export async function storeMemoryPattern(pattern: MemoryPattern): Promise<string> {
+  const { data, error } = await supabase
+    .from('memory_patterns')
+    .insert({
+      pattern_name: pattern.patternName,
+      description: pattern.description,
+      elements: pattern.elements,
+      facets: pattern.facets,
+      confidence: pattern.confidence,
+      metadata: pattern.metadata,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error storing memory pattern:', error);
+    throw new Error('Failed to store memory pattern');
   }
 
-  async updateMemory(id: string, content: string): Promise<boolean> {
-    const index = this.memories.findIndex(m => m.id === id);
-    if (index === -1) return false;
+  return data.id;
+}
 
-    this.memories[index] = {
-      ...this.memories[index],
-      content,
-      metadata: MetaService.enrichMeta(
-        this.memories[index].metadata || {},
-        { lastModified: new Date().toISOString() }
-      )
-    };
+export async function storeMemoryAggregation(aggregation: MemoryAggregation): Promise<string> {
+  const { data, error } = await supabase
+    .from('memory_aggregations')
+    .insert({
+      content: aggregation.content,
+      source_patterns: aggregation.sourcePatterns,
+      elements: aggregation.elements,
+      facets: aggregation.facets,
+      confidence: aggregation.confidence,
+      metadata: aggregation.metadata,
+    })
+    .select()
+    .single();
 
-    return true;
+  if (error) {
+    console.error('Error storing memory aggregation:', error);
+    throw new Error('Failed to store memory aggregation');
   }
 
-  async deleteMemory(id: string): Promise<boolean> {
-    const initialLength = this.memories.length;
-    this.memories = this.memories.filter(m => m.id !== id);
-    return this.memories.length < initialLength;
+  return data.id;
+}
+
+export async function getRelevantMemories(
+  element: string,
+  facet?: string,
+  limit = 10
+): Promise<MemoryItem[]> {
+  let query = supabase
+    .from('memory_items')
+    .select('*')
+    .eq('element', element)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (facet) {
+    query = query.eq('facet', facet);
   }
 
-  async getMemoryInsights(clientId: string): Promise<string[]> {
-    const clientMemories = await this.retrieveMemories(clientId);
-    if (clientMemories.length === 0) {
-      return ["No memories found for analysis"];
-    }
+  const { data, error } = await query;
 
-    return [
-      "Insight 1: Patterns show consistent engagement",
-      "Insight 2: Memory retention improving over time",
-      "Insight 3: Key concepts are being reinforced"
-    ];
+  if (error) {
+    console.error('Error fetching memories:', error);
+    throw new Error('Failed to fetch memories');
   }
+
+  return data;
+}
+
+export async function getPatternsByElements(
+  elements: string[],
+  minConfidence = 0.7
+): Promise<MemoryPattern[]> {
+  const { data, error } = await supabase
+    .from('memory_patterns')
+    .select('*')
+    .contains('elements', elements)
+    .gte('confidence', minConfidence)
+    .order('confidence', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching patterns:', error);
+    throw new Error('Failed to fetch patterns');
+  }
+
+  return data;
+}
+
+export async function getAggregatedWisdom(
+  elements: string[],
+  facets: string[],
+  minConfidence = 0.7
+): Promise<MemoryAggregation[]> {
+  const { data, error } = await supabase
+    .from('memory_aggregations')
+    .select('*')
+    .contains('elements', elements)
+    .contains('facets', facets)
+    .gte('confidence', minConfidence)
+    .order('confidence', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching aggregated wisdom:', error);
+    throw new Error('Failed to fetch aggregated wisdom');
+  }
+
+  return data;
 }

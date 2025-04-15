@@ -1,34 +1,58 @@
-import fs from 'node:fs';
+import winston from 'winston';
+import { supabase } from '../lib/supabase';
 
-const LOG_FILE = 'updates.log';
+// Custom transport for Supabase
+class SupabaseTransport extends winston.Transport {
+  async log(info: any, callback: () => void) {
+    setImmediate(() => {
+      this.emit('logged', info);
+    });
 
-export function logUpdate(message: string): void {
-  const timestamp = new Date().toLocaleString();
-  const logEntry = `[${timestamp}] ${message}\n`;
-  
-  try {
-    fs.appendFileSync(LOG_FILE, logEntry);
-    console.log('✅ Update logged successfully');
-  } catch (error) {
-    console.error('Error writing to log file:', error);
-  }
-}
-
-export function getLatestUpdates(count: number = 10): string[] {
-  try {
-    if (!fs.existsSync(LOG_FILE)) {
-      return ['No updates logged yet'];
+    try {
+      await supabase
+        .from('system_logs')
+        .insert({
+          level: info.level,
+          message: info.message,
+          metadata: info.metadata || {},
+          timestamp: new Date().toISOString(),
+        });
+    } catch (error) {
+      console.error('Error logging to Supabase:', error);
     }
-    
-    const content = fs.readFileSync(LOG_FILE, 'utf-8');
-    return content.split('\n')
-      .filter(line => line.trim())
-      .slice(-count);
-  } catch (error) {
-    console.error('Error reading log file:', error);
-    return ['Error reading updates'];
+
+    callback();
   }
 }
 
-// Log initial creation of the log file
-logUpdate('Update logging system initialized');
+// Create logger instance
+export const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    // Console transport for development
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+    }),
+    // Supabase transport for production logging
+    new SupabaseTransport(),
+  ],
+});
+
+// Add request context
+export const addRequestContext = (req: any, info: any) => ({
+  ...info,
+  metadata: {
+    ...info.metadata,
+    requestId: req.id,
+    userId: req.user?.id,
+    path: req.path,
+    method: req.method,
+  },
+});
