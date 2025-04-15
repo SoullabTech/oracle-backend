@@ -1,4 +1,4 @@
-import type { MemoryItem } from '../types';
+import type { MemoryItem } from '../types/index.js';
 
 let memoryStore: MemoryItem[] = [];
 

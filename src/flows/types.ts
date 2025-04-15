@@ -1,4 +1,4 @@
-import type { Session, MemoryItem, SessionStats } from '../types';
+import type { Session, MemoryItem, SessionStats } from '../types/index.js';
 
 export interface FlowResult {
   success: boolean;

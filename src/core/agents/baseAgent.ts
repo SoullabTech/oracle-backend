@@ -1,4 +1,4 @@
-import type { AgentResponse } from '../../types';
+import type { AgentResponse } from '../types.js';
 
 export class BaseAgent {
   async processQuery(query: string): Promise<AgentResponse> {

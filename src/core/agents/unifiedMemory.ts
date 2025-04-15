@@ -1,5 +1,5 @@
-import { storeMemory, retrieveMemory } from '../memory/persistentMemory.js';
-import type { MemoryItem } from '../core/types.js';
+import type { MemoryItem } from '../types.js';
+import { storeMemory, retrieveMemory } from './persistentMemory.js';
 
 export async function storeInsightMemory(item: MemoryItem): Promise<MemoryItem> {
   await storeMemory(item);

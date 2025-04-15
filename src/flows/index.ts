@@ -1,7 +1,7 @@
-import type { Session, MemoryItem, SessionStats } from '../types';
-import { SessionService } from '../services/sessionService';
-import { MemoryService } from '../services/memoryService';
-import { MetaService } from '../services/metaService';
+import type { Session, MemoryItem, SessionStats } from '../types/index.js';
+import { SessionService } from '../services/sessionService.js';
+import { MemoryService } from '../services/memoryService.js';
+import { MetaService } from '../services/metaService.js';
 
 export class FlowManager {
   private sessionService: SessionService;
@@ -22,10 +22,10 @@ export class FlowManager {
 
       // Initialize with a starting memory
       const initialMemory = await this.memoryService.storeMemory({
-        id: Math.random().toString(36).substring(7),
         content: 'Learning flow initiated',
         clientId,
-        metadata: MetaService.createMeta()
+        metadata: MetaService.createMeta(),
+        timestamp: new Date().getTime()
       });
 
       return {
@@ -49,10 +49,10 @@ export class FlowManager {
     try {
       // Store the interaction memory
       const memory = await this.memoryService.storeMemory({
-        id: Math.random().toString(36).substring(7),
         content,
         clientId,
-        metadata: MetaService.createMeta()
+        metadata: MetaService.createMeta(),
+        timestamp: new Date().getTime()
       });
 
       // Generate insights based on stored memories
@@ -77,7 +77,7 @@ export class FlowManager {
   }> {
     try {
       // End the session
-      await this.sessionService.endSession(sessionId);
+      await this.sessionService.endSession(sessionId, clientId);
 
       // Get final statistics and insights
       const [sessionStats, finalInsights] = await Promise.all([

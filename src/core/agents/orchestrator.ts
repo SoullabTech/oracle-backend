@@ -1,6 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { LLMChain } from "langchain/chains";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import axios from "axios";
 
 export async function runLangChain(query: string): Promise<string> {
@@ -8,21 +7,26 @@ export async function runLangChain(query: string): Promise<string> {
     throw new Error("OPENAI_API_KEY environment variable is not set");
   }
 
-  const model = new ChatOpenAI({ 
+  // Initialize the LLM model
+  const model = new ChatOpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
     temperature: 0.7,
-    modelName: "gpt-3.5-turbo"
+    modelName: "gpt-3.5-turbo",
   });
 
-  const template = "You are a wise oracle. Provide a poetic and thoughtful response to: {query}";
-  const promptTemplate = PromptTemplate.fromTemplate(template);
+  // Wrap the model in a Runnable
+  const runnableModel = model;
 
-  const chain = new LLMChain({
-    llm: model,
-    prompt: promptTemplate
-  });
+  // Create a prompt template
+  const prompt = ChatPromptTemplate.fromTemplate(
+    "You are a wise oracle. Provide a poetic and thoughtful response to: {query}"
+  );
+
+  // Use LCEL's pipe method to chain the prompt and model
+  const chain = prompt.pipe(runnableModel);
 
   try {
+    // Invoke the chain with the query
     const result = await chain.invoke({ query });
     return result.text || "No response generated";
   } catch (error) {
