@@ -1,4 +1,6 @@
-import type { Session, MemoryItem, SessionStats } from '../types/index.js';
+// src/types/flowTypes.ts
+import type { Session, SessionStats } from './someSharedTypes'; // Adjust path if needed.
+import type { MemoryItem } from './coreTypes';
 
 export interface FlowResult {
   success: boolean;
