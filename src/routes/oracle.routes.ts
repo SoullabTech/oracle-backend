@@ -2,6 +2,7 @@
 
 import { Router } from 'express';
 import { oracle } from '../core/agents/MainOracleAgent';
+import { logInsightToNotion } from '@/services/notionLogger';
 import { z } from 'zod';
 
 const router = Router();
@@ -14,7 +15,7 @@ const oracleQuerySchema = z.object({
 });
 
 /**
- * POST /api/oracle/query
+ * POST /query
  * Handles incoming Oracle queries with optional context and userId
  */
 router.post('/query', async (req, res) => {
@@ -37,6 +38,26 @@ router.post('/query', async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Oracle processing error'
+    });
+  }
+});
+
+/**
+ * GET /test-log
+ * Simple route to test Notion integration
+ */
+router.get('/test-log', async (_req, res) => {
+  try {
+    const result = await logInsightToNotion({
+      title: 'Test Insight',
+      content: 'This is a test insight from the Oracle backend.'
+    });
+    return res.status(200).json({ success: true, id: result.id });
+  } catch (error: any) {
+    console.error('❌ Notion logging failed:', error.message);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to log test insight to Notion'
     });
   }
 });
