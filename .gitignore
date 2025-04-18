@@ -1,0 +1,6 @@
+node_modules
+# both repos
+.env
+.env.local
+.env.production
+.env.development
