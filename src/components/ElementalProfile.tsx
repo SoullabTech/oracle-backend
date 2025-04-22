@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { getElementalProfile } from '../services/surveyService';
-import { CRYSTAL_FOCUS_OPTIONS } from '../types/survey';
-import type { ElementalProfile as ElementalProfileType } from '../types/survey';
+import { useQuery } from "@tanstack/react-query";
+import { getElementalProfile } from "../services/surveyService";
+import { CRYSTAL_FOCUS_OPTIONS } from "../types/survey";
+import type { ElementalProfile as ElementalProfileType } from "../types/survey";
 
 interface ElementalScoreProps {
   element: string;
@@ -11,12 +11,18 @@ interface ElementalScoreProps {
 function ElementalScore({ element, score }: ElementalScoreProps) {
   const getElementColor = (element: string) => {
     switch (element) {
-      case 'fire': return 'from-red-500 to-red-600';
-      case 'water': return 'from-blue-500 to-blue-600';
-      case 'earth': return 'from-green-500 to-green-600';
-      case 'air': return 'from-yellow-500 to-yellow-600';
-      case 'aether': return 'from-purple-500 to-purple-600';
-      default: return 'from-gray-500 to-gray-600';
+      case "fire":
+        return "from-red-500 to-red-600";
+      case "water":
+        return "from-blue-500 to-blue-600";
+      case "earth":
+        return "from-green-500 to-green-600";
+      case "air":
+        return "from-yellow-500 to-yellow-600";
+      case "aether":
+        return "from-purple-500 to-purple-600";
+      default:
+        return "from-gray-500 to-gray-600";
     }
   };
 
@@ -29,9 +35,7 @@ function ElementalScore({ element, score }: ElementalScoreProps) {
           </span>
         </div>
         <div className="text-right">
-          <span className="text-xs font-semibold inline-block">
-            {score}%
-          </span>
+          <span className="text-xs font-semibold inline-block">{score}%</span>
         </div>
       </div>
       <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
@@ -46,7 +50,7 @@ function ElementalScore({ element, score }: ElementalScoreProps) {
 
 export function ElementalProfile() {
   const { data: profile, isLoading } = useQuery<ElementalProfileType>({
-    queryKey: ['elementalProfile'],
+    queryKey: ["elementalProfile"],
     queryFn: () => getElementalProfile(),
   });
 
@@ -66,13 +70,18 @@ export function ElementalProfile() {
   if (!profile) {
     return (
       <div className="text-center py-4">
-        <p className="text-gray-600">No profile data available. Complete the survey to see your elemental balance.</p>
+        <p className="text-gray-600">
+          No profile data available. Complete the survey to see your elemental
+          balance.
+        </p>
       </div>
     );
   }
 
   const crystalFocus = profile.crystal_focus;
-  const focusOption = CRYSTAL_FOCUS_OPTIONS.find(opt => opt.type === crystalFocus?.type);
+  const focusOption = CRYSTAL_FOCUS_OPTIONS.find(
+    (opt) => opt.type === crystalFocus?.type,
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -81,7 +90,9 @@ export function ElementalProfile() {
         {focusOption && (
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">{focusOption.title}</h3>
-            <p className="text-gray-600">{crystalFocus?.customDescription || focusOption.description}</p>
+            <p className="text-gray-600">
+              {crystalFocus?.customDescription || focusOption.description}
+            </p>
           </div>
         )}
       </div>

@@ -1,8 +1,8 @@
 // src/routes/survey.routes.ts
 
-import { Router } from 'express';
-import { processSurveySubmission } from '../services/surveyService';
-import { z } from 'zod';
+import { Router } from "express";
+import { processSurveySubmission } from "../services/surveyService";
+import { z } from "zod";
 
 const router = Router();
 
@@ -14,18 +14,18 @@ const SurveySubmissionSchema = z.object({
     z.object({
       questionId: z.string(),
       answer: z.number().min(1).max(5),
-    })
+    }),
   ),
 });
 
 // POST /api/oracle/survey
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   const parseResult = SurveySubmissionSchema.safeParse(req.body);
 
   if (!parseResult.success) {
     return res.status(400).json({
       success: false,
-      error: 'Invalid survey submission data',
+      error: "Invalid survey submission data",
       details: parseResult.error.flatten(),
     });
   }
@@ -35,15 +35,17 @@ router.post('/', async (req, res) => {
     const result = await processSurveySubmission(submission);
 
     if (!result) {
-      return res.status(500).json({ success: false, error: 'Processing failed' });
+      return res
+        .status(500)
+        .json({ success: false, error: "Processing failed" });
     }
 
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
-    console.error('❌ Survey processing error:', err);
+    console.error("❌ Survey processing error:", err);
     return res.status(500).json({
       success: false,
-      error: 'Unexpected server error',
+      error: "Unexpected server error",
     });
   }
 });

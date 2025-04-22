@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export function Navigation() {
   const { user, signOut } = useAuth();
@@ -20,10 +20,16 @@ export function Navigation() {
             </Link>
             {user ? (
               <>
-                <Link to="/survey" className="text-gray-700 hover:text-gray-900">
+                <Link
+                  to="/survey"
+                  className="text-gray-700 hover:text-gray-900"
+                >
                   Survey
                 </Link>
-                <Link to="/oracle" className="text-gray-700 hover:text-gray-900">
+                <Link
+                  to="/oracle"
+                  className="text-gray-700 hover:text-gray-900"
+                >
                   Oracle
                 </Link>
                 <button
@@ -38,7 +44,10 @@ export function Navigation() {
                 <Link to="/login" className="text-gray-700 hover:text-gray-900">
                   Login
                 </Link>
-                <Link to="/signup" className="text-gray-700 hover:text-gray-900">
+                <Link
+                  to="/signup"
+                  className="text-gray-700 hover:text-gray-900"
+                >
                   Sign Up
                 </Link>
               </>

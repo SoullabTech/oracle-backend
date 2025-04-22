@@ -1,8 +1,6 @@
-// src/utils/modelService.ts
-
-import { openai } from '../lib/openaiClient; // adjust if using other clients
-import logger from './logger;
-import type { AgentResponse } from '../core/agents/types;
+import { openai } from '../lib/openaiClient'; // adjust if using other clients
+import logger from './logger';
+import type { AgentResponse } from '../core/agents/types';
 
 class ModelService {
   /**
@@ -19,6 +17,7 @@ class ModelService {
     try {
       logger.info('🔮 Sending query to model', { userId, input });
 
+      // Send the query to OpenAI (or another LLM model)
       const completion = await openai.chat.completions.create({
         model: 'gpt-4', // or 'gpt-3.5-turbo' / 'claude' depending on your setup
         messages: [
@@ -35,8 +34,10 @@ class ModelService {
         max_tokens: 800,
       });
 
+      // Retrieve the model's response
       const responseText = completion.choices[0]?.message?.content?.trim() ?? '';
 
+      // Prepare the AgentResponse
       const response: AgentResponse = {
         response: responseText,
         provider: 'openai',
@@ -58,4 +59,5 @@ class ModelService {
   }
 }
 
+// Export the instance of ModelService for use
 export default new ModelService();

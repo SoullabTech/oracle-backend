@@ -1,7 +1,88 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 export function Navigation() {
-    const { user, signOut } = useAuth();
-    return (_jsx("nav", { className: "bg-white shadow-lg", children: _jsx("div", { className: "container mx-auto px-4", children: _jsxs("div", { className: "flex justify-between h-16", children: [_jsx("div", { className: "flex", children: _jsxs(Link, { to: "/", className: "flex items-center", children: [_jsx("img", { src: "/vite.svg", className: "h-8 w-8", alt: "Logo" }), _jsx("span", { className: "ml-2 text-xl font-bold", children: "Your App" })] }) }), _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx(Link, { to: "/", className: "text-gray-700 hover:text-gray-900", children: "Home" }), user ? (_jsxs(_Fragment, { children: [_jsx(Link, { to: "/survey", className: "text-gray-700 hover:text-gray-900", children: "Survey" }), _jsx(Link, { to: "/oracle", className: "text-gray-700 hover:text-gray-900", children: "Oracle" }), _jsx("button", { onClick: () => signOut(), className: "text-gray-700 hover:text-gray-900", children: "Sign Out" })] })) : (_jsxs(_Fragment, { children: [_jsx(Link, { to: "/login", className: "text-gray-700 hover:text-gray-900", children: "Login" }), _jsx(Link, { to: "/signup", className: "text-gray-700 hover:text-gray-900", children: "Sign Up" })] })), _jsx(Link, { to: "/about", className: "text-gray-700 hover:text-gray-900", children: "About" })] })] }) }) }));
+  const { user, signOut } = useAuth();
+  return _jsx("nav", {
+    className: "bg-white shadow-lg",
+    children: _jsx("div", {
+      className: "container mx-auto px-4",
+      children: _jsxs("div", {
+        className: "flex justify-between h-16",
+        children: [
+          _jsx("div", {
+            className: "flex",
+            children: _jsxs(Link, {
+              to: "/",
+              className: "flex items-center",
+              children: [
+                _jsx("img", {
+                  src: "/vite.svg",
+                  className: "h-8 w-8",
+                  alt: "Logo",
+                }),
+                _jsx("span", {
+                  className: "ml-2 text-xl font-bold",
+                  children: "Your App",
+                }),
+              ],
+            }),
+          }),
+          _jsxs("div", {
+            className: "flex items-center space-x-4",
+            children: [
+              _jsx(Link, {
+                to: "/",
+                className: "text-gray-700 hover:text-gray-900",
+                children: "Home",
+              }),
+              user
+                ? _jsxs(_Fragment, {
+                    children: [
+                      _jsx(Link, {
+                        to: "/survey",
+                        className: "text-gray-700 hover:text-gray-900",
+                        children: "Survey",
+                      }),
+                      _jsx(Link, {
+                        to: "/oracle",
+                        className: "text-gray-700 hover:text-gray-900",
+                        children: "Oracle",
+                      }),
+                      _jsx("button", {
+                        onClick: () => signOut(),
+                        className: "text-gray-700 hover:text-gray-900",
+                        children: "Sign Out",
+                      }),
+                    ],
+                  })
+                : _jsxs(_Fragment, {
+                    children: [
+                      _jsx(Link, {
+                        to: "/login",
+                        className: "text-gray-700 hover:text-gray-900",
+                        children: "Login",
+                      }),
+                      _jsx(Link, {
+                        to: "/signup",
+                        className: "text-gray-700 hover:text-gray-900",
+                        children: "Sign Up",
+                      }),
+                    ],
+                  }),
+              _jsx(Link, {
+                to: "/about",
+                className: "text-gray-700 hover:text-gray-900",
+                children: "About",
+              }),
+            ],
+          }),
+        ],
+      }),
+    }),
+  });
 }

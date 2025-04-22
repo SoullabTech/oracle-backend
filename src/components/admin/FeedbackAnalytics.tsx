@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { Line } from 'react-chartjs-2';
+import { useQuery } from "@tanstack/react-query";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,9 +9,9 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { getFeedbackStats } from '../../services/feedbackService';
-import { getMetricTrends } from '../../services/oracleMetricsService';
+} from "chart.js";
+import { getFeedbackStats } from "../../services/feedbackService";
+import { getMetricTrends } from "../../services/oracleMetricsService";
 
 ChartJS.register(
   CategoryScale,
@@ -20,7 +20,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export function FeedbackAnalytics() {
@@ -30,13 +30,13 @@ export function FeedbackAnalytics() {
   };
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['feedbackStats'],
-    queryFn: () => getFeedbackStats('all'),
+    queryKey: ["feedbackStats"],
+    queryFn: () => getFeedbackStats("all"),
   });
 
   const { data: trends, isLoading: trendsLoading } = useQuery({
-    queryKey: ['feedbackTrends', timeframe],
-    queryFn: () => getMetricTrends('user_satisfaction', timeframe),
+    queryKey: ["feedbackTrends", timeframe],
+    queryFn: () => getMetricTrends("user_satisfaction", timeframe),
   });
 
   if (statsLoading || trendsLoading) {
@@ -48,13 +48,14 @@ export function FeedbackAnalytics() {
   }
 
   const chartData = {
-    labels: trends?.map(t => new Date(t.timestamp).toLocaleDateString()) || [],
+    labels:
+      trends?.map((t) => new Date(t.timestamp).toLocaleDateString()) || [],
     datasets: [
       {
-        label: 'User Satisfaction',
-        data: trends?.map(t => t.value * 100) || [],
-        borderColor: 'rgb(99, 102, 241)',
-        backgroundColor: 'rgba(99, 102, 241, 0.5)',
+        label: "User Satisfaction",
+        data: trends?.map((t) => t.value * 100) || [],
+        borderColor: "rgb(99, 102, 241)",
+        backgroundColor: "rgba(99, 102, 241, 0.5)",
       },
     ],
   };
@@ -63,11 +64,11 @@ export function FeedbackAnalytics() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'User Satisfaction Trend',
+        text: "User Satisfaction Trend",
       },
     },
     scales: {
@@ -84,15 +85,23 @@ export function FeedbackAnalytics() {
 
       <div className="grid grid-cols-2 gap-4 mb-8">
         <div className="bg-indigo-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-indigo-900">Total Feedback</h3>
+          <h3 className="text-lg font-semibold text-indigo-900">
+            Total Feedback
+          </h3>
           <p className="text-3xl font-bold text-indigo-600">
             {stats?.totalFeedback || 0}
           </p>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-green-900">Satisfaction Rate</h3>
+          <h3 className="text-lg font-semibold text-green-900">
+            Satisfaction Rate
+          </h3>
           <p className="text-3xl font-bold text-green-600">
-            {Math.round((stats?.positiveFeedback || 0) / (stats?.totalFeedback || 1) * 100)}%
+            {Math.round(
+              ((stats?.positiveFeedback || 0) / (stats?.totalFeedback || 1)) *
+                100,
+            )}
+            %
           </p>
         </div>
       </div>
@@ -105,15 +114,17 @@ export function FeedbackAnalytics() {
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">Elemental Distribution</h3>
           <div className="grid grid-cols-5 gap-4">
-            {Object.entries(stats.elementalDistribution).map(([element, count]) => (
-              <div
-                key={element}
-                className="bg-gray-50 p-4 rounded-lg text-center"
-              >
-                <h4 className="font-medium capitalize">{element}</h4>
-                <p className="text-2xl font-bold text-gray-700">{count}</p>
-              </div>
-            ))}
+            {Object.entries(stats.elementalDistribution).map(
+              ([element, count]) => (
+                <div
+                  key={element}
+                  className="bg-gray-50 p-4 rounded-lg text-center"
+                >
+                  <h4 className="font-medium capitalize">{element}</h4>
+                  <p className="text-2xl font-bold text-gray-700">{count}</p>
+                </div>
+              ),
+            )}
           </div>
         </div>
       )}

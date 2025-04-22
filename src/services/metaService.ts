@@ -1,19 +1,22 @@
-import type { Metadata } from '../types';
+import type { Metadata } from "../types";
 
 export class MetaService {
   static createMeta(): Metadata {
     return {
       timestamp: new Date().toISOString(),
       clientId: "clientXYZ",
-      processedAt: new Date().toISOString()
+      processedAt: new Date().toISOString(),
     };
   }
 
-  static enrichMeta(meta: Metadata, additionalData: Partial<Metadata>): Metadata {
+  static enrichMeta(
+    meta: Metadata,
+    additionalData: Partial<Metadata>,
+  ): Metadata {
     return {
       ...meta,
       ...additionalData,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 

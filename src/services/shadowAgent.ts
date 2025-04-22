@@ -1,68 +1,62 @@
-import type { AIResponse } from '../types/ai';
-import type { QueryInput } from '../types/oracle';
-import { extractSymbolsFromJournal } from '../utils/symbolParser;
-import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
-import { logOracleInsight } from ../utils/oracleLogger';
+"use strict";
 
-export class ShadowAgent {
-  id: string;
-  name: string;
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from '../utils/oracleLogger'; // Corrected import
+import MemoryModule from "../../utils/memoryModule"; 
+import ModelService from "../../utils/modelService"; 
+import type { AgentResponse } from "./types";
 
-  constructor(id = 'shadow-001') {
-    this.id = id;
-    this.name = 'ShadowAgent';
+/**
+ * ShadowAgent: Engages the unconscious terrain, confronting patterns, projections, and personal myths.
+ */
+export class ShadowAgent extends OracleAgent {
+  constructor() {
+    super({ debug: false });
   }
 
-  async processQuery(query: QueryInput): Promise<AIResponse> {
-    const symbols = extractSymbolsFromJournal(query.input);
-    const shadowSymbols = symbols.filter(s => s.category === 'shadow' || s.weight >= 5);
+  public async processQuery(query: { input: string; userId?: string }): Promise<AgentResponse> {
+    const contextMemory = MemoryModule.getRecentEntries(5);
 
-    const shadowPrompt = `
-🜄 Shadow Reflection 🜄
+    const contextHeader = contextMemory.length
+      ? `⟳ Echoes from your shadow:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}`
+      : "";
 
-Your words: "${query.input}"
+    const augmentedInput = `${contextHeader}\n\n${query.input}\n\nWhat unresolved patterns or projections might this reveal?`;
 
-These symbols emerged from the depths:  
-${shadowSymbols.map(s => `- ${s.name || s.category}`).join('\n')}
-
-✨ Reflect:
-- What aspect of yourself are you resisting or disowning?
-- How might this emotion be a messenger, not a menace?
-- Where does this story repeat in your life?
-
-The spiral calls you inward. Not to fix, but to witness.
-
-You are not broken. You are becoming.
-    `.trim();
-
-    const detectedFacet = detectFacetFromInput(query.input);
-    const facetDescription = getFacetDescription(detectedFacet);
-
-    const response: AIResponse = {
-      content: shadowPrompt,
-      provider: this.name,
-      model: 'ShadowOracle-v1',
-      confidence: 0.85,
-      metadata: {
-        archetype: 'Shadow Walker',
-        element: 'aether',
-        symbols,
-        facet: detectedFacet,
-        facetDescription,
-        phase: 'Water 2',
-      }
+    const augmentedQuery = {
+      ...query,
+      input: augmentedInput,
     };
 
-    await logOracleInsight({
-      anon_id: query.userId,
-      element: 'aether',
-      archetype: 'Shadow Walker',
-      insight: response.content,
-      emotion: 0.4,
-      phase: 'Water 2',
-      facet: detectedFacet
+    const baseResponse: AgentResponse = await ModelService.getResponse(augmentedQuery);
+
+    const personalityFlair = `\n\n🜃 In the mirror of shadow, your hidden power waits to be reclaimed.`;
+    const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
+
+    MemoryModule.addEntry({
+      timestamp: new Date().toISOString(),
+      query: query.input,
+      response: enhancedResponse,
     });
 
-    return response;
+    await logOracleInsight({
+      anon_id: query.userId || null,
+      archetype: baseResponse.metadata?.archetype || "Shadow Walker",
+      element: "Aether",
+      insight: {
+        message: enhancedResponse,
+        raw_input: query.input,
+      },
+      emotion: baseResponse.metadata?.emotion_score ?? 0.92,
+      phase: baseResponse.metadata?.phase || "Shadow Phase",
+      context: contextMemory,
+    });
+
+    return {
+      ...baseResponse,
+      response: enhancedResponse,
+      confidence: baseResponse.confidence ?? 0.92,
+      routingPath: [...(baseResponse.routingPath || []), "shadow-agent"],
+    };
   }
 }

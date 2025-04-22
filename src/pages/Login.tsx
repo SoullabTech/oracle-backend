@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export function Login() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -13,9 +13,9 @@ export function Login() {
     e.preventDefault();
     try {
       await signIn(email, password); // Ensure the signIn function handles the credentials properly
-      navigate('/survey'); // Redirect to survey page after successful login
+      navigate("/survey"); // Redirect to survey page after successful login
     } catch (err: any) {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     }
   };
 
@@ -23,7 +23,7 @@ export function Login() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
-        
+
         {/* Display error message if there is one */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -34,7 +34,10 @@ export function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email input */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -49,7 +52,10 @@ export function Login() {
 
           {/* Password input */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -73,7 +79,7 @@ export function Login() {
 
         {/* Link to signup page */}
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-blue-600 hover:text-blue-500">
             Sign up
           </Link>

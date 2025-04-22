@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import type { CrystalFocus } from '../types/survey';
-import { CRYSTAL_FOCUS_OPTIONS } from '../types/survey';
+import { useState } from "react";
+import type { CrystalFocus } from "../types/survey";
+import { CRYSTAL_FOCUS_OPTIONS } from "../types/survey";
 
 interface CrystalFocusMenuProps {
   onComplete: (focus: CrystalFocus) => void;
 }
 
 export function CrystalFocusMenu({ onComplete }: CrystalFocusMenuProps) {
-  const [selectedType, setSelectedType] = useState<CrystalFocus['type'] | null>(null);
-  const [customDescription, setCustomDescription] = useState('');
-  const [challenges, setChallenges] = useState('');
-  const [aspirations, setAspirations] = useState('');
+  const [selectedType, setSelectedType] = useState<CrystalFocus["type"] | null>(
+    null,
+  );
+  const [customDescription, setCustomDescription] = useState("");
+  const [challenges, setChallenges] = useState("");
+  const [aspirations, setAspirations] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export function CrystalFocusMenu({ onComplete }: CrystalFocusMenuProps) {
       aspirations,
     };
 
-    if (selectedType === 'other') {
+    if (selectedType === "other") {
       focus.customDescription = customDescription;
     }
 
@@ -34,7 +36,8 @@ export function CrystalFocusMenu({ onComplete }: CrystalFocusMenuProps) {
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-4">Choose Your Crystal Focus</h2>
         <p className="text-gray-600">
-          Every aspect of life follows a unique spiral of growth. What is most important to you right now?
+          Every aspect of life follows a unique spiral of growth. What is most
+          important to you right now?
         </p>
       </div>
 
@@ -47,15 +50,15 @@ export function CrystalFocusMenu({ onComplete }: CrystalFocusMenuProps) {
               onClick={() => setSelectedType(option.type)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 selectedType === option.type
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-200'
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 hover:border-blue-200"
               }`}
             >
               <h3 className="font-semibold mb-2">{option.title}</h3>
               <p className="text-sm text-gray-600">{option.description}</p>
               {option.elements.length > 0 && (
                 <div className="mt-2 text-sm text-gray-500">
-                  Elements: {option.elements.join(', ')}
+                  Elements: {option.elements.join(", ")}
                 </div>
               )}
             </button>
@@ -64,7 +67,7 @@ export function CrystalFocusMenu({ onComplete }: CrystalFocusMenuProps) {
 
         {selectedType && (
           <div className="space-y-4 mt-8">
-            {selectedType === 'other' && (
+            {selectedType === "other" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Describe your focus area

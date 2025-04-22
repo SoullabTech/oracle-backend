@@ -1,8 +1,10 @@
 // src/components/FacilitatorDashboard.tsx
-import { useState } from 'react';
+import { useState } from "react";
 
 const FacilitatorDashboard = () => {
-  const [data, setData] = useState<string>('Welcome to the Facilitator Dashboard!');
+  const [data, setData] = useState<string>(
+    "Welcome to the Facilitator Dashboard!",
+  );
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
@@ -10,7 +12,7 @@ const FacilitatorDashboard = () => {
       <p>{data}</p>
       <button
         className="mt-4 px-4 py-2 bg-indigo-500 text-white rounded"
-        onClick={() => setData('Data updated!')}
+        onClick={() => setData("Data updated!")}
       >
         Update Data
       </button>

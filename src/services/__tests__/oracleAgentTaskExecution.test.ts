@@ -1,10 +1,10 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { OracleAgent } from '../OracleAgent';
-import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import { OracleAgent } from "../OracleAgent";
+import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 
 // ---- MOCKS ----
-vi.mock('openai', () => {
+vi.mock("openai", () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       chat: {
@@ -16,7 +16,7 @@ vi.mock('openai', () => {
   };
 });
 
-vi.mock('@anthropic-ai/sdk', () => {
+vi.mock("@anthropic-ai/sdk", () => {
   return {
     default: vi.fn().mockImplementation(() => ({
       messages: {
@@ -28,58 +28,62 @@ vi.mock('@anthropic-ai/sdk', () => {
 
 // ---- CONFIG ----
 const openaiConfig = {
-  openaiApiKey: 'test-openai-key',
-  anthropicApiKey: 'test-anthropic-key',
-  defaultModel: 'gpt-4' as const,
+  openaiApiKey: "test-openai-key",
+  anthropicApiKey: "test-anthropic-key",
+  defaultModel: "gpt-4" as const,
   temperature: 0.7,
 };
 
 const claudeConfig = {
   ...openaiConfig,
-  defaultModel: 'claude-3' as const,
+  defaultModel: "claude-3" as const,
 };
 
 // ---- TESTS ----
-describe('Oracle Agent Extended Tests', () => {
+describe("Oracle Agent Extended Tests", () => {
   let oracleAgent: OracleAgent;
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should return correct token metadata from OpenAI', async () => {
+  it("should return correct token metadata from OpenAI", async () => {
     oracleAgent = new OracleAgent(openaiConfig);
     const mockCompletion = {
-      choices: [{ message: { content: 'With tokens' } }],
+      choices: [{ message: { content: "With tokens" } }],
       usage: { total_tokens: 123 },
     };
 
-    const mockedOpenAIInstance = (OpenAI as unknown as vi.Mock).mock.results[0].value;
-    mockedOpenAIInstance.chat.completions.create.mockResolvedValueOnce(mockCompletion);
+    const mockedOpenAIInstance = (OpenAI as unknown as vi.Mock).mock.results[0]
+      .value;
+    mockedOpenAIInstance.chat.completions.create.mockResolvedValueOnce(
+      mockCompletion,
+    );
 
     const result = await oracleAgent.performTask();
     expect(result.metadata.tokens).toBe(123);
   });
 
-  it('should perform a task with Claude successfully', async () => {
+  it("should perform a task with Claude successfully", async () => {
     oracleAgent = new OracleAgent(claudeConfig);
     const mockMessage = {
-      content: [{ text: 'Claude reply' }],
+      content: [{ text: "Claude reply" }],
       usage: { output_tokens: 456 },
     };
 
-    const mockedAnthropicInstance = (Anthropic as unknown as vi.Mock).mock.results[0].value;
+    const mockedAnthropicInstance = (Anthropic as unknown as vi.Mock).mock
+      .results[0].value;
     mockedAnthropicInstance.messages.create.mockResolvedValueOnce(mockMessage);
 
     const result = await oracleAgent.performTask();
 
-    expect(result.content).toBe('Claude reply');
-    expect(result.provider).toBe('anthropic');
-    expect(result.model).toBe('claude-3-opus');
+    expect(result.content).toBe("Claude reply");
+    expect(result.provider).toBe("anthropic");
+    expect(result.model).toBe("claude-3-opus");
     expect(result.metadata.tokens).toBe(456);
   });
 
-  it('should throw error if config is invalid (Zod enforcement)', () => {
+  it("should throw error if config is invalid (Zod enforcement)", () => {
     expect(() => new OracleAgent({} as any)).toThrow();
   });
 });

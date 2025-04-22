@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { submitFeedback } from '../services/feedbackService';
-import { useAuth } from '../hooks/useAuth';
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { submitFeedback } from "../services/feedbackService";
+import { useAuth } from "../hooks/useAuth";
 
 interface FeedbackWidgetProps {
   responseId: string;
@@ -19,15 +19,15 @@ export function FeedbackWidget({
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [rating, setRating] = useState<number | null>(null);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const feedbackMutation = useMutation({
     mutationFn: async () => {
       if (!rating || !user) return;
-      
+
       await submitFeedback(user.id, {
-        query: '',
+        query: "",
         response,
         rating,
         comments: comment,
@@ -40,11 +40,11 @@ export function FeedbackWidget({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['personalityWeights'] });
-      queryClient.invalidateQueries({ queryKey: ['aggregatedWisdom'] });
+      queryClient.invalidateQueries({ queryKey: ["personalityWeights"] });
+      queryClient.invalidateQueries({ queryKey: ["aggregatedWisdom"] });
       setIsExpanded(false);
       setRating(null);
-      setComment('');
+      setComment("");
     },
   });
 
@@ -61,8 +61,8 @@ export function FeedbackWidget({
               }}
               className={`w-8 h-8 rounded-full transition-colors ${
                 rating === value
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-600"
               }`}
             >
               {value}
@@ -95,7 +95,7 @@ export function FeedbackWidget({
               disabled={!rating || feedbackMutation.isPending}
               className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
-              {feedbackMutation.isPending ? 'Submitting...' : 'Submit Feedback'}
+              {feedbackMutation.isPending ? "Submitting..." : "Submit Feedback"}
             </button>
           </div>
         </div>

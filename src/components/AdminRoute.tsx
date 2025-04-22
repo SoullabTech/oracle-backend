@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../hooks/useAuth';
-import { isAdmin } from '../services/adminService';
+import { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../hooks/useAuth";
+import { isAdmin } from "../services/adminService";
 
 interface AdminRouteProps {
   children: ReactNode;
@@ -13,8 +13,8 @@ export function AdminRoute({ children }: AdminRouteProps) {
   const location = useLocation();
 
   const { data: isUserAdmin, isLoading } = useQuery({
-    queryKey: ['isAdmin', user?.id],
-    queryFn: () => isAdmin(user?.id || ''),
+    queryKey: ["isAdmin", user?.id],
+    queryFn: () => isAdmin(user?.id || ""),
     enabled: !!user,
   });
 

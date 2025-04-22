@@ -1,11 +1,11 @@
 // src/lib/supabase.ts
 
-import { createClient } from '@supabase/supabase-js';
-import { env } from './config';
-import type { Database } from './database.types';
+import { createClient } from "@supabase/supabase-js";
+import { env } from "./config";
+import type { Database } from "./database.types";
 
 if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error("Missing Supabase environment variables");
 }
 
 export const supabase = createClient<Database>(
@@ -16,5 +16,5 @@ export const supabase = createClient<Database>(
       autoRefreshToken: true,
       persistSession: true,
     },
-  }
+  },
 );

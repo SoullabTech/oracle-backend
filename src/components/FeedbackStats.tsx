@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { Line } from 'react-chartjs-2';
+import { useQuery } from "@tanstack/react-query";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,9 +9,9 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { getFeedbackStats } from '../services/feedbackService';
-import { useAuth } from '../hooks/useAuth';
+} from "chart.js";
+import { getFeedbackStats } from "../services/feedbackService";
+import { useAuth } from "../hooks/useAuth";
 
 ChartJS.register(
   CategoryScale,
@@ -20,14 +20,14 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export function FeedbackStats() {
   const { user } = useAuth();
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['feedbackStats', user?.id],
-    queryFn: () => getFeedbackStats(user?.id || ''),
+    queryKey: ["feedbackStats", user?.id],
+    queryFn: () => getFeedbackStats(user?.id || ""),
     enabled: !!user,
   });
 
@@ -56,10 +56,10 @@ export function FeedbackStats() {
     labels: Object.keys(stats.elementalDistribution),
     datasets: [
       {
-        label: 'Elemental Distribution',
+        label: "Elemental Distribution",
         data: Object.values(stats.elementalDistribution),
-        borderColor: 'rgb(99, 102, 241)',
-        backgroundColor: 'rgba(99, 102, 241, 0.5)',
+        borderColor: "rgb(99, 102, 241)",
+        backgroundColor: "rgba(99, 102, 241, 0.5)",
       },
     ],
   };
@@ -68,11 +68,11 @@ export function FeedbackStats() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'Feedback Distribution by Element',
+        text: "Feedback Distribution by Element",
       },
     },
     scales: {

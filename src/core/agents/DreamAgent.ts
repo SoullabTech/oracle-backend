@@ -1,6 +1,6 @@
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
+import { OracleAgent } from "./oracleAgent";
 import { logOracleInsight } from "../utils/oracleLogger;
 import MemoryModule from "../../utils/memoryModule";
 import ModelService from "../../utils/modelService;
@@ -63,7 +63,7 @@ export class MentorAgent extends OracleAgent {
 }
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
+import { OracleAgent } from "./oracleAgent";
 import { logOracleInsight } from "../utils/oracleLogger;
 import MemoryModule from "../../utils/memoryModule;
 import ModelService from "../../utils/modelService;

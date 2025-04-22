@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface SurveyQuestionProps {
   id: string;
@@ -8,23 +8,29 @@ interface SurveyQuestionProps {
   currentAnswer?: number;
 }
 
-export function SurveyQuestion({ id, text, element, onAnswer, currentAnswer }: SurveyQuestionProps) {
+export function SurveyQuestion({
+  id,
+  text,
+  element,
+  onAnswer,
+  currentAnswer,
+}: SurveyQuestionProps) {
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
   const getElementColor = (element: string) => {
     switch (element) {
-      case 'fire':
-        return 'bg-red-500';
-      case 'water':
-        return 'bg-blue-500';
-      case 'earth':
-        return 'bg-green-500';
-      case 'air':
-        return 'bg-yellow-500';
-      case 'aether':
-        return 'bg-purple-500';
+      case "fire":
+        return "bg-red-500";
+      case "water":
+        return "bg-blue-500";
+      case "earth":
+        return "bg-green-500";
+      case "air":
+        return "bg-yellow-500";
+      case "aether":
+        return "bg-purple-500";
       default:
-        return 'bg-gray-500';
+        return "bg-gray-500";
     }
   };
 
@@ -44,8 +50,8 @@ export function SurveyQuestion({ id, text, element, onAnswer, currentAnswer }: S
                 currentAnswer === rating
                   ? `${getElementColor(element)} text-white`
                   : hoveredRating && hoveredRating >= rating
-                  ? `${getElementColor(element)} bg-opacity-50 text-white`
-                  : 'bg-gray-100 hover:bg-gray-200'
+                    ? `${getElementColor(element)} bg-opacity-50 text-white`
+                    : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
               {rating}

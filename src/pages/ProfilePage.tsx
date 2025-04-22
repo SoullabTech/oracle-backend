@@ -1,7 +1,7 @@
 // src/pages/ProfilePage.tsx
 
-import React from 'react';
-import ProfileUpdateForm from '../components/ProfileUpdateForm';
+import React from "react";
+import ProfileUpdateForm from "../components/ProfileUpdateForm";
 
 const ProfilePage = () => {
   return (

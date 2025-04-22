@@ -1,11 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
-import { AdminLayout } from '../components/admin/AdminLayout';
-import { DashboardOverview } from '../components/admin/DashboardOverview';
-import { OracleInsights } from '../components/admin/OracleInsights';
-import { MemoryExplorer } from '../components/admin/MemoryExplorer';
-import { ConfigurationPanel } from '../components/admin/ConfigurationPanel';
-import { FeedbackAnalytics } from '../components/admin/FeedbackAnalytics';
-import { SystemMetrics } from '../components/admin/SystemMetrics';
+import { Route, Routes } from "react-router-dom";
+import { AdminLayout } from "../components/admin/AdminLayout";
+import { DashboardOverview } from "../components/admin/DashboardOverview";
+import { OracleInsights } from "../components/admin/OracleInsights";
+import { MemoryExplorer } from "../components/admin/MemoryExplorer";
+import { ConfigurationPanel } from "../components/admin/ConfigurationPanel";
+import { FeedbackAnalytics } from "../components/admin/FeedbackAnalytics";
+import { SystemMetrics } from "../components/admin/SystemMetrics";
 
 export function AdminDashboard() {
   return (

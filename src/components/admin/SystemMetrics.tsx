@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { Line } from 'react-chartjs-2';
+import { useQuery } from "@tanstack/react-query";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,8 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { getSystemMetrics } from '../../services/adminService';
+} from "chart.js";
+import { getSystemMetrics } from "../../services/adminService";
 
 ChartJS.register(
   CategoryScale,
@@ -19,12 +19,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export function SystemMetrics() {
   const { data: metrics, isLoading } = useQuery({
-    queryKey: ['systemMetrics'],
+    queryKey: ["systemMetrics"],
     queryFn: getSystemMetrics,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -49,16 +49,16 @@ export function SystemMetrics() {
     labels: metrics.timestamps,
     datasets: [
       {
-        label: 'Active Users',
+        label: "Active Users",
         data: metrics.activeUsers,
-        borderColor: 'rgb(99, 102, 241)',
-        backgroundColor: 'rgba(99, 102, 241, 0.5)',
+        borderColor: "rgb(99, 102, 241)",
+        backgroundColor: "rgba(99, 102, 241, 0.5)",
       },
       {
-        label: 'Response Time (ms)',
+        label: "Response Time (ms)",
         data: metrics.responseTimes,
-        borderColor: 'rgb(52, 211, 153)',
-        backgroundColor: 'rgba(52, 211, 153, 0.5)',
+        borderColor: "rgb(52, 211, 153)",
+        backgroundColor: "rgba(52, 211, 153, 0.5)",
       },
     ],
   };
@@ -67,11 +67,11 @@ export function SystemMetrics() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'System Performance',
+        text: "System Performance",
       },
     },
     scales: {
@@ -85,13 +85,17 @@ export function SystemMetrics() {
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-indigo-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-indigo-900">Active Users</h3>
+          <h3 className="text-lg font-semibold text-indigo-900">
+            Active Users
+          </h3>
           <p className="text-3xl font-bold text-indigo-600">
             {metrics.currentActiveUsers}
           </p>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-green-900">Avg Response Time</h3>
+          <h3 className="text-lg font-semibold text-green-900">
+            Avg Response Time
+          </h3>
           <p className="text-3xl font-bold text-green-600">
             {metrics.avgResponseTime}ms
           </p>

@@ -1,93 +1,41 @@
-import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { validate } from '../middleware/validate';
-import { SessionService } from '../services/sessionService';
-import { createSessionSchema, updateSessionSchema, getSessionStatsSchema } from '../schemas/session';
-import type { AuthenticatedRequest } from '../types';
-import logger from '../utils/logger';
+// src/utils/errors.ts
 
-const router = Router();
-const sessionService = new SessionService();
-
-router.post(
-  '/start',
-  authenticateToken,
-  validate(createSessionSchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { metadata } = req.body;
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required.' });
-      }
-
-      const session = await sessionService.createSession(userId, metadata);
-      res.json(session);
-    } catch (error) {
-      logger.error('Failed to start session', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to start session' 
-      });
-    }
+export class AppError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number = 500,
+    public code?: string,
+  ) {
+    super(message);
+    this.name = "AppError";
+    Error.captureStackTrace(this, this.constructor);
   }
-);
+}
 
-router.post(
-  '/end/:id',
-  authenticateToken,
-  validate(updateSessionSchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { id } = req.params;
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required.' });
-      }
-
-      const success = await sessionService.endSession(id, userId);
-      if (success) {
-        res.json({ message: 'Session ended successfully' });
-      } else {
-        res.status(404).json({ error: 'Session not found' });
-      }
-    } catch (error) {
-      logger.error('Failed to end session', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to end session' 
-      });
-    }
+export class ValidationError extends AppError {
+  constructor(message: string) {
+    super(message, 400, "VALIDATION_ERROR");
+    this.name = "ValidationError";
   }
-);
+}
 
-router.get(
-  '/stats',
-  authenticateToken,
-  validate(getSessionStatsSchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const userId = req.user?.id;
-      const { startDate, endDate } = req.query;
-
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required.' });
-      }
-
-      const stats = await sessionService.getSessionStats(
-        userId,
-        startDate ? new Date(startDate as string) : undefined,
-        endDate ? new Date(endDate as string) : undefined
-      );
-      
-      res.json(stats);
-    } catch (error) {
-      logger.error('Failed to get session stats', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to get session stats' 
-      });
-    }
+export class AuthenticationError extends AppError {
+  constructor(message: string = "Authentication required") {
+    super(message, 401, "AUTHENTICATION_ERROR");
+    this.name = "AuthenticationError";
   }
-);
+}
 
-export default router;
+export class AuthorizationError extends AppError {
+  constructor(message: string = "Access denied") {
+    super(message, 403, "AUTHORIZATION_ERROR");
+    this.name = "AuthorizationError";
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message: string = "Resource not found") {
+    super(message, 404, "NOT_FOUND");
+    this.name = "NotFoundError";
+  }
+}

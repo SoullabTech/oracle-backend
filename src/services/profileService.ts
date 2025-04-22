@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as profileService from './profileService';
-import { supabase } from '../lib/supabase';
-import { elementalProfileSchema } from '../lib/schemas/elemental';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import * as profileService from "./profileService";
+import { supabase } from "../lib/supabase";
+import { elementalProfileSchema } from "../lib/schemas/elemental";
 
-vi.mock('../lib/supabase', () => ({
+vi.mock("../lib/supabase", () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
@@ -18,7 +18,7 @@ vi.mock('../lib/supabase', () => ({
   },
 }));
 
-const mockUserId = 'user123';
+const mockUserId = "user123";
 const mockProfile = {
   user_id: mockUserId,
   fire: 80,
@@ -27,49 +27,57 @@ const mockProfile = {
   air: 90,
   aether: 75,
   crystal_focus: {
-    type: 'career',
-    challenges: 'Balancing creative work and structure',
-    aspirations: 'Integrate success with soulful service',
+    type: "career",
+    challenges: "Balancing creative work and structure",
+    aspirations: "Integrate success with soulful service",
   },
   updated_at: new Date().toISOString(),
 };
 
-describe('profileService', () => {
+describe("profileService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should get user profile successfully', async () => {
+  it("should get user profile successfully", async () => {
     supabase.from().single.mockResolvedValue({ data: mockProfile });
 
     const result = await profileService.getUserProfile(mockUserId);
     expect(result).toMatchObject(mockProfile);
   });
 
-  it('should return null if getUserProfile fails', async () => {
-    supabase.from().single.mockResolvedValue({ error: { message: 'Not found' } });
+  it("should return null if getUserProfile fails", async () => {
+    supabase
+      .from()
+      .single.mockResolvedValue({ error: { message: "Not found" } });
 
     const result = await profileService.getUserProfile(mockUserId);
     expect(result).toBeNull();
   });
 
-  it('should update user profile successfully', async () => {
+  it("should update user profile successfully", async () => {
     const upsertMock = supabase.from().upsert().select().single;
     upsertMock.mockResolvedValue({ data: mockProfile });
 
-    const result = await profileService.updateUserProfile(mockUserId, mockProfile);
+    const result = await profileService.updateUserProfile(
+      mockUserId,
+      mockProfile,
+    );
     expect(result).toMatchObject(mockProfile);
   });
 
-  it('should return null if updateUserProfile fails', async () => {
+  it("should return null if updateUserProfile fails", async () => {
     const upsertMock = supabase.from().upsert().select().single;
-    upsertMock.mockResolvedValue({ error: { message: 'Insert failed' } });
+    upsertMock.mockResolvedValue({ error: { message: "Insert failed" } });
 
-    const result = await profileService.updateUserProfile(mockUserId, mockProfile);
+    const result = await profileService.updateUserProfile(
+      mockUserId,
+      mockProfile,
+    );
     expect(result).toBeNull();
   });
 
-  it('should return only elemental scores from getProfileStats', async () => {
+  it("should return only elemental scores from getProfileStats", async () => {
     const mockStats = {
       fire: 80,
       water: 70,
