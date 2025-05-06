@@ -17,6 +17,15 @@ import { EarthAgent } from "./earthAgent";
 import { AirAgent } from "./airAgent";
 import { AetherAgent } from "./aetherAgent";
 import { FacilitatorAgent } from "./facilitatorAgent";
+import { AstrologyAgent } from "./astrologyAgent";
+import { GaiaAgent } from "./gaiaAgent";
+import { ShamanAgent } from "./shamanAgent";
+import { FamilyConstellationsAgent } from "./familyConstellationsAgent";
+import { CBTAgent } from "./cbtAgent";
+import { JungianAnalystAgent } from "./jungianAnalystAgent";
+import { ScribeAgent } from "./scribeAgent";
+import { RitualkeeperAgent } from "./ritualkeeperAgent";
+import { OrpheusAgent } from "./orpheusAgent";
 import logger from "../../utils/logger";
 import { feedbackPrompts } from '../../constants/feedbackPrompts.ts';
 import type { AIResponse } from "../../types/ai";
@@ -35,7 +44,22 @@ export class MainOracleAgent {
   private airAgent = new AirAgent();
   private aetherAgent = new AetherAgent();
   private facilitatorAgent = new FacilitatorAgent("facilitator-001");
+  private astrologyAgent = new AstrologyAgent();
+  private gaiaAgent = new GaiaAgent();
+  private shamanAgent = new ShamanAgent();
+  private familyConstellationsAgent = new FamilyConstellationsAgent();
+  private cbtAgent = new CBTAgent();
+  private jungianAnalystAgent = new JungianAnalystAgent();
+  private scribeAgent = new ScribeAgent();
+  private ritualkeeperAgent = new RitualkeeperAgent();
+  private orpheusAgent = new OrpheusAgent();
 
+  // The rest of the processQuery and related methods remain unchanged
+  // Symbolic router logic to be placed in a separate module
+  ...
+}
+
+export const oracle = new MainOracleAgent();
   async processQuery(query: QueryInput): Promise<AIResponse> {
     try {
       logger.info("Processing query", {
