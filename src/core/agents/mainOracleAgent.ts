@@ -18,7 +18,7 @@ import { AirAgent } from "./airAgent";
 import { AetherAgent } from "./aetherAgent";
 import { FacilitatorAgent } from "./facilitatorAgent";
 import logger from "../../utils/logger";
-import { feedbackPrompts } from "../../constants/feedbackPrompts";
+import { feedbackPrompts } from '../../constants/feedbackPrompts.ts';
 import type { AIResponse } from "../../types/ai";
 import type { StoryRequest, OracleContext } from "../../types/oracle";
 

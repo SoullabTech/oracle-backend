@@ -1,6 +1,6 @@
 import type { AIResponse } from '../types/ai';
-import { extractSymbolsFromJournal } from '../utils/symbolParser;
-import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
+import { extractSymbolsFromJournal } from '../utils/symbolParser';
+import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil';
 
 export class InnerGuideAgent {
   id: string;

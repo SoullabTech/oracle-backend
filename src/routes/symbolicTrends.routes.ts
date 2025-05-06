@@ -7,21 +7,26 @@ const router = Router();
 
 /**
  * GET /api/symbolic-trends
- * Query Params:
- *   - symbol? (string): filter tags by specific symbol
- *   - agent?  (string): filter tags by specific agent
- *   - since?  (ISO date string): only return tags after this timestamp
+ * Optional Query Params:
+ *   - symbol (string): Filter by specific symbol
+ *   - agent  (string): Filter by sourceAgent
+ *   - since  (ISO date string): Filter tags after a certain timestamp
  */
 router.get("/", (req, res) => {
   try {
     let tags = memoryModule.getAllSymbolicTags();
-    const { symbol, agent, since } = req.query as Record<string, string>;
+    const { symbol, agent, since } = req.query as {
+      symbol?: string;
+      agent?: string;
+      since?: string;
+    };
 
+    // Apply filters if provided
     if (symbol) {
-      tags = memoryModule.getEntriesBySymbol(symbol);
+      tags = tags.filter((t) => t.symbol === symbol);
     }
     if (agent) {
-      tags = memoryModule.getEntriesByAgent(agent);
+      tags = tags.filter((t) => t.sourceAgent === agent);
     }
     if (since) {
       const cutoff = new Date(since).toISOString();
@@ -30,13 +35,18 @@ router.get("/", (req, res) => {
 
     // Aggregate counts by day
     const countsByDate: Record<string, number> = {};
-    tags.forEach((tag) => {
-      const day = tag.timestamp!.slice(0, 10); // YYYY-MM-DD
-      countsByDate[day] = (countsByDate[day] || 0) + 1;
-    });
+    for (const tag of tags) {
+      const day = tag.timestamp?.slice(0, 10);
+      if (day) {
+        countsByDate[day] = (countsByDate[day] || 0) + 1;
+      }
+    }
 
     res.json({
-      meta: { totalTags: tags.length, days: Object.keys(countsByDate).length },
+      meta: {
+        totalTags: tags.length,
+        days: Object.keys(countsByDate).length,
+      },
       countsByDate,
       tags,
     });

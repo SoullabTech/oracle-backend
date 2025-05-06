@@ -1,10 +1,10 @@
 "use strict";
 
 import { OracleAgent } from "./oracleAgent";
-import { logOracleInsight } from '../../utils/oracleLogger;
+import { logOracleInsight } from '../../utils/oracleLogger';
 import MemoryModule from "../../utils/memoryModule";
 import ModelService from '../../utils/modelService.ts';
-import type { AgentResponse } from "../../types/ai;
+import type { AgentResponse } from "../../types/ai";
 
 /**
  * FireAgent: Embodies bold, transformative energy.

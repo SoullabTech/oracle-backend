@@ -1,5 +1,5 @@
 import type { AIResponse } from '../types/ai';
-import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
+import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil''';
 
 export class GuideAgent {
   id: string;

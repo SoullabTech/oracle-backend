@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { authenticateToken } from "../middleware/auth";
-import type { AuthenticatedRequest } from "../types";
+import { authenticateToken } from '../middleware/authenticateToken.ts';
+import type { AuthenticatedRequest } from '../types/index.ts';
 
-const router = Router();
+const router = Router<AuthenticatedRequest>();
 
 router.post(
   "/guide",

@@ -1,51 +1,77 @@
-import { Request, Response, NextFunction } from "express";
-import {
-  AppError,
-  ValidationError,
-  AuthenticationError,
-  AuthorizationError,
-  NotFoundError,
-} from "../utils/errors";
-import logger from "../utils/logger";
-import { config } from "../config";
+// src/app.ts
 
-export const errorHandler = (
-  error: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
-  logger.error("Error:", {
-    name: error.name,
-    message: error.message,
-    stack: config.server.env === "development" ? error.stack : undefined,
-  });
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-  if (error instanceof ValidationError) {
-    return res.status(400).json({ error: error.message });
-  }
+import { supabase } from './lib/supabaseClient.ts';
+import { authenticate } from './middleware/authenticate.ts';
+import logger from './utils/logger.ts';
 
-  if (error instanceof AuthenticationError) {
-    return res.status(401).json({ error: error.message });
-  }
+// Route imports
+import oracleRouter from './routes/oracle.routes.ts';
+import userProfileRouter from './routes/userProfile.routes.ts';
+import facetRouter from './routes/facet.routes.ts';
+import facetMapRouter from './routes/facetMap.routes.ts';
+import insightHistoryRouter from './routes/insightHistory.routes.ts';
+import storyGeneratorRouter from './routes/storyGenerator.routes.ts';
+import surveyRouter from './routes/survey.routes.ts';
+import memoryRouter from './routes/memory.routes.ts';
+import feedbackRouter from './routes/feedback.routes.ts';
+import notionIngestRoutes from './routes/notionIngest.routes.ts';
 
-  if (error instanceof AuthorizationError) {
-    return res.status(403).json({ error: error.message });
-  }
+// Setup __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  if (error instanceof NotFoundError) {
-    return res.status(404).json({ error: error.message });
-  }
+// Initialize app
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-  if (error instanceof AppError) {
-    return res.status(error.statusCode).json({ error: error.message });
-  }
+// ─── Health Check ─────────────────────────────────────────────────────────────
+app.get("/", (_req, res) => {
+  res.send("🧠 Spiralogic Oracle backend is alive and listening.");
+});
 
-  // Default error
-  res.status(500).json({
-    error:
-      config.server.env === "production"
-        ? "Internal Server Error"
-        : error.message,
-  });
-};
+app.get("/test-supabase", async (_req, res) => {
+  const { data, error } = await supabase
+    .from("insight_history")
+    .select("*")
+    .limit(1);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ sampleRow: data });
+});
+
+// ─── Public Routes ────────────────────────────────────────────────────────────
+app.use("/api/oracle", oracleRouter);
+app.use("/api/oracle/facet-lookup", facetRouter);
+app.use("/api/oracle/facet-map", facetMapRouter);
+app.use("/api/oracle/story-generator", storyGeneratorRouter);
+app.use("/api/feedback", feedbackRouter);
+app.use("/api/update-profile", userProfileRouter); // POST /api/update-profile
+
+// ─── Ingestion Endpoints ──────────────────────────────────────────────────────
+app.use("/api/notion/ingest", notionIngestRoutes);
+
+// ─── Protected Routes ─────────────────────────────────────────────────────────
+app.use("/api/oracle/insight-history", authenticate, insightHistoryRouter);
+app.use("/api/survey", authenticate, surveyRouter);
+app.use("/api/oracle/memory", authenticate, memoryRouter);
+
+// ─── Swagger Docs ─────────────────────────────────────────────────────────────
+try {
+  const swaggerDocument = YAML.load(
+    path.join(__dirname, "docs", "oracle.openapi.yaml")
+  );
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log(`📘 Swagger UI available at http://localhost:${process.env.PORT || 5001}/docs`);
+} catch (e) {
+  console.warn("⚠️ Could not load Swagger YAML:", e);
+}
+
+export default app;

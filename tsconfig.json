@@ -1,21 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target":           "ESNext",
+    "module":           "ESNext",
     "moduleResolution": "Node",
-    "lib": ["DOM", "ESNext"],
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "lib":              ["DOM", "ESNext"],
+    "jsx":              "react-jsx",
+    "esModuleInterop":  true,
+    "allowJs":          true,
+    "skipLibCheck":     true,
+    "strict":           true,
+
+    // ─── START alias config ─────────────────────────────────────────
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@lib/*": ["src/lib/*"]
+      "@/*":          ["src/*"],
+      "@/services/*": ["src/services/*"],
+      "@/utils/*":    ["src/utils/*"],
+      "@/lib/*":      ["src/lib/*"]
     },
+    // ─── END alias config ───────────────────────────────────────────
+
     "types": ["vitest/globals", "vite/client"]
   },
   "include": ["src", "src/types", "test", "vitest.config.ts"],

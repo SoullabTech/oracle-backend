@@ -1,3 +1,5 @@
+// src/routes/memory.routes.ts
+
 import { Router } from "express";
 import { authenticateToken } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -21,7 +23,6 @@ router.post(
     try {
       const { content, metadata } = req.body;
       const clientId = req.user?.id;
-
       if (!clientId) {
         return res.status(400).json({ error: "Client ID is required." });
       }
@@ -43,23 +44,29 @@ router.post(
   },
 );
 
-router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
-    const clientId = req.user?.id;
-    if (!clientId) {
-      return res.status(400).json({ error: "Client ID is required." });
-    }
+router.get(
+  "/",
+  authenticateToken,
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const clientId = req.user?.id;
+      if (!clientId) {
+        return res.status(400).json({ error: "Client ID is required." });
+      }
 
-    const memories = await memoryService.retrieveMemories(clientId);
-    res.json(memories);
-  } catch (error) {
-    logger.error("Failed to retrieve memories", { error });
-    res.status(500).json({
-      error:
-        error instanceof Error ? error.message : "Failed to retrieve memories",
-    });
-  }
-});
+      const memories = await memoryService.retrieveMemories(clientId);
+      res.json(memories);
+    } catch (error) {
+      logger.error("Failed to retrieve memories", { error });
+      res.status(500).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve memories",
+      });
+    }
+  },
+);
 
 router.put(
   "/:id",
@@ -70,22 +77,22 @@ router.put(
       const { id } = req.params;
       const { content } = req.body;
       const clientId = req.user?.id;
-
       if (!clientId) {
         return res.status(400).json({ error: "Client ID is required." });
       }
 
       const success = await memoryService.updateMemory(id, content, clientId);
       if (success) {
-        res.json({ message: "Memory updated successfully" });
-      } else {
-        res.status(404).json({ error: "Memory not found" });
+        return res.json({ message: "Memory updated successfully" });
       }
+      return res.status(404).json({ error: "Memory not found" });
     } catch (error) {
       logger.error("Failed to update memory", { error });
       res.status(500).json({
         error:
-          error instanceof Error ? error.message : "Failed to update memory",
+          error instanceof Error
+            ? error.message
+            : "Failed to update memory",
       });
     }
   },
@@ -97,3 +104,27 @@ router.delete(
   validate(deleteMemorySchema),
   async (req: AuthenticatedRequest, res) => {
     try {
+      const { id } = req.params;
+      const clientId = req.user?.id;
+      if (!clientId) {
+        return res.status(400).json({ error: "Client ID is required." });
+      }
+
+      const success = await memoryService.deleteMemory(id, clientId);
+      if (success) {
+        return res.json({ message: "Memory deleted successfully" });
+      }
+      return res.status(404).json({ error: "Memory not found" });
+    } catch (error) {
+      logger.error("Failed to delete memory", { error });
+      res.status(500).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete memory",
+      });
+    }
+  },
+);
+
+export default router;

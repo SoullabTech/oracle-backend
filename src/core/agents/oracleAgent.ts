@@ -1,4 +1,4 @@
-import type { AgentResponse, Metadata } from './types;
+import type { AgentResponse, Metadata } from './types';
 
 export class OracleAgent {
   debug: boolean;
