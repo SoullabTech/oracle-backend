@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function AgentCircleView({ dialogues }) {
+    return (_jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-6 p-6", children: dialogues.map((d, i) => (_jsxs("div", { className: "p-4 bg-white dark:bg-zinc-800 rounded-xl shadow", children: [_jsxs("div", { className: "flex items-center justify-between mb-2", children: [_jsx("div", { className: "font-bold text-indigo-600 dark:text-indigo-300", children: d.name.replace("Agent", "") }), _jsx("div", { className: "text-sm text-zinc-400", children: d.element })] }), _jsx("p", { className: "text-zinc-800 dark:text-zinc-200 whitespace-pre-line", children: d.content }), _jsxs("div", { className: "mt-2 text-xs italic text-zinc-500 dark:text-zinc-400", children: ["Archetype: ", d.archetype || "Unspecified"] })] }, i))) }));
+}

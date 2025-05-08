@@ -7,6 +7,13 @@ import { Survey } from './pages/Survey';
 import { OnboardingWizard } from './pages/onboarding';
 import { Dashboard } from './pages/Dashboard';
 import { OnboardingGuard } from './components/OnboardingGuard';
+// src/pages/_app.tsx
+import '@/styles/globals.css'
+import type { AppProps } from 'next/app'
+
+export default function App({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />
+}
 
 export default function App() {
   return (

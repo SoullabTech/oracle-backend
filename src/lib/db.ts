@@ -1,7 +1,9 @@
-// ✅ File: src/lib/db.ts
-import { MongoClient } from 'mongodb';
+import { MongoClient } from 'mongodb'
 
-const client = new MongoClient(process.env.MONGO_URI!);
-await client.connect();
+const url = process.env.MONGO_URL
+if (!url) {
+  throw new Error('❌ MONGO_URL environment variable is not defined')
+}
 
-export const db = client.db('oracle'); // You can name your database here
+const client = new MongoClient(url)
+export const someDbClient = client.db('your-db-name')
