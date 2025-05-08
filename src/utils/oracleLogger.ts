@@ -18,7 +18,6 @@ export interface InsightLogEntry {
 export async function logInsight(entry: InsightLogEntry): Promise<void> {
   const { userId, insightType, content, metadata } = entry;
   try {
-    // Persist to Supabase
     const { error } = await supabase.from("insight_history").insert({
       user_id: userId,
       insight_type: insightType,
@@ -27,7 +26,6 @@ export async function logInsight(entry: InsightLogEntry): Promise<void> {
     });
     if (error) throw error;
 
-    // Log locally
     logger.info("[OracleLog] Insight logged", {
       userId,
       insightType,
@@ -38,3 +36,15 @@ export async function logInsight(entry: InsightLogEntry): Promise<void> {
     logger.error("Failed to log insight:", { error: err.message || err });
   }
 }
+
+// You can define additional utilities if needed, or leave this out
+function anotherUtilityIfExists() {
+  // Placeholder function
+}
+
+const oracleLogger = {
+  logInsight,
+  anotherUtilityIfExists,
+};
+
+export default oracleLogger;

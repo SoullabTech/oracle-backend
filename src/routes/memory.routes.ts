@@ -1,4 +1,5 @@
-// src/routes/memory.routes.ts
+// File: /src/routes/memory.routes.ts
+// Layer: 🔁 Backend — Symbolic Memory Routes (Express + Auth Middleware)
 
 import { Router } from 'express';
 import { authenticate } from '../middleware/authenticate.ts';
@@ -74,9 +75,7 @@ router.get('/insights', async (req, res) => {
     res.json({ success: true, insights });
   } catch (err: any) {
     console.error('❌ Error generating memory insights:', err);
-    res
-      .status(500)
-      .json({ success: false, error: 'Failed to generate insights.' });
+    res.status(500).json({ success: false, error: 'Failed to generate insights.' });
   }
 });
 

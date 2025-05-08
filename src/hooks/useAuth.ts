@@ -1,83 +1,66 @@
+// File: src/hooks/useAuth.ts
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase"; // Ensure supabase is correctly configured
-import type { User, Session } from "@supabase/supabase-js"; // Type for the user object
+import { supabase } from "@/lib/supabaseClient";   // ← make sure this matches your alias
+import type { User, Session } from "@supabase/supabase-js";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null); // Store user data
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [error, setError] = useState<string | null>(null); // For error handling
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Function to fetch the initial session and set user
-    const fetchSession = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setUser(session?.user ?? null); // Set user session or null
-      } catch (err) {
-        setError("Failed to retrieve session"); // Handle session fetch error
+    // Load existing session
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      })
+      .catch((err) => {
         console.error("Session fetch error:", err);
-      } finally {
-        setLoading(false); // Mark loading complete
-      }
-    };
+        setError("Failed to retrieve session");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
-    fetchSession(); // Fetch session on component mount
-
-    // Subscribe to auth state changes and update user state
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
-      setUser(session?.user ?? null); // Update user when auth state changes
+    // Listen for changes (login / logout)
+    const { subscription } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
+      setUser(session?.user ?? null);
     });
 
-    // Cleanup subscription when component unmounts
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    try {
-      setError(null); // Reset any previous error
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error; // Throw error if exists
-    } catch (err: any) {
-      setError(err.message); // Set error state if sign-in fails
-      console.error("Sign-in error: ", err);
+    setError(null);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      console.error("Sign-in error:", error);
+      setError(error.message);
+      throw error;
     }
   };
 
   const signUp = async (email: string, password: string) => {
-    try {
-      setError(null); // Reset any previous error
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error; // Throw error if exists
-    } catch (err: any) {
-      setError(err.message); // Set error state if sign-up fails
-      console.error("Sign-up error: ", err);
+    setError(null);
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      console.error("Sign-up error:", error);
+      setError(error.message);
+      throw error;
     }
   };
 
   const signOut = async () => {
-    try {
-      setError(null); // Reset any previous error
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error; // Throw error if exists
-    } catch (err: any) {
-      setError(err.message); // Set error state if sign-out fails
-      console.error("Sign-out error: ", err);
+    setError(null);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Sign-out error:", error);
+      setError(error.message);
+      throw error;
     }
   };
 
-  return {
-    user,
-    loading,
-    error, // Expose the error for UI handling
-    signIn,
-    signUp,
-    signOut,
-  };
+  return { user, loading, error, signIn, signUp, signOut };
 }

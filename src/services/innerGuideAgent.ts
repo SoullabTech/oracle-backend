@@ -47,6 +47,7 @@ Let the silence between the symbols speak. Integration is underway.
         phase: 'soul-reflection',
       },
     };
+    \n\n🧙 — InnerGuideAgent
 
     return response;
   }
