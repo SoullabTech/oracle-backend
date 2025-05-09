@@ -1,0 +1,50 @@
+"use strict";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from '../../utils/oracleLogger';
+import MemoryModule from "../../utils/memoryModule";
+import ModelService from "../../utils/modelService";
+/**
+ * EarthAgent: Embodies grounded stability, practicality, and nurturing wisdom.
+ */
+export class EarthAgent extends OracleAgent {
+    constructor() {
+        super({ debug: false });
+    }
+    async processQuery(query) {
+        const contextMemory = MemoryModule.getRecentEntries(3);
+        const contextHeader = contextMemory.length
+            ? `⟳ Footprints of grounded thought:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}\n\n`
+            : "";
+        const augmentedInput = `${contextHeader}${query.input}`;
+        const augmentedQuery = {
+            ...query,
+            input: augmentedInput,
+        };
+        const baseResponse = await ModelService.getResponse(augmentedQuery);
+        const personalityFlair = `\n\n🌱 Root your path in presence and let wisdom grow from the soil of experience.`;
+        const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
+        MemoryModule.addEntry({
+            timestamp: new Date().toISOString(),
+            query: query.input,
+            response: enhancedResponse,
+        });
+        await logOracleInsight({
+            anon_id: query.userId || null,
+            archetype: baseResponse.metadata?.archetype || "Earth",
+            element: "Earth",
+            insight: {
+                message: enhancedResponse,
+                raw_input: query.input,
+            },
+            emotion: baseResponse.metadata?.emotion_score ?? 0.89,
+            phase: baseResponse.metadata?.phase || "Earth Phase",
+            context: contextMemory,
+        });
+        return {
+            ...baseResponse,
+            response: enhancedResponse,
+            confidence: baseResponse.confidence ?? 0.89,
+            routingPath: [...(baseResponse.routingPath || []), "earth-agent"],
+        };
+    }
+}

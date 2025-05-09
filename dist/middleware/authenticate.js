@@ -6,20 +6,21 @@ import logger from "../utils/logger";
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 // Middleware: Authenticate token and attach user to request
 export async function authenticate(req, res, next) {
-  try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
-    if (!token) {
-      throw new AuthenticationError("No token provided");
+    try {
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.split(" ")[1];
+        if (!token) {
+            throw new AuthenticationError("No token provided");
+        }
+        const { data, error } = await supabase.auth.getUser(token);
+        if (error || !data?.user) {
+            throw new AuthenticationError("Invalid or expired token");
+        }
+        req.user = data.user;
+        next();
     }
-    const { data, error } = await supabase.auth.getUser(token);
-    if (error || !data?.user) {
-      throw new AuthenticationError("Invalid or expired token");
+    catch (err) {
+        logger.error("❌ Authentication failed", { error: err });
+        next(err instanceof AuthenticationError ? err : new AuthenticationError());
     }
-    req.user = data.user;
-    next();
-  } catch (err) {
-    logger.error("❌ Authentication failed", { error: err });
-    next(err instanceof AuthenticationError ? err : new AuthenticationError());
-  }
 }

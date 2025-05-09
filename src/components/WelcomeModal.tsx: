@@ -1,0 +1,30 @@
+import { useState, useEffect } from 'react';
+
+export function WelcomeModal() {
+  const [open, setOpen] = useState(true);
+
+  // auto-close after first render if you like
+  useEffect(() => {
+    const seen = localStorage.getItem('welcomeSeen');
+    if (seen) return setOpen(false);
+    localStorage.setItem('welcomeSeen', 'true');
+  }, []);
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg max-w-sm text-center">
+        <h2 className="text-2xl mb-2">Welcome to Spiralogic!</h2>
+        <p className="mb-4">
+          Try your first Oracle query, then explore “My Insights.”
+        </p>
+        <button
+          onClick={() => setOpen(false)}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Let’s Go
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -1,95 +1,81 @@
-// src/routes/memory.routes.ts
+// File: /src/routes/memory.routes.ts
+// Layer: 🔁 Backend — Symbolic Memory Routes (Express + Auth Middleware)
 
-import { Router } from "express";
-import { authenticate } from "../middleware/authenticate";
-import memoryService from "../services/memoryService";
+import { Router } from 'express';
+import { authenticate } from '../middleware/authenticate.ts';
+import memoryService from '../services/memoryService.ts';
 
 const router = Router();
 
 // 🔒 All memory routes require authentication
 router.use(authenticate);
 
-/**
- * POST /api/oracle/memory
- * Body: { content, element, sourceAgent, confidence, metadata }
- */
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
+    const { content, element, sourceAgent, confidence, metadata } = req.body;
+    const clientId = (req as any).user.id;
+
     const memory = await memoryService.storeMemory({
-      clientId: req.user.id,
-      content: req.body.content,
-      element: req.body.element,
-      sourceAgent: req.body.sourceAgent,
-      confidence: req.body.confidence,
-      metadata: req.body.metadata,
+      clientId,
+      content,
+      element,
+      sourceAgent,
+      confidence,
+      metadata,
     });
+
     res.json({ success: true, memory });
   } catch (err: any) {
-    console.error("❌ Error storing memory:", err);
-    res.status(500).json({ success: false, error: "Failed to store memory." });
+    console.error('❌ Error storing memory:', err);
+    res.status(500).json({ success: false, error: 'Failed to store memory.' });
   }
 });
 
-/**
- * GET /api/oracle/memory
- * Returns all memories for the current user
- */
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const memories = await memoryService.retrieveMemories(req.user.id);
+    const clientId = (req as any).user.id;
+    const memories = await memoryService.retrieveMemories(clientId);
     res.json({ success: true, memories });
   } catch (err: any) {
-    console.error("❌ Error fetching memories:", err);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to fetch memories." });
+    console.error('❌ Error fetching memories:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch memories.' });
   }
 });
 
-/**
- * PUT /api/oracle/memory/:id
- * Body: { content }
- */
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const updated = await memoryService.updateMemory(
+    const clientId = (req as any).user.id;
+    const memory = await memoryService.updateMemory(
       req.params.id,
       req.body.content,
-      req.user.id,
+      clientId,
     );
-    res.json({ success: true, memory: updated });
+    res.json({ success: true, memory });
   } catch (err: any) {
-    console.error("❌ Error updating memory:", err);
-    res.status(500).json({ success: false, error: "Failed to update memory." });
+    console.error('❌ Error updating memory:', err);
+    res.status(500).json({ success: false, error: 'Failed to update memory.' });
   }
 });
 
-/**
- * DELETE /api/oracle/memory/:id
- */
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    await memoryService.deleteMemory(req.params.id, req.user.id);
+    const clientId = (req as any).user.id;
+    await memoryService.deleteMemory(req.params.id, clientId);
     res.json({ success: true });
   } catch (err: any) {
-    console.error("❌ Error deleting memory:", err);
-    res.status(500).json({ success: false, error: "Failed to delete memory." });
+    console.error('❌ Error deleting memory:', err);
+    res.status(500).json({ success: false, error: 'Failed to delete memory.' });
   }
 });
 
-/**
- * GET /api/oracle/memory/insights
- * Returns simple generated insights
- */
-router.get("/insights", async (req, res) => {
+router.get('/insights', async (req, res) => {
   try {
-    const insights = await memoryService.getMemoryInsights(req.user.id);
+    const clientId = (req as any).user.id;
+    const insights = await memoryService.getMemoryInsights(clientId);
     res.json({ success: true, insights });
   } catch (err: any) {
-    console.error("❌ Error generating memory insights:", err);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to generate insights." });
+    console.error('❌ Error generating memory insights:', err);
+    res.status(500).json({ success: false, error: 'Failed to generate insights.' });
   }
 });
 

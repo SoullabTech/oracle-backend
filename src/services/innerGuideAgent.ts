@@ -1,6 +1,6 @@
 import type { AIResponse } from '../types/ai';
-import { extractSymbolsFromJournal } from '../utils/symbolParser;
-import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
+import { extractSymbolsFromJournal } from '../utils/symbolParser';
+import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil';
 
 export class InnerGuideAgent {
   id: string;
@@ -47,6 +47,7 @@ Let the silence between the symbols speak. Integration is underway.
         phase: 'soul-reflection',
       },
     };
+    \n\n🧙 — InnerGuideAgent
 
     return response;
   }

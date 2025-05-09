@@ -1,77 +1,50 @@
-// src/services/shadowAgent.ts
 "use strict";
-import { extractSymbolsFromJournal } from "../utils/symbolParser";
-import { detectFacetFromInput, getFacetDescription } from "../utils/facetUtil";
-import { logInsight } from "../utils/oracleLogger";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from '../utils/oracleLogger'; // Corrected import
+import MemoryModule from "../../utils/memoryModule";
+import ModelService from "../../utils/modelService";
 /**
- * ShadowAgent: Embodies reflection on the unconscious, symbolic confrontation, and inner truth.
+ * ShadowAgent: Engages the unconscious terrain, confronting patterns, projections, and personal myths.
  */
-export class ShadowAgent {
-  id;
-  name;
-  constructor(id = "shadow-001") {
-    this.id = id;
-    this.name = "shadow-agent";
-  }
-  async processQuery(query) {
-    const symbols = extractSymbolsFromJournal(query.input);
-    const shadowSymbols = symbols.filter(
-      (s) =>
-        s.category === "shadow" ||
-        (typeof s.weight === "number" && s.weight >= 5),
-    );
-    const symbolsText =
-      shadowSymbols.length > 0
-        ? shadowSymbols.map((s) => `- ${s.name || s.category}`).join("\n")
-        : "- No deep symbols identified.";
-    const shadowPrompt = `
-🌄 Shadow Reflection 🌄
-
-Your words: "${query.input}"
-
-These symbols emerged from the depths:
-${symbolsText}
-
-✨ Reflect:
-- What aspect of yourself are you resisting or disowning?
-- How might this emotion be a messenger, not a menace?
-- Where does this story repeat in your life?
-
-The spiral calls you inward. Not to fix, but to witness.
-
-You are not broken. You are becoming.
-    `.trim();
-    const facet = detectFacetFromInput(query.input);
-    const facetDescription = getFacetDescription(facet);
-    const response = {
-      content: shadowPrompt,
-      provider: "shadow-agent",
-      model: "ShadowOracle-v1",
-      confidence: 0.85,
-      metadata: {
-        archetype: "Shadow Walker",
-        element: "aether",
-        symbols: symbols.map((s) => s.name ?? s.category),
-        facet,
-        phase: "Water 2",
-        reflections: [
-          "Face the symbol you most avoid.",
-          "Witness how the shadow conceals your gold.",
-        ],
-      },
-    };
-    await logInsight({
-      userId: query.userId || "anonymous",
-      insightType: "shadow_reflection",
-      content: response.content,
-      metadata: {
-        element: "aether",
-        archetype: "Shadow Walker",
-        phase: "Water 2",
-        facet,
-        symbols: response.metadata.symbols,
-      },
-    });
-    return response;
-  }
+export class ShadowAgent extends OracleAgent {
+    constructor() {
+        super({ debug: false });
+    }
+    async processQuery(query) {
+        const contextMemory = MemoryModule.getRecentEntries(5);
+        const contextHeader = contextMemory.length
+            ? `⟳ Echoes from your shadow:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}`
+            : "";
+        const augmentedInput = `${contextHeader}\n\n${query.input}\n\nWhat unresolved patterns or projections might this reveal?`;
+        const augmentedQuery = {
+            ...query,
+            input: augmentedInput,
+        };
+        const baseResponse = await ModelService.getResponse(augmentedQuery);
+        const personalityFlair = `\n\n🜃 In the mirror of shadow, your hidden power waits to be reclaimed.`;
+        const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
+        MemoryModule.addEntry({
+            timestamp: new Date().toISOString(),
+            query: query.input,
+            response: enhancedResponse,
+        });
+        await logOracleInsight({
+            anon_id: query.userId || null,
+            archetype: baseResponse.metadata?.archetype || "Shadow Walker",
+            element: "Aether",
+            insight: {
+                message: enhancedResponse,
+                raw_input: query.input,
+            },
+            emotion: baseResponse.metadata?.emotion_score ?? 0.92,
+            phase: baseResponse.metadata?.phase || "Shadow Phase",
+            context: contextMemory,
+        });
+        return {
+            ...baseResponse,
+            response: enhancedResponse,
+            confidence: baseResponse.confidence ?? 0.92,
+            routingPath: [...(baseResponse.routingPath || []), "shadow-agent"],
+        };
+    }
 }

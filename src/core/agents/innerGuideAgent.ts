@@ -1,9 +1,9 @@
 // src/agents/innerGuideAgent.ts
 
 import { z } from 'zod';
-import { generateDivinatoryInsight } from '../services/divinationService;
-import { interpretDreamSymbols } from '../services/dreamService;
-import { extractSymbolsFromJournal } from '../utils/symbolParser;
+import { generateDivinatoryInsight } from '../services/divinationService';
+import { interpretDreamSymbols } from '../services/dreamService';
+import { extractSymbolsFromJournal } from '../utils/symbolParser';
 
 export const journalEntrySchema = z.object({
   userId: z.string(),

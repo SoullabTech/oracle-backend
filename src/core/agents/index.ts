@@ -1,3 +1,3 @@
 export * from './baseAgent';
 export * from './oracleAgent';
-export * from ../core/agents/mentorAgent';
+export * from '../core/agents/mentorAgent';

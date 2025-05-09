@@ -1,7 +1,8 @@
 // src/routes/facet.routes.ts
 
 import { Router } from "express";
-import facetService from "../services/facetService";
+import * as facetService from '../services/facetService.ts';
+
 
 const router = Router();
 

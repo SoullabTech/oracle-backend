@@ -1,7 +1,9 @@
+// src/routes/index.ts
+
 import { Router } from 'express';
-import authRoutes from './authRoutes;
-import memoryRoutes from './memoryRoutes;
-import sessionRoutes from './sessionRoutes;
+import authRoutes from './auth.Routes.ts';
+import memoryRoutes from './memoryRoutes.ts';
+import sessionRoutes from './sessionRoutes.ts';
 
 const router = Router();
 

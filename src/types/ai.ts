@@ -75,3 +75,12 @@ export interface AIResponse {
     [key: string]: any; // Allow for future extensions
   };
 }
+
+/**
+ * Optional: Extend OracleOrchestrator return with AIResponse typing
+ */
+export interface OracleExtendedResponse extends AIResponse {
+  agentLabel?: string;
+  userId?: string;
+  accessLevel?: string;
+} 

@@ -1,8 +1,9 @@
 // src/routes/insightHistory.routes.ts
 
 import { Router } from "express";
-import oracleLogger from "../utils/oracleLogger";
-import { authenticate } from "../middleware/authenticate";
+import * as oracleLogger from '../utils/oracleLogger.ts';
+
+import { authenticate } from '../middleware/authenticate.ts';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.use(authenticate);
  */
 router.get("/", async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = (req as any).user.id;
     const { type, limit = "50", offset = "0" } = req.query;
 
     const insights = await oracleLogger.getInsightHistory(userId, {
@@ -41,7 +42,8 @@ router.get("/", async (req, res) => {
  */
 router.get("/stats", async (req, res) => {
   try {
-    const stats = await oracleLogger.getInsightStats(req.user.id);
+    const userId = (req as any).user.id;
+    const stats = await oracleLogger.getInsightStats(userId);
     return res.status(200).json({ success: true, stats });
   } catch (err: any) {
     console.error(

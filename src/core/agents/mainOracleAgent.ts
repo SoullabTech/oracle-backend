@@ -1,4 +1,4 @@
-// src/core/agents/MainOracleAgent.ts
+// src/core/agents/mainOracleAgent.ts
 
 import { elementalOracle } from "../../services/elementalOracleService";
 import { getUserProfile } from "../../services/profileService";
@@ -11,14 +11,26 @@ import { logInsight } from "../../utils/oracleLogger";
 import { runShadowWork } from "../../modules/shadowWorkModule";
 import { scoreQuery } from "../../utils/agentScoreUtil";
 import { detectFacetFromInput } from "../../utils/facetUtil";
+
 import { FireAgent } from "./fireAgent";
 import { WaterAgent } from "./waterAgent";
 import { EarthAgent } from "./earthAgent";
 import { AirAgent } from "./airAgent";
 import { AetherAgent } from "./aetherAgent";
 import { FacilitatorAgent } from "./facilitatorAgent";
+import { AstrologyAgent } from "./astrologyAgent";
+import { GaiaAgent } from "./GaiaAgent";
+import { ShamanAgent } from "./shamanAgent";
+import { FamilyConstellationsAgent } from "./familyConstellationsAgent";
+import { CBTAgent } from "./cbtAgent";
+import { JungianAnalystAgent } from "./jungianAnalystAgent";
+import { ScribeAgent } from "./scribeAgent";
+import { RitualkeeperAgent } from "./ritualkeeperAgent";
+import { OrpheusAgent } from "./orpheusAgent";
+
 import logger from "../../utils/logger";
-import { feedbackPrompts } from "../../constants/feedbackPrompts";
+import { feedbackPrompts } from "../../constants/feedbackPrompts.ts";
+
 import type { AIResponse } from "../../types/ai";
 import type { StoryRequest, OracleContext } from "../../types/oracle";
 
@@ -34,7 +46,19 @@ export class MainOracleAgent {
   private earthAgent = new EarthAgent();
   private airAgent = new AirAgent();
   private aetherAgent = new AetherAgent();
+
   private facilitatorAgent = new FacilitatorAgent("facilitator-001");
+
+  // Specialized Oracle Agents
+  private astrologyAgent = new AstrologyAgent();
+  private gaiaAgent = new GaiaAgent();
+  private shamanAgent = new ShamanAgent();
+  private familyConstellationsAgent = new FamilyConstellationsAgent();
+  private cbtAgent = new CBTAgent();
+  private jungianAnalystAgent = new JungianAnalystAgent();
+  private scribeAgent = new ScribeAgent();
+  private ritualkeeperAgent = new RitualkeeperAgent();
+  private orpheusAgent = new OrpheusAgent();
 
   async processQuery(query: QueryInput): Promise<AIResponse> {
     try {
@@ -65,10 +89,7 @@ export class MainOracleAgent {
           memories: relevantMemories,
         };
 
-        const story = await elementalOracle.generateStory(
-          storyRequest,
-          context,
-        );
+        const story = await elementalOracle.generateStory(storyRequest, context);
 
         const finalResponse: AIResponse = {
           content: this.formatStoryResponse(story),
@@ -133,13 +154,12 @@ export class MainOracleAgent {
       }
 
       const elementalResponse = await chosenAgent.processQuery(query);
-
       const detectedFacet = await detectFacetFromInput(query.input);
+
       elementalResponse.metadata = {
         ...elementalResponse.metadata,
         facet: detectedFacet,
-        provider:
-          elementalResponse.metadata?.provider || chosenAgent.constructor.name,
+        provider: elementalResponse.metadata?.provider || chosenAgent.constructor.name,
         model: elementalResponse.metadata?.model || "gpt-4",
       };
 
@@ -176,8 +196,7 @@ export class MainOracleAgent {
     if (!kws.some((k) => text.toLowerCase().includes(k))) return null;
 
     const themes = ["fire", "water", "earth", "air", "aether"] as const;
-    const theme =
-      themes.find((t) => text.toLowerCase().includes(t)) ?? "aether";
+    const theme = themes.find((t) => text.toLowerCase().includes(t)) ?? "aether";
 
     return {
       focusArea: "personal growth",

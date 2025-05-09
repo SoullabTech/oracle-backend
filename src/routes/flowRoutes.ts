@@ -1,88 +1,60 @@
+// src/routes/flowRoutes.ts
+
 import { Router } from "express";
-import { authenticateToken } from "../middleware";
-import { LearningFlow } from "../flows/learningFlow";
-import type { AuthenticatedRequest } from "../types";
+import { authenticateToken } from '../middleware/authenticate.ts';
+import { LearningFlow } from '../flows/learningFlow.ts';
+import type { AuthenticatedRequest } from '../types/index.ts';
 
 const router = Router();
+const flow = new LearningFlow();
 
+/**
+ * POST /api/flow/start
+ * Body: { userId: string; params?: Record<string, any> }
+ * Starts a new learning flow session for the authenticated user.
+ */
 router.post(
-  "/learning/start",
+  "/start",
   authenticateToken,
   async (req: AuthenticatedRequest, res) => {
+    const { userId } = req;
+    const params = req.body.params ?? {};
     try {
-      const clientId = req.user?.id;
-      if (!clientId) {
-        return res.status(400).json({ error: "Client ID is required." });
-      }
-
-      const flow = new LearningFlow(clientId);
-      const result = await flow.start();
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to start learning flow",
-      });
+      const session = await flow.startSession(userId, params);
+      return res.status(200).json({ success: true, session });
+    } catch (err: any) {
+      console.error("❌ /api/flow/start", err);
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to start learning flow" });
     }
-  },
+  }
 );
 
+/**
+ * POST /api/flow/respond
+ * Body: { userId: string; sessionId: string; answer: any }
+ * Sends the user's answer into the ongoing flow and returns the next prompt.
+ */
 router.post(
-  "/learning/interact",
+  "/respond",
   authenticateToken,
   async (req: AuthenticatedRequest, res) => {
+    const { userId } = req;
+    const { sessionId, answer } = req.body as {
+      sessionId: string;
+      answer: unknown;
+    };
     try {
-      const clientId = req.user?.id;
-      const { content, sessionId } = req.body;
-
-      if (!clientId || !content || !sessionId) {
-        return res
-          .status(400)
-          .json({ error: "Client ID, content, and session ID are required." });
-      }
-
-      const flow = new LearningFlow(clientId);
-      const result = await flow.processInteraction(content);
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to process interaction",
-      });
+      const nextStep = await flow.handleResponse(userId, sessionId, answer);
+      return res.status(200).json({ success: true, nextStep });
+    } catch (err: any) {
+      console.error("❌ /api/flow/respond", err);
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to process learning flow response" });
     }
-  },
-);
-
-router.post(
-  "/learning/complete",
-  authenticateToken,
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const clientId = req.user?.id;
-      const { sessionId } = req.body;
-
-      if (!clientId || !sessionId) {
-        return res
-          .status(400)
-          .json({ error: "Client ID and session ID are required." });
-      }
-
-      const flow = new LearningFlow(clientId);
-      const result = await flow.complete();
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to complete learning flow",
-      });
-    }
-  },
+  }
 );
 
 export default router;

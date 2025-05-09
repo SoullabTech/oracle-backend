@@ -1,7 +1,17 @@
+openapi: 3.0.3
+info:
+  title: Spiralogic Oracle API
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3002
+
 paths:
-  /api/oracle/facet-lookup:
+  /api/oracle:
     post:
-      summary: Detect the most likely elemental facet from user input.
+      tags:
+        - Oracle
+      summary: Send user input to the Oracle and get a generated response
       requestBody:
         required: true
         content:
@@ -11,12 +21,70 @@ paths:
               properties:
                 input:
                   type: string
+                  description: The user’s question or prompt
+                  example: "What guidance does the element of Water have for me today?"
+                storeToMemory:
+                  type: boolean
+                  description: Whether to save this interaction in the user’s memory
+                  example: true
+                accessLevel:
+                  type: string
+                  description: Access scope (public or private)
+                  enum: [public, private]
+                  example: public
+              required:
+                - input
+      responses:
+        "200":
+          description: Oracle response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+                    description: The Oracle’s answer
+                    example: "Water invites you to flow with your emotions..."
+                  provider:
+                    type: string
+                    description: Which agent handled the request
+                    example: elemental-oracle
+                  model:
+                    type: string
+                    description: Underlying LLM model
+                    example: gpt-4
+                  confidence:
+                    type: number
+                    format: float
+                    description: Confidence score 0–1
+                    example: 0.93
+        "400":
+          description: Invalid request payload
+        "500":
+          description: Server error
+
+  /api/oracle/facet-lookup:
+    post:
+      tags:
+        - Oracle
+      summary: Detect the most likely elemental facet from user input
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: string
+                  description: The user’s query or statement
                   example: "I feel like something in me is trying to emerge and be expressed."
               required:
                 - input
       responses:
         "200":
-          description: Detected elemental facet and associated details.
+          description: Detected elemental facet and associated details
           content:
             application/json:
               schema:
@@ -24,28 +92,37 @@ paths:
                 properties:
                   detected:
                     type: string
+                    description: Canonical facet ID
                     example: fire2
-                    description: Canonical ID of the facet
                   name:
                     type: string
+                    description: Human‑readable facet name
                     example: Expression
                   description:
                     type: string
+                    description: Brief summary of the facet’s meaning
                     example: Purpose made visible through vision.
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
 
   /api/oracle/insight-history:
     get:
-      summary: Retrieve recent insight memory records for a given user.
+      tags:
+        - Oracle
+      summary: Retrieve recent insight memory records for a user
       parameters:
         - in: query
           name: userId
           required: true
           schema:
             type: string
+            description: Supabase user UUID
             example: user-abc-123
       responses:
         "200":
-          description: Array of stored oracle insights
+          description: Stored oracle insights
           content:
             application/json:
               schema:
@@ -53,12 +130,15 @@ paths:
                 properties:
                   success:
                     type: boolean
+                    description: Whether the fetch succeeded
                     example: true
                   count:
                     type: integer
+                    description: Number of insight records returned
                     example: 3
                   insights:
                     type: array
+                    description: List of insight entries
                     items:
                       type: object
                       properties:
@@ -81,11 +161,18 @@ paths:
                         emotion:
                           type: number
                           format: float
+                          description: Emotion intensity score
                           example: 0.82
+        "400":
+          description: Missing or invalid `userId` parameter
+        "500":
+          description: Server error
 
   /api/oracle/story-generator:
     post:
-      summary: Generate a symbolic narrative (story) from elemental theme and archetype.
+      tags:
+        - Oracle
+      summary: Generate a symbolic narrative from an elemental theme and archetype
       requestBody:
         required: true
         content:
@@ -95,18 +182,28 @@ paths:
               properties:
                 userId:
                   type: string
+                  description: Supabase user UUID
                   example: user-abc-123
                 elementalTheme:
                   type: string
-                  enum: [fire, water, earth, air, aether]
+                  description: One of the five elemental realms
+                  enum:
+                    - fire
+                    - water
+                    - earth
+                    - air
+                    - aether
                 archetype:
                   type: string
+                  description: Archetypal role to center the story on
                   example: Seeker
                 focusArea:
                   type: string
+                  description: Topic or domain for the narrative
                   example: personal growth
                 depthLevel:
                   type: integer
+                  description: Story complexity level (1–5)
                   example: 3
               required:
                 - userId
@@ -122,31 +219,111 @@ paths:
                 properties:
                   content:
                     type: string
+                    description: The narrative text
                     example: "In a world of burning skies, the Seeker stood alone..."
                   provider:
                     type: string
+                    description: Source agent identifier
                     example: elemental-oracle
                   model:
                     type: string
+                    description: LLM model used
                     example: gpt-4
                   confidence:
                     type: number
                     format: float
+                    description: Confidence score (0–1)
                     example: 0.9
                   metadata:
                     type: object
+                    description: Additional story details
                     properties:
                       reflections:
                         type: array
                         items:
                           type: string
-                          example: "The fire within requires boundaries."
+                        example:
+                          - "The fire within requires boundaries."
                       symbols:
                         type: array
                         items:
                           type: string
-                          example: "Phoenix"
+                        example:
+                          - "Phoenix"
         "400":
-          description: Missing required fields
+          description: Missing required fields or invalid payload
         "500":
           description: Failed to generate story
+
+  /api/oracle/memory:
+    get:
+      tags:
+        - Oracle
+      summary: Retrieve saved Oracle-memory entries for the current user
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: user-abc-123
+      responses:
+        "200":
+          description: List of memory entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: mem-xyz-789
+                    input:
+                      type: string
+                      example: "What does Fire need to teach me?"
+                    insight:
+                      type: string
+                      example: "Fire calls you to ignite your passion..."
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-05-08T11:00:00Z"
+        "400":
+          description: Missing or invalid userId
+        "500":
+          description: Server error
+
+  /api/oracle/facet-map:
+    get:
+      tags:
+        - Oracle
+      summary: Return the full mapping of elemental facets and their metadata
+      responses:
+        "200":
+          description: Full facet map
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: fire2
+                    name:
+                      type: string
+                      example: Expression
+                    description:
+                      type: string
+                      example: "Purpose made visible through vision."
+                    element:
+                      type: string
+                      example: Fire
+                    phase:
+                      type: string
+                      example: Goal
+        "500":
+          description: Server error

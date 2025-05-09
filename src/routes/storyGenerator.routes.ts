@@ -1,24 +1,19 @@
 // src/routes/storyGenerator.routes.ts
 
 import { Router } from "express";
-import { elementalOracle } from "../services/elementalOracleService";
-import oracleLogger from "../utils/oracleLogger";
-import { authenticate } from "../middleware/authenticate";
-import { getUserProfile } from "../services/profileService";
+import { elementalOracle } from '../services/elementalOracleService.ts';
+import oracleLogger from '../utils/oracleLogger.ts';
+import { authenticate } from '../middleware/authenticate.ts';
+import { getUserProfile } from '../services/profileService.ts';
 import {
   getRelevantMemories,
   storeMemoryItem,
-} from "../services/memoryService";
+} from '../services/memoryService.ts';
 
 const router = Router();
 
-// 🔒 All story-generation routes require authentication
 router.use(authenticate);
 
-/**
- * POST /api/oracle/story-generator
- * Generates a symbolic story based on user profile, memories, and request
- */
 router.post("/", async (req, res) => {
   try {
     const {
@@ -29,7 +24,6 @@ router.post("/", async (req, res) => {
       depthLevel = 3,
     } = req.body;
 
-    // 1) Validate & fetch profile
     if (!userId || !elementalTheme || !archetype) {
       return res.status(400).json({ error: "Missing required fields." });
     }
@@ -39,10 +33,8 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Profile not found." });
     }
 
-    // 2) Gather memories
     const memories = await getRelevantMemories(userId, elementalTheme, 5);
 
-    // 3) Build context
     const context = {
       userId,
       elementalProfile: {
@@ -57,13 +49,11 @@ router.post("/", async (req, res) => {
       phase: "story",
     };
 
-    // 4) Generate story
     const story = await elementalOracle.generateStory(
       { elementalTheme, archetype, focusArea, depthLevel },
-      context,
+      context
     );
 
-    // 5) Format output
     const content = [
       story.narrative.trim(),
       "\nReflections:",
@@ -72,44 +62,43 @@ router.post("/", async (req, res) => {
       ...story.symbols.map((s) => `- ${s}`),
     ].join("\n");
 
+    const metadata = {
+      archetype,
+      focusArea,
+      depthLevel,
+      reflections: story.reflections,
+      symbols: story.symbols,
+      element: elementalTheme,
+      phase: "story",
+    };
+
     const response = {
       content,
       provider: "elemental-oracle",
       model: "gpt-4",
       confidence: 0.9,
-      metadata: {
-        archetype,
-        focusArea,
-        depthLevel,
-        reflections: story.reflections,
-        symbols: story.symbols,
-        element: elementalTheme,
-        phase: "story",
-      },
+      metadata,
     };
 
-    // 6) Persist memory
     await storeMemoryItem({
       content,
       element: elementalTheme,
       sourceAgent: "elemental-oracle",
       clientId: userId,
       confidence: 0.9,
-      metadata: response.metadata,
+      metadata,
     });
 
-    // 7) Log insight
     await oracleLogger.logInsight({
       userId,
       insightType: "story_generation",
       content,
-      metadata: response.metadata,
+      metadata,
     });
 
-    // ✅ Return response
     return res.json({ success: true, response });
-  } catch (err: any) {
-    console.error("❌ Error in story-generator:", err.message || err);
+  } catch (err) {
+    console.error("❌ Error in story-generator:", err?.message || err);
     return res.status(500).json({ error: "Failed to generate story." });
   }
 });

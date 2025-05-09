@@ -1,8 +1,8 @@
 // journalingAgent.ts
-import { getUserProfile } from './profileService;
-import { detectFacetFromInput } from './utils/facetUtil;
-import { storeMemoryItem } from './memoryService;
-import logger from './utils/logger;
+import { getUserProfile } from './profileService';
+import { detectFacetFromInput } from './utils/facetUtil';
+import { storeMemoryItem } from './memoryService';
+import logger from './utils/logger';
 
 interface JournalEntry {
   input: string;

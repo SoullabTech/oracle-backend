@@ -1,40 +1,45 @@
-import { useState, useCallback } from "react";
-import "./App.css";
+// src/App.tsx
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './hooks/useAuth';
+import { Signup } from './components/Signup';
+import { Login } from './components/Login';
+import { Survey } from './pages/Survey';
+import { OnboardingWizard } from './pages/onboarding';
+import { Dashboard } from './pages/Dashboard';
+import { OnboardingGuard } from './components/OnboardingGuard';
+// src/pages/_app.tsx
+import '@/styles/globals.css'
+import type { AppProps } from 'next/app'
 
-function App() {
-  const [count, setCount] = useState<number>(0); // Type is already set for count
-
-  const incrementCount = useCallback(() => {
-    setCount((prevCount) => prevCount + 1);
-  }, []);
-
-  return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>Welcome to the Vite + React App</h1>
-      </header>
-
-      <main>
-        <div className="counter-card">
-          <button
-            onClick={incrementCount}
-            className="increment-button"
-            aria-label="Increment count" // Added aria-label for accessibility
-          >
-            Count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test Hot Module
-            Replacement (HMR)
-          </p>
-        </div>
-
-        <footer>
-          <p>Click on the Vite and React logos to learn more.</p>
-        </footer>
-      </main>
-    </div>
-  );
+export default function App({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public */}
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/survey" element={<Survey />} />
+          <Route path="/onboarding" element={<OnboardingWizard />} />
+
+          {/* Protected */}
+          <Route
+            path="/dashboard"
+            element={
+              <OnboardingGuard>
+                <Dashboard />
+              </OnboardingGuard>
+            }
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/signup" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
