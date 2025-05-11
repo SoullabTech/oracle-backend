@@ -1,86 +1,111 @@
-import { createClient } from '@supabase/supabase-js';
-import { config } from '../config';
-import logger from '../utils/logger';
-import type { Session, SessionStats } from '../types';
-import { NotFoundError } from '../utils/errors';
+import { createClient } from "@supabase/supabase-js";
+import { config } from "../config";
+import logger from "../utils/logger";
+import type { Session, SessionStats } from "../types";
+import { NotFoundError, SessionCreationError } from "../utils/errors";
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
 export class SessionService {
-  async createSession(userId: string, metadata?: Record<string, unknown>): Promise<Session> {
+  /**
+   * Creates a new session for a user.
+   * @param userId - The user ID to associate with the session.
+   * @param metadata - Optional metadata for the session.
+   */
+  async createSession(
+    userId: string,
+    metadata?: Record<string, unknown>
+  ): Promise<Session> {
     try {
       const { data, error } = await supabase
-        .from('sessions')
+        .from("sessions")
         .insert({
           user_id: userId,
           metadata,
-          status: 'active'
+          status: "active",
         })
         .select()
         .single();
 
-      if (error) throw error;
-      
-      logger.info('Session created successfully', { id: data.id });
+      if (error) throw new SessionCreationError("Failed to create session");
+
+      logger.info("Session created successfully", { userId, sessionId: data.id });
       return data;
     } catch (error) {
-      logger.error('Failed to create session', { error });
-      throw error;
+      logger.error("Failed to create session", { error });
+      throw error; // Propagate error to be handled by route handler
     }
   }
 
+  /**
+   * Fetches a specific session by ID and user ID.
+   * @param id - The session ID.
+   * @param userId - The user ID to validate against.
+   */
   async getSession(id: string, userId: string): Promise<Session> {
     try {
       const { data, error } = await supabase
-        .from('sessions')
-        .select('*')
-        .eq('id', id)
-        .eq('user_id', userId)
+        .from("sessions")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", userId)
         .single();
 
       if (error) throw error;
-      if (!data) throw new NotFoundError('Session not found');
+      if (!data) throw new NotFoundError("Session not found");
 
       return data;
     } catch (error) {
-      logger.error('Failed to get session', { error, id });
-      throw error;
+      logger.error("Failed to get session", { error, sessionId: id, userId });
+      throw error; // Propagate error to be handled by route handler
     }
   }
 
+  /**
+   * Ends a session by updating its status to "completed".
+   * @param id - The session ID.
+   * @param userId - The user ID to validate against.
+   */
   async endSession(id: string, userId: string): Promise<boolean> {
     try {
       const { error } = await supabase
-        .from('sessions')
-        .update({ 
-          status: 'completed',
-          ended_at: new Date().toISOString()
+        .from("sessions")
+        .update({
+          status: "completed",
+          ended_at: new Date().toISOString(),
         })
-        .eq('id', id)
-        .eq('user_id', userId);
+        .eq("id", id)
+        .eq("user_id", userId);
 
       if (error) throw error;
 
-      logger.info('Session ended successfully', { id });
+      logger.info("Session ended successfully", { sessionId: id, userId });
       return true;
     } catch (error) {
-      logger.error('Failed to end session', { error, id });
-      throw error;
+      logger.error("Failed to end session", { error, sessionId: id, userId });
+      throw error; // Propagate error to be handled by route handler
     }
   }
 
-  async getSessionStats(userId: string, startDate?: Date, endDate?: Date): Promise<SessionStats> {
+  /**
+   * Retrieves session stats for a user.
+   * @param userId - The user ID to retrieve stats for.
+   * @param startDate - Optional start date for filtering.
+   * @param endDate - Optional end date for filtering.
+   */
+  async getSessionStats(
+    userId: string,
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<SessionStats> {
     try {
-      let query = supabase
-        .from('sessions')
-        .select('*')
-        .eq('user_id', userId);
+      let query = supabase.from("sessions").select("*").eq("user_id", userId);
 
       if (startDate) {
-        query = query.gte('started_at', startDate.toISOString());
+        query = query.gte("started_at", startDate.toISOString());
       }
       if (endDate) {
-        query = query.lte('started_at', endDate.toISOString());
+        query = query.lte("started_at", endDate.toISOString());
       }
 
       const { data, error } = await query;
@@ -89,16 +114,16 @@ export class SessionService {
 
       const stats: SessionStats = {
         totalSessions: data.length,
-        activeSessions: data.filter(s => s.status === 'active').length,
-        completedSessions: data.filter(s => s.status === 'completed').length,
-        lastSessionTime: data[data.length - 1]?.started_at || '',
-        clientId: userId
+        activeSessions: data.filter((s) => s.status === "active").length,
+        completedSessions: data.filter((s) => s.status === "completed").length,
+        lastSessionTime: data[data.length - 1]?.started_at || "",
+        clientId: userId,
       };
 
       return stats;
     } catch (error) {
-      logger.error('Failed to get session stats', { error, userId });
-      throw error;
+      logger.error("Failed to get session stats", { error, userId });
+      throw error; // Propagate error to be handled by route handler
     }
   }
 }

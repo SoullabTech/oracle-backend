@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { getOracleResponse } from '../../services/oracleService';
-import { logOracleInsight } from '../../services/oracleLogger';
+import { useState } from "react";
+import { getOracleResponse } from "../../services/oracleService";
+import { logOracleInsight } from "../../services/oracleLogger";
 
-const elements = ['fire', 'water', 'earth', 'air', 'aether'];
+const elements = ["fire", "water", "earth", "air", "aether"];
 
 export function AskOracle({ userId }: { userId: string }) {
-  const [userInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState("");
   const [oracleResponse, setOracleResponse] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // New state
-  const [elementFocus, setElementFocus] = useState<string>('aether');
+  const [elementFocus, setElementFocus] = useState<string>("aether");
   const [emotion, setEmotion] = useState<number>(0.5);
 
   const handleAskOracle = async () => {
@@ -28,7 +28,7 @@ export function AskOracle({ userId }: { userId: string }) {
 
       setOracleResponse(response);
       setHistory((prev) => [...prev, { query: userInput, response }]);
-      setUserInput('');
+      setUserInput("");
 
       await logOracleInsight({
         anon_id: userId,
@@ -36,13 +36,15 @@ export function AskOracle({ userId }: { userId: string }) {
           query: userInput,
           response: response.content,
         },
-        element: response.metadata?.elementalAdjustments?.emphasis?.[0] || elementFocus,
+        element:
+          response.metadata?.elementalAdjustments?.emphasis?.[0] ||
+          elementFocus,
         emotion: emotion,
-        archetype: response.metadata?.archetype || '',
-        phase: response.metadata?.phase || '',
+        archetype: response.metadata?.archetype || "",
+        phase: response.metadata?.phase || "",
       });
     } catch (err) {
-      setOracleResponse({ content: '⚠️ Failed to fetch oracle response.' });
+      setOracleResponse({ content: "⚠️ Failed to fetch oracle response." });
     } finally {
       setLoading(false);
     }
@@ -55,7 +57,9 @@ export function AskOracle({ userId }: { userId: string }) {
       {/* 🔮 Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Elemental Focus</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Elemental Focus
+          </label>
           <select
             value={elementFocus}
             onChange={(e) => setElementFocus(e.target.value)}
@@ -100,25 +104,29 @@ export function AskOracle({ userId }: { userId: string }) {
           disabled={loading}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
         >
-          {loading ? 'Asking...' : 'Ask'}
+          {loading ? "Asking..." : "Ask"}
         </button>
       </div>
 
       {/* ✨ Oracle Response */}
       {oracleResponse && (
         <div className="bg-gray-50 border-l-4 border-indigo-500 p-4 rounded">
-          <p className="text-gray-800 whitespace-pre-line">{oracleResponse.content}</p>
+          <p className="text-gray-800 whitespace-pre-line">
+            {oracleResponse.content}
+          </p>
 
           {oracleResponse.metadata?.elementalAdjustments?.emphasis && (
             <div className="mt-2 flex flex-wrap gap-2 text-sm">
-              {oracleResponse.metadata.elementalAdjustments.emphasis.map((tag: string) => (
-                <span
-                  key={tag}
-                  className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
+              {oracleResponse.metadata.elementalAdjustments.emphasis.map(
+                (tag: string) => (
+                  <span
+                    key={tag}
+                    className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ),
+              )}
             </div>
           )}
         </div>
@@ -129,16 +137,21 @@ export function AskOracle({ userId }: { userId: string }) {
         <div className="mt-6 border-t pt-4">
           <h3 className="text-sm text-gray-500 mb-2">Previous Questions</h3>
           <ul className="space-y-3 text-sm text-gray-700">
-            {history.slice(-5).reverse().map((entry, index) => (
-              <li key={index} className="border-l-2 border-gray-200 pl-3">
-                <p>
-                  <strong className="text-indigo-600">Q:</strong> {entry.query}
-                </p>
-                <p>
-                  <strong className="text-green-700">A:</strong> {entry.response?.content}
-                </p>
-              </li>
-            ))}
+            {history
+              .slice(-5)
+              .reverse()
+              .map((entry, index) => (
+                <li key={index} className="border-l-2 border-gray-200 pl-3">
+                  <p>
+                    <strong className="text-indigo-600">Q:</strong>{" "}
+                    {entry.query}
+                  </p>
+                  <p>
+                    <strong className="text-green-700">A:</strong>{" "}
+                    {entry.response?.content}
+                  </p>
+                </li>
+              ))}
           </ul>
         </div>
       )}

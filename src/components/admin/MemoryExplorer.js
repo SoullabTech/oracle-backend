@@ -1,14 +1,131 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getRelevantMemories } from '../../services/memoryService';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getRelevantMemories } from "../../services/memoryService";
 export function MemoryExplorer() {
-    const [selectedElement, setSelectedElement] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
-    const { data: memories, isLoading } = useQuery({
-        queryKey: ['memories', selectedElement, searchTerm],
-        queryFn: () => getRelevantMemories(selectedElement === 'all' ? undefined : selectedElement),
-    });
-    const filteredMemories = memories?.filter(memory => memory.content.toLowerCase().includes(searchTerm.toLowerCase()));
-    return (_jsxs("div", { className: "bg-white rounded-lg shadow-lg p-6", children: [_jsx("h2", { className: "text-2xl font-bold mb-6", children: "Memory Explorer" }), _jsxs("div", { className: "flex gap-4 mb-6", children: [_jsx("div", { className: "flex-1", children: _jsx("input", { type: "text", value: searchTerm, onChange: (e) => setSearchTerm(e.target.value), placeholder: "Search memories...", className: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" }) }), _jsxs("select", { value: selectedElement, onChange: (e) => setSelectedElement(e.target.value), className: "rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", children: [_jsx("option", { value: "all", children: "All Elements" }), _jsx("option", { value: "fire", children: "Fire" }), _jsx("option", { value: "water", children: "Water" }), _jsx("option", { value: "earth", children: "Earth" }), _jsx("option", { value: "air", children: "Air" }), _jsx("option", { value: "aether", children: "Aether" })] })] }), isLoading ? (_jsx("div", { className: "animate-pulse space-y-4", children: [...Array(5)].map((_, i) => (_jsx("div", { className: "h-24 bg-gray-200 rounded" }, i))) })) : (_jsx("div", { className: "space-y-4", children: filteredMemories?.map(memory => (_jsxs("div", { className: "border rounded-lg p-4 hover:bg-gray-50 transition-colors", children: [_jsxs("div", { className: "flex items-start justify-between", children: [_jsxs("div", { className: "flex-1", children: [_jsx("p", { className: "text-gray-700", children: memory.content }), _jsxs("div", { className: "mt-2 flex gap-2", children: [_jsx("span", { className: "px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm", children: memory.element }), memory.facet && (_jsx("span", { className: "px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm", children: memory.facet }))] })] }), _jsx("div", { className: "text-sm text-gray-500", children: new Date(memory.created_at).toLocaleDateString() })] }), _jsxs("div", { className: "mt-2 text-sm text-gray-500", children: ["Source: ", memory.sourceAgent, memory.confidence && (_jsxs("span", { className: "ml-4", children: ["Confidence: ", Math.round(memory.confidence * 100), "%"] }))] })] }, memory.id))) }))] }));
+  const [selectedElement, setSelectedElement] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data: memories, isLoading } = useQuery({
+    queryKey: ["memories", selectedElement, searchTerm],
+    queryFn: () =>
+      getRelevantMemories(
+        selectedElement === "all" ? undefined : selectedElement,
+      ),
+  });
+  const filteredMemories = memories?.filter((memory) =>
+    memory.content.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+  return _jsxs("div", {
+    className: "bg-white rounded-lg shadow-lg p-6",
+    children: [
+      _jsx("h2", {
+        className: "text-2xl font-bold mb-6",
+        children: "Memory Explorer",
+      }),
+      _jsxs("div", {
+        className: "flex gap-4 mb-6",
+        children: [
+          _jsx("div", {
+            className: "flex-1",
+            children: _jsx("input", {
+              type: "text",
+              value: searchTerm,
+              onChange: (e) => setSearchTerm(e.target.value),
+              placeholder: "Search memories...",
+              className:
+                "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+            }),
+          }),
+          _jsxs("select", {
+            value: selectedElement,
+            onChange: (e) => setSelectedElement(e.target.value),
+            className:
+              "rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+            children: [
+              _jsx("option", { value: "all", children: "All Elements" }),
+              _jsx("option", { value: "fire", children: "Fire" }),
+              _jsx("option", { value: "water", children: "Water" }),
+              _jsx("option", { value: "earth", children: "Earth" }),
+              _jsx("option", { value: "air", children: "Air" }),
+              _jsx("option", { value: "aether", children: "Aether" }),
+            ],
+          }),
+        ],
+      }),
+      isLoading
+        ? _jsx("div", {
+            className: "animate-pulse space-y-4",
+            children: [...Array(5)].map((_, i) =>
+              _jsx("div", { className: "h-24 bg-gray-200 rounded" }, i),
+            ),
+          })
+        : _jsx("div", {
+            className: "space-y-4",
+            children: filteredMemories?.map((memory) =>
+              _jsxs(
+                "div",
+                {
+                  className:
+                    "border rounded-lg p-4 hover:bg-gray-50 transition-colors",
+                  children: [
+                    _jsxs("div", {
+                      className: "flex items-start justify-between",
+                      children: [
+                        _jsxs("div", {
+                          className: "flex-1",
+                          children: [
+                            _jsx("p", {
+                              className: "text-gray-700",
+                              children: memory.content,
+                            }),
+                            _jsxs("div", {
+                              className: "mt-2 flex gap-2",
+                              children: [
+                                _jsx("span", {
+                                  className:
+                                    "px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm",
+                                  children: memory.element,
+                                }),
+                                memory.facet &&
+                                  _jsx("span", {
+                                    className:
+                                      "px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm",
+                                    children: memory.facet,
+                                  }),
+                              ],
+                            }),
+                          ],
+                        }),
+                        _jsx("div", {
+                          className: "text-sm text-gray-500",
+                          children: new Date(
+                            memory.created_at,
+                          ).toLocaleDateString(),
+                        }),
+                      ],
+                    }),
+                    _jsxs("div", {
+                      className: "mt-2 text-sm text-gray-500",
+                      children: [
+                        "Source: ",
+                        memory.sourceAgent,
+                        memory.confidence &&
+                          _jsxs("span", {
+                            className: "ml-4",
+                            children: [
+                              "Confidence: ",
+                              Math.round(memory.confidence * 100),
+                              "%",
+                            ],
+                          }),
+                      ],
+                    }),
+                  ],
+                },
+                memory.id,
+              ),
+            ),
+          }),
+    ],
+  });
 }

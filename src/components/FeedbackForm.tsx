@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { submitFeedback } from '../services/feedbackService';
-import { useAuth } from '../hooks/useAuth';
-import type { FeedbackInput } from '../types/feedback';
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { submitFeedback } from "../services/feedbackService";
+import { useAuth } from "../hooks/useAuth";
+import type { FeedbackInput } from "../types/feedback";
 
 interface FeedbackFormProps {
   responseId: string;
@@ -11,17 +11,23 @@ interface FeedbackFormProps {
   onComplete?: () => void;
 }
 
-export function FeedbackForm({ responseId, response, metadata, onComplete }: FeedbackFormProps) {
+export function FeedbackForm({
+  responseId,
+  response,
+  metadata,
+  onComplete,
+}: FeedbackFormProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [rating, setRating] = useState<number | null>(null);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const feedbackMutation = useMutation({
-    mutationFn: (feedback: FeedbackInput) => submitFeedback(user?.id || '', feedback),
+    mutationFn: (feedback: FeedbackInput) =>
+      submitFeedback(user?.id || "", feedback),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feedbackStats'] });
+      queryClient.invalidateQueries({ queryKey: ["feedbackStats"] });
       setIsSubmitted(true);
       onComplete?.();
     },
@@ -51,7 +57,9 @@ export function FeedbackForm({ responseId, response, metadata, onComplete }: Fee
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-4">
       <div>
-        <p className="text-sm text-gray-600 mb-2">How helpful was this response?</p>
+        <p className="text-sm text-gray-600 mb-2">
+          How helpful was this response?
+        </p>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -60,8 +68,8 @@ export function FeedbackForm({ responseId, response, metadata, onComplete }: Fee
               onClick={() => setRating(value)}
               className={`w-10 h-10 rounded-full transition-colors ${
                 rating === value
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200'
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
               {value}
@@ -85,7 +93,7 @@ export function FeedbackForm({ responseId, response, metadata, onComplete }: Fee
         disabled={!rating || feedbackMutation.isPending}
         className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
       >
-        {feedbackMutation.isPending ? 'Submitting...' : 'Submit Feedback'}
+        {feedbackMutation.isPending ? "Submitting..." : "Submit Feedback"}
       </button>
 
       {feedbackMutation.isError && (

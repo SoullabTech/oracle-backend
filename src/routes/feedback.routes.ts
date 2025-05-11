@@ -1,9 +1,9 @@
 // src/routes/feedback.routes.ts
 
-import { Router } from 'express';
-import memoryModule from '../utils/memoryModule';
-import { storeMemoryItem } from '../services/memoryService';
-import type { QueryInput } from '../core/types/ai';
+import { Router } from "express";
+import memoryModule from "../utils/memoryModule";
+import { storeMemoryItem } from "../services/memoryService";
+import type { QueryInput } from "../core/types/ai";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ const router = Router();
  * Body: { userId: string; messageId: string; rating: number; comments?: string }
  * Records user feedback and logs it into memory for adaptive routing.
  */
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { userId, messageId, rating, comments } = req.body as {
       userId: string;
@@ -28,11 +28,11 @@ router.post('/', async (req, res) => {
       timestamp: Date.now(),
       clientId: userId,
       metadata: {
-        role: 'feedback',
+        role: "feedback",
         originalMessageId: messageId,
         rating,
         comments,
-      }
+      },
     };
 
     // Log in in-memory store
@@ -41,17 +41,19 @@ router.post('/', async (req, res) => {
     // Persist via memoryService
     await storeMemoryItem({
       content: feedbackItem.content,
-      element: 'feedback',
-      sourceAgent: 'feedback-endpoint',
+      element: "feedback",
+      sourceAgent: "feedback-endpoint",
       clientId: userId,
       confidence: 1,
-      metadata: feedbackItem.metadata
+      metadata: feedbackItem.metadata,
     });
 
     res.json({ success: true });
   } catch (err) {
-    console.error('❌ /api/feedback', err);
-    res.status(500).json({ success: false, error: 'Failed to record feedback' });
+    console.error("❌ /api/feedback", err);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to record feedback" });
   }
 });
 

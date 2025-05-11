@@ -1,11 +1,11 @@
-import type { Metadata } from './metadata';
+import type { Metadata } from "./metadata";
 
 export interface Session {
   id: string;
   clientId: string;
   startTime: string;
   meta: Metadata;
-  status: 'active' | 'completed';
+  status: "active" | "completed";
 }
 
 export interface SessionStats {

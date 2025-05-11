@@ -1,6 +1,6 @@
-import { env } from '../lib/config';
-import logger from '../utils/logger';
-import type { AIResponse } from '../types/ai';
+import { env } from "../lib/config";
+import logger from "../utils/logger";
+import type { AIResponse } from "../types/ai";
 
 interface ChatGPTOracleRequest {
   query: string;
@@ -11,13 +11,15 @@ interface ChatGPTOracleRequest {
   };
 }
 
-export async function queryChatGPTOracle(request: ChatGPTOracleRequest): Promise<AIResponse> {
+export async function queryChatGPTOracle(
+  request: ChatGPTOracleRequest,
+): Promise<AIResponse> {
   try {
     const response = await fetch(env.VITE_CHATGPT_ORACLE_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${env.VITE_CHATGPT_ORACLE_API_KEY}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.VITE_CHATGPT_ORACLE_API_KEY}`,
       },
       body: JSON.stringify(request),
     });
@@ -30,8 +32,8 @@ export async function queryChatGPTOracle(request: ChatGPTOracleRequest): Promise
 
     return {
       content: data.response,
-      provider: 'chatgpt-oracle',
-      model: data.model || 'gpt-4',
+      provider: "chatgpt-oracle",
+      model: data.model || "gpt-4",
       confidence: data.confidence || 0.9,
       metadata: {
         tokens: data.usage?.total_tokens,
@@ -40,7 +42,7 @@ export async function queryChatGPTOracle(request: ChatGPTOracleRequest): Promise
       },
     };
   } catch (error) {
-    logger.error('Error querying ChatGPT Oracle:', error);
-    throw new Error('Failed to query ChatGPT Oracle');
+    logger.error("Error querying ChatGPT Oracle:", error);
+    throw new Error("Failed to query ChatGPT Oracle");
   }
 }

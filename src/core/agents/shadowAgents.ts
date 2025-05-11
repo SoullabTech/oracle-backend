@@ -1,12 +1,12 @@
-// src/agents/shadowAgent.ts
+// src/core/agents/shadowAgents.ts
 
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
-import { logOracleInsight } from ../utils/oracleLogger";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
 import MemoryModule from "../../utils/memoryModule";
-import ModelService from "../../utils/modelService;
-import type { AgentResponse } from "./types;
+import ModelService from "../../utils/modelService";
+import type { AgentResponse } from "./types";
 
 /**
  * ShadowAgent: Engages the unconscious terrain, confronting patterns, projections, and personal myths.

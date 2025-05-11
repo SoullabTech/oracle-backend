@@ -1,11 +1,11 @@
 // src/components/ProfileUpdateForm.tsx
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Use axios or fetch for API calls
-import { useAuth } from '../hooks/useAuth'; // Assuming you have an authentication hook
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Use axios or fetch for API calls
+import { useAuth } from "../hooks/useAuth"; // Assuming you have an authentication hook
 
 interface CrystalFocus {
-  type: 'career' | 'spiritual' | 'relational' | 'health' | 'creative' | 'other';
+  type: "career" | "spiritual" | "relational" | "health" | "creative" | "other";
   customDescription?: string;
   challenges: string;
   aspirations: string;
@@ -29,9 +29,9 @@ const ProfileUpdateForm = () => {
     air: 0,
     aether: 0,
     crystal_focus: {
-      type: 'career',
-      challenges: '',
-      aspirations: '',
+      type: "career",
+      challenges: "",
+      aspirations: "",
     },
   });
 
@@ -40,18 +40,20 @@ const ProfileUpdateForm = () => {
       // Fetch the current profile data for the logged-in user
       axios
         .get(`/api/user-profile/${user.id}`)
-        .then(response => {
+        .then((response) => {
           setProfileData(response.data); // Assuming the data format matches ProfileFormData
         })
-        .catch(error => {
-          console.error('Failed to fetch profile data:', error);
+        .catch((error) => {
+          console.error("Failed to fetch profile data:", error);
         });
     }
   }, [user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setProfileData(prevState => ({
+    setProfileData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -62,21 +64,26 @@ const ProfileUpdateForm = () => {
 
     try {
       // Send the updated profile data to the backend for saving
-      const response = await axios.post('/api/update-profile', profileData);
-      console.log('Profile updated successfully:', response.data);
+      const response = await axios.post("/api/update-profile", profileData);
+      console.log("Profile updated successfully:", response.data);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-semibold text-center mb-6">Update Your Profile</h2>
+      <h2 className="text-2xl font-semibold text-center mb-6">
+        Update Your Profile
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           {/* Fire */}
           <div>
-            <label htmlFor="fire" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="fire"
+              className="block text-sm font-medium text-gray-700"
+            >
               Fire
             </label>
             <input
@@ -93,7 +100,10 @@ const ProfileUpdateForm = () => {
 
           {/* Water */}
           <div>
-            <label htmlFor="water" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="water"
+              className="block text-sm font-medium text-gray-700"
+            >
               Water
             </label>
             <input
@@ -110,7 +120,10 @@ const ProfileUpdateForm = () => {
 
           {/* Earth */}
           <div>
-            <label htmlFor="earth" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="earth"
+              className="block text-sm font-medium text-gray-700"
+            >
               Earth
             </label>
             <input
@@ -127,7 +140,10 @@ const ProfileUpdateForm = () => {
 
           {/* Air */}
           <div>
-            <label htmlFor="air" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="air"
+              className="block text-sm font-medium text-gray-700"
+            >
               Air
             </label>
             <input
@@ -144,7 +160,10 @@ const ProfileUpdateForm = () => {
 
           {/* Aether */}
           <div>
-            <label htmlFor="aether" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="aether"
+              className="block text-sm font-medium text-gray-700"
+            >
               Aether
             </label>
             <input
@@ -162,7 +181,10 @@ const ProfileUpdateForm = () => {
 
         {/* Crystal Focus */}
         <div>
-          <label htmlFor="challenges" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="challenges"
+            className="block text-sm font-medium text-gray-700"
+          >
             Challenges
           </label>
           <textarea
@@ -174,7 +196,10 @@ const ProfileUpdateForm = () => {
             rows={3}
           />
 
-          <label htmlFor="aspirations" className="block text-sm font-medium text-gray-700 mt-4">
+          <label
+            htmlFor="aspirations"
+            className="block text-sm font-medium text-gray-700 mt-4"
+          >
             Aspirations
           </label>
           <textarea

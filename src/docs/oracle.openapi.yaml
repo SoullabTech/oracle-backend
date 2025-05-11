@@ -15,7 +15,7 @@ paths:
               required:
                 - input
       responses:
-        '200':
+        "200":
           description: Detected elemental facet and associated details.
           content:
             application/json:
@@ -44,7 +44,7 @@ paths:
             type: string
             example: user-abc-123
       responses:
-        '200':
+        "200":
           description: Array of stored oracle insights
           content:
             application/json:
@@ -113,7 +113,7 @@ paths:
                 - elementalTheme
                 - archetype
       responses:
-        '200':
+        "200":
           description: The generated symbolic story
           content:
             application/json:
@@ -146,7 +146,7 @@ paths:
                         items:
                           type: string
                           example: "Phoenix"
-        '400':
+        "400":
           description: Missing required fields
-        '500':
+        "500":
           description: Failed to generate story

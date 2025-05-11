@@ -1,10 +1,10 @@
 // src/middleware/authenticateToken.ts
 import { Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
-import { config } from '../config/index;
-import { AuthenticationError } from '../utils/errors;
-import type { AuthenticatedRequest } from '../types/index;
-import logger from '../utils/logger;
+import { config } from '../config';  // Fixed path to config
+import { AuthenticationError } from '../utils/errors';  // Fixed path to errors
+import type { AuthenticatedRequest } from '../types';  // Ensure correct path to types
+import logger from '../utils/logger';
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
@@ -33,7 +33,7 @@ export async function authenticateToken(
       throw new AuthenticationError('Invalid or expired token');
     }
 
-    // Attach minimal user info
+    // Attach minimal user info to the request
     req.user = {
       id: user.id,
       email: user.email ?? null,

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { Line } from 'react-chartjs-2';
+import { useQuery } from "@tanstack/react-query";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,10 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
-import { getPersonalityWeights } from '../services/monitoringService';
-import { getAggregatedWisdom } from '../services/memoryService';
+import { getPersonalityWeights } from "../services/monitoringService";
+import { getAggregatedWisdom } from "../services/memoryService";
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +21,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 // Optional: add these types for clarity if you have them in `@types`
@@ -41,16 +41,20 @@ type OracleWisdom = {
 
 export function OracleDashboard() {
   // 📊 Query: Personality Weights
-  const { data: weights = [], isLoading: weightsLoading } = useQuery<PersonalityWeight[]>({
-    queryKey: ['personalityWeights'],
+  const { data: weights = [], isLoading: weightsLoading } = useQuery<
+    PersonalityWeight[]
+  >({
+    queryKey: ["personalityWeights"],
     queryFn: getPersonalityWeights,
   });
 
   // 🔮 Query: Collective Wisdom
-  const { data: wisdom = [], isLoading: wisdomLoading } = useQuery<OracleWisdom[]>({
-    queryKey: ['aggregatedWisdom'],
+  const { data: wisdom = [], isLoading: wisdomLoading } = useQuery<
+    OracleWisdom[]
+  >({
+    queryKey: ["aggregatedWisdom"],
     queryFn: () =>
-      getAggregatedWisdom(['fire', 'water', 'earth', 'air', 'aether'], ['all']),
+      getAggregatedWisdom(["fire", "water", "earth", "air", "aether"], ["all"]),
   });
 
   if (weightsLoading || wisdomLoading) {
@@ -62,24 +66,24 @@ export function OracleDashboard() {
   }
 
   const chartData = {
-    labels: ['Fire', 'Water', 'Earth', 'Air', 'Aether'],
+    labels: ["Fire", "Water", "Earth", "Air", "Aether"],
     datasets: [
       {
-        label: 'Element Weights (%)',
-        data: ['fire', 'water', 'earth', 'air', 'aether'].map(
-          e => (weights.find(w => w.element === e)?.weight || 0) * 100
+        label: "Element Weights (%)",
+        data: ["fire", "water", "earth", "air", "aether"].map(
+          (e) => (weights.find((w) => w.element === e)?.weight || 0) * 100,
         ),
-        borderColor: 'rgb(99, 102, 241)',
-        backgroundColor: 'rgba(99, 102, 241, 0.3)',
+        borderColor: "rgb(99, 102, 241)",
+        backgroundColor: "rgba(99, 102, 241, 0.3)",
         fill: true,
       },
       {
-        label: 'Confidence (%)',
-        data: ['fire', 'water', 'earth', 'air', 'aether'].map(
-          e => (weights.find(w => w.element === e)?.confidence || 0) * 100
+        label: "Confidence (%)",
+        data: ["fire", "water", "earth", "air", "aether"].map(
+          (e) => (weights.find((w) => w.element === e)?.confidence || 0) * 100,
         ),
-        borderColor: 'rgb(52, 211, 153)',
-        backgroundColor: 'rgba(52, 211, 153, 0.3)',
+        borderColor: "rgb(52, 211, 153)",
+        backgroundColor: "rgba(52, 211, 153, 0.3)",
         fill: true,
       },
     ],
@@ -88,8 +92,8 @@ export function OracleDashboard() {
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' as const },
-      title: { display: true, text: 'Elemental Balance Overview' },
+      legend: { position: "top" as const },
+      title: { display: true, text: "Elemental Balance Overview" },
     },
     scales: {
       y: { beginAtZero: true, max: 100 },
@@ -110,14 +114,14 @@ export function OracleDashboard() {
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold mb-4">Collective Wisdom</h2>
         <div className="space-y-4">
-          {wisdom.map(item => (
+          {wisdom.map((item) => (
             <div
               key={item.id}
               className="border-l-4 border-indigo-500 pl-4 py-2"
             >
               <p className="text-gray-700">{item.content}</p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {item.elements.map(element => (
+                {item.elements.map((element) => (
                   <span
                     key={element}
                     className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm"
@@ -125,7 +129,7 @@ export function OracleDashboard() {
                     {element}
                   </span>
                 ))}
-                {item.facets.map(facet => (
+                {item.facets.map((facet) => (
                   <span
                     key={facet}
                     className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"

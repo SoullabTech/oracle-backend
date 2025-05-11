@@ -1,44 +1,40 @@
 // src/utils/oracleLogger.ts
-import { supabase } from '../lib/supabaseClient'
-import logger from './logger'
+import { supabase } from "../lib/supabaseClient";
+import logger from "./logger";
 
-type InsightMetadata = Record<string, unknown>
+type InsightMetadata = Record<string, unknown>;
 
 export interface InsightLogEntry {
-  userId: string
-  insightType: string
-  content: string
-  metadata?: InsightMetadata
+  userId: string;
+  insightType: string;
+  content: string;
+  metadata?: InsightMetadata;
 }
 
 /**
  * Logs an insight both to the database and to the console.
  * Inserts into the `insight_history` table and writes a log entry.
  */
-export async function logInsight(
-  entry: InsightLogEntry
-): Promise<void> {
-  const { userId, insightType, content, metadata } = entry
+export async function logInsight(entry: InsightLogEntry): Promise<void> {
+  const { userId, insightType, content, metadata } = entry;
   try {
     // Persist to Supabase
-    const { error } = await supabase
-      .from('insight_history')
-      .insert({
-        user_id: userId,
-        insight_type: insightType,
-        content,
-        metadata: metadata || {},
-      })
-    if (error) throw error
+    const { error } = await supabase.from("insight_history").insert({
+      user_id: userId,
+      insight_type: insightType,
+      content,
+      metadata: metadata || {},
+    });
+    if (error) throw error;
 
     // Log locally
-    logger.info('[OracleLog] Insight logged', {
+    logger.info("[OracleLog] Insight logged", {
       userId,
       insightType,
       content,
       metadata,
-    })
+    });
   } catch (err: any) {
-    logger.error('Failed to log insight:', { error: err.message || err })
+    logger.error("Failed to log insight:", { error: err.message || err });
   }
 }

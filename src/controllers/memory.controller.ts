@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MemoryService } from '../services/memoryService;
+import { MemoryService } from '../services/memoryService'; // Fixed import
 
 const service = new MemoryService();
 

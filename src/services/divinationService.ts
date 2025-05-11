@@ -1,12 +1,14 @@
 // src/services/divinationService.ts
 
-import { openai } from '../lib/clients';
+import { openai } from "../lib/clients";
 
 /**
  * Generates a divinatory-style insight for a journal entry.
  * This uses GPT to simulate a symbolic, archetypal interpretation.
  */
-export async function generateDivinatoryInsight(entry: string): Promise<string> {
+export async function generateDivinatoryInsight(
+  entry: string,
+): Promise<string> {
   try {
     const systemPrompt = `
 You are a divinatory oracle drawing upon archetypes, symbols, and inner wisdom.
@@ -17,16 +19,18 @@ Your answer should sound timeless, gentle, and illuminating — not literal.
     const userPrompt = `Journal Entry:\n${entry}\n\nWhat is the symbolic insight or message?`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: "gpt-4",
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
     });
 
-    return completion.choices[0]?.message?.content?.trim() || 'No insight received.';
+    return (
+      completion.choices[0]?.message?.content?.trim() || "No insight received."
+    );
   } catch (err) {
-    console.error('❌ Failed to generate divinatory insight:', err);
-    return 'The oracle is silent. Please try again later.';
+    console.error("❌ Failed to generate divinatory insight:", err);
+    return "The oracle is silent. Please try again later.";
   }
 }

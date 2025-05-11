@@ -1,6 +1,6 @@
-import { env } from '../lib/config';
-import logger from '../utils/logger';
-import oracleLogger from '../utils/oracleLogger';
+import { env } from "../lib/config";
+import logger from "../utils/logger";
+import oracleLogger from "../utils/oracleLogger";
 
 export interface StoryRequest {
   elementalTheme: string;
@@ -36,16 +36,16 @@ export class ElementalOracleService {
 
   async generateStory(
     request: StoryRequest,
-    context: StoryContext
+    context: StoryContext,
   ): Promise<StoryResponse> {
     const url = `${this.baseUrl}/storyRequest`;
 
     try {
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           ...request,
@@ -53,21 +53,23 @@ export class ElementalOracleService {
             userId: context.userId,
             elementalProfile: context.elementalProfile,
             crystalFocus: context.crystalFocus,
-            phase: context.phase ?? 'story',
+            phase: context.phase ?? "story",
             memories: context.memories,
           },
         }),
       });
 
       if (!res.ok) {
-        throw new Error(`Story generation failed: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `Story generation failed: ${res.status} ${res.statusText}`,
+        );
       }
 
       const data = (await res.json()) as StoryResponse;
 
       await oracleLogger.logInsight({
         userId: context.userId,
-        insightType: 'story_generation',
+        insightType: "story_generation",
         content: `Generated story with theme: ${request.elementalTheme}, archetype: ${request.archetype}`,
         metadata: {
           theme: request.elementalTheme,
@@ -81,7 +83,7 @@ export class ElementalOracleService {
         },
       });
 
-      logger.info('✨ Story generated successfully', {
+      logger.info("✨ Story generated successfully", {
         elementalTheme: request.elementalTheme,
         archetype: request.archetype,
         focusArea: request.focusArea,
@@ -90,23 +92,23 @@ export class ElementalOracleService {
 
       return data;
     } catch (err: any) {
-      logger.error('❌ Error in generateStory:', err);
-      throw new Error('Failed to generate story');
+      logger.error("❌ Error in generateStory:", err);
+      throw new Error("Failed to generate story");
     }
   }
 
   async generateReflection(
     storyId: string,
-    context: StoryContext
+    context: StoryContext,
   ): Promise<string[]> {
     const url = `${this.baseUrl}/storyRequest/${storyId}/reflections`;
 
     try {
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           context: {
@@ -120,14 +122,16 @@ export class ElementalOracleService {
       });
 
       if (!res.ok) {
-        throw new Error(`Reflection generation failed: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `Reflection generation failed: ${res.status} ${res.statusText}`,
+        );
       }
 
       const payload = await res.json();
 
       await oracleLogger.logInsight({
         userId: context.userId,
-        insightType: 'story_reflection',
+        insightType: "story_reflection",
         content: `Generated reflections for story: ${storyId}`,
         metadata: {
           story_id: storyId,
@@ -136,11 +140,11 @@ export class ElementalOracleService {
         },
       });
 
-      logger.info('🔍 Reflections generated successfully', { storyId });
+      logger.info("🔍 Reflections generated successfully", { storyId });
       return payload.reflections as string[];
     } catch (err: any) {
-      logger.error('❌ Error in generateReflection:', err);
-      throw new Error('Failed to generate reflections');
+      logger.error("❌ Error in generateReflection:", err);
+      throw new Error("Failed to generate reflections");
     }
   }
 }

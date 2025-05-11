@@ -2,11 +2,11 @@ import {
   analyzeFeedbackTrends,
   updatePersonalityWeights,
   getPersonalityWeights,
-} from '../monitoringService';
-import { supabase } from '../../lib/supabase';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+} from "../monitoringService";
+import { supabase } from "../../lib/supabase";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock('../../lib/supabase', () => ({
+vi.mock("../../lib/supabase", () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
@@ -19,19 +19,19 @@ vi.mock('../../lib/supabase', () => ({
   },
 }));
 
-describe('Monitoring Service', () => {
+describe("Monitoring Service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('analyzeFeedbackTrends', () => {
-    it('should analyze feedback data correctly', async () => {
+  describe("analyzeFeedbackTrends", () => {
+    it("should analyze feedback data correctly", async () => {
       const mockFeedback = [
         {
           rating: 5,
           metadata: {
             elementalAdjustments: {
-              emphasis: ['fire', 'water'],
+              emphasis: ["fire", "water"],
             },
           },
         },
@@ -39,7 +39,7 @@ describe('Monitoring Service', () => {
           rating: 4,
           metadata: {
             elementalAdjustments: {
-              emphasis: ['earth', 'air'],
+              emphasis: ["earth", "air"],
             },
           },
         },
@@ -51,8 +51,8 @@ describe('Monitoring Service', () => {
       });
 
       const timeframe = {
-        start: new Date('2025-01-01'),
-        end: new Date('2025-01-02'),
+        start: new Date("2025-01-01"),
+        end: new Date("2025-01-02"),
       };
 
       const metrics = await analyzeFeedbackTrends(timeframe);
@@ -63,53 +63,59 @@ describe('Monitoring Service', () => {
       expect(metrics.confidenceScores).toBeDefined();
     });
 
-    it('should handle analysis errors', async () => {
+    it("should handle analysis errors", async () => {
       (supabase.from().select().gte().lte as any).mockResolvedValue({
         data: null,
-        error: new Error('Analysis failed'),
+        error: new Error("Analysis failed"),
       });
 
       const timeframe = {
-        start: new Date('2025-01-01'),
-        end: new Date('2025-01-02'),
+        start: new Date("2025-01-01"),
+        end: new Date("2025-01-02"),
       };
 
-      await expect(analyzeFeedbackTrends(timeframe)).rejects.toThrow('Failed to analyze feedback trends');
+      await expect(analyzeFeedbackTrends(timeframe)).rejects.toThrow(
+        "Failed to analyze feedback trends",
+      );
     });
   });
 
-  describe('updatePersonalityWeights', () => {
-    it('should update weights successfully', async () => {
+  describe("updatePersonalityWeights", () => {
+    it("should update weights successfully", async () => {
       (supabase.from().upsert as any).mockResolvedValue({
         error: null,
       });
 
       const mockAdjustments = [
-        { element: 'fire', weight: 0.8, confidence: 0.9 },
-        { element: 'water', weight: 0.6, confidence: 0.8 },
+        { element: "fire", weight: 0.8, confidence: 0.9 },
+        { element: "water", weight: 0.6, confidence: 0.8 },
       ];
 
-      await expect(updatePersonalityWeights(mockAdjustments)).resolves.not.toThrow();
+      await expect(
+        updatePersonalityWeights(mockAdjustments),
+      ).resolves.not.toThrow();
     });
 
-    it('should handle update errors', async () => {
+    it("should handle update errors", async () => {
       (supabase.from().upsert as any).mockResolvedValue({
-        error: new Error('Update failed'),
+        error: new Error("Update failed"),
       });
 
       const mockAdjustments = [
-        { element: 'fire', weight: 0.8, confidence: 0.9 },
+        { element: "fire", weight: 0.8, confidence: 0.9 },
       ];
 
-      await expect(updatePersonalityWeights(mockAdjustments)).rejects.toThrow('Failed to update personality weights');
+      await expect(updatePersonalityWeights(mockAdjustments)).rejects.toThrow(
+        "Failed to update personality weights",
+      );
     });
   });
 
-  describe('getPersonalityWeights', () => {
-    it('should fetch weights successfully', async () => {
+  describe("getPersonalityWeights", () => {
+    it("should fetch weights successfully", async () => {
       const mockWeights = [
-        { element: 'fire', weight: 0.8, confidence: 0.9 },
-        { element: 'water', weight: 0.6, confidence: 0.8 },
+        { element: "fire", weight: 0.8, confidence: 0.9 },
+        { element: "water", weight: 0.6, confidence: 0.8 },
       ];
 
       (supabase.from().select().order as any).mockResolvedValue({
@@ -121,13 +127,15 @@ describe('Monitoring Service', () => {
       expect(weights).toEqual(mockWeights);
     });
 
-    it('should handle fetch errors', async () => {
+    it("should handle fetch errors", async () => {
       (supabase.from().select().order as any).mockResolvedValue({
         data: null,
-        error: new Error('Fetch failed'),
+        error: new Error("Fetch failed"),
       });
 
-      await expect(getPersonalityWeights()).rejects.toThrow('Failed to fetch personality weights');
+      await expect(getPersonalityWeights()).rejects.toThrow(
+        "Failed to fetch personality weights",
+      );
     });
   });
 });

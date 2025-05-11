@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -7,19 +7,19 @@ import {
   ClockIcon,
   ServerIcon,
   BoltIcon,
-} from '@heroicons/react/24/outline';
-import { getSystemMetrics } from '../../services/adminService';
-import { AskOracle } from './AskOracle';
-import { useAuth } from '../../lib/auth';
+} from "@heroicons/react/24/outline";
+import { getSystemMetrics } from "../../services/adminService";
+import { AskOracle } from "./AskOracle";
+import { useAuth } from "../../lib/auth";
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export function DashboardOverview() {
   const { currentUser } = useAuth();
   const { data: metrics, isLoading } = useQuery({
-    queryKey: ['systemMetrics'],
+    queryKey: ["systemMetrics"],
     queryFn: getSystemMetrics,
     refetchInterval: 30000,
   });
@@ -40,31 +40,31 @@ export function DashboardOverview() {
 
   const stats = [
     {
-      name: 'Active Users',
+      name: "Active Users",
       value: metrics?.currentActiveUsers || 0,
-      change: '+4.75%',
-      changeType: 'positive',
+      change: "+4.75%",
+      changeType: "positive",
       icon: UsersIcon,
     },
     {
-      name: 'Avg. Response Time',
+      name: "Avg. Response Time",
       value: `${metrics?.avgResponseTime || 0}ms`,
-      change: '-1.39%',
-      changeType: 'negative',
+      change: "-1.39%",
+      changeType: "negative",
       icon: ClockIcon,
     },
     {
-      name: 'Memory Usage',
+      name: "Memory Usage",
       value: `${metrics?.memoryUsage || 0}%`,
-      change: '+2.45%',
-      changeType: 'positive',
+      change: "+2.45%",
+      changeType: "positive",
       icon: ServerIcon,
     },
     {
-      name: 'System Load',
-      value: metrics?.systemLoad || '0.45',
-      change: '-3.02%',
-      changeType: 'negative',
+      name: "System Load",
+      value: metrics?.systemLoad || "0.45",
+      change: "-3.02%",
+      changeType: "negative",
       icon: BoltIcon,
     },
   ];
@@ -72,9 +72,11 @@ export function DashboardOverview() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Dashboard Overview
+        </h1>
         <p className="mt-2 text-sm text-gray-700">
-          Last updated: {format(new Date(), 'PPpp')}
+          Last updated: {format(new Date(), "PPpp")}
         </p>
       </div>
 
@@ -87,27 +89,35 @@ export function DashboardOverview() {
             >
               <dt>
                 <div className="absolute rounded-md bg-indigo-500 p-3">
-                  <item.icon className="h-6 w-6 text-white" aria-hidden="true" />
+                  <item.icon
+                    className="h-6 w-6 text-white"
+                    aria-hidden="true"
+                  />
                 </div>
                 <p className="ml-16 truncate text-sm font-medium text-gray-500">
                   {item.name}
                 </p>
               </dt>
               <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-                <p className="text-2xl font-semibold text-gray-900">{item.value}</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {item.value}
+                </p>
                 <p
                   className={classNames(
-                    item.changeType === 'positive' ? 'text-green-600' : 'text-red-600',
-                    'ml-2 flex items-baseline text-sm font-semibold'
+                    item.changeType === "positive"
+                      ? "text-green-600"
+                      : "text-red-600",
+                    "ml-2 flex items-baseline text-sm font-semibold",
                   )}
                 >
-                  {item.changeType === 'positive' ? (
+                  {item.changeType === "positive" ? (
                     <ArrowUpIcon className="h-5 w-5 flex-shrink-0 self-center text-green-500" />
                   ) : (
                     <ArrowDownIcon className="h-5 w-5 flex-shrink-0 self-center text-red-500" />
                   )}
                   <span className="sr-only">
-                    {item.changeType === 'positive' ? 'Increased' : 'Decreased'} by
+                    {item.changeType === "positive" ? "Increased" : "Decreased"}{" "}
+                    by
                   </span>
                   {item.change}
                 </p>
@@ -134,7 +144,9 @@ export function DashboardOverview() {
 
       {/* 🧠 Oracle Input */}
       <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Ask the Oracle</h2>
+        <h2 className="text-lg font-medium text-gray-900 mb-4">
+          Ask the Oracle
+        </h2>
         <AskOracle userId={currentUser.id} />
       </div>
     </div>

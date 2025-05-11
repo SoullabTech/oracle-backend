@@ -1,30 +1,30 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { ElementalProfile } from '../components/ElementalProfile';
-import { OracleDashboard } from '../components/OracleDashboard';
-import { FeedbackWidget } from '../components/FeedbackWidget';
-import type { AIResponse } from '../types/ai';
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { ElementalProfile } from "../components/ElementalProfile";
+import { OracleDashboard } from "../components/OracleDashboard";
+import { FeedbackWidget } from "../components/FeedbackWidget";
+import type { AIResponse } from "../types/ai";
 
 export function Oracle() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [responses, setResponses] = useState<AIResponse[]>([]);
 
   // Redirect if not authenticated
   if (!authLoading && !user) {
-    navigate('/login');
+    navigate("/login");
     return null;
   }
 
   const oracleMutation = useMutation({
     mutationFn: async (input: string) => {
-      const response = await fetch('/api/oracle', {
-        method: 'POST',
+      const response = await fetch("/api/oracle", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: input,
@@ -33,14 +33,14 @@ export function Oracle() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get Oracle response');
+        throw new Error("Failed to get Oracle response");
       }
 
       return response.json() as Promise<AIResponse>;
     },
     onSuccess: (data) => {
-      setResponses(prev => [...prev, data]);
-      setQuery('');
+      setResponses((prev) => [...prev, data]);
+      setQuery("");
     },
   });
 
@@ -81,20 +81,30 @@ export function Oracle() {
                     <div className="text-xs text-gray-500 space-y-1 ml-2">
                       {response.metadata.elementalAdjustments && (
                         <div className="space-y-1">
-                          <p>Tone: {response.metadata.elementalAdjustments.tone}</p>
-                          <p>Style: {response.metadata.elementalAdjustments.style}</p>
                           <p>
-                            Emphasis:{' '}
-                            {response.metadata.elementalAdjustments.emphasis?.join(', ')}
+                            Tone: {response.metadata.elementalAdjustments.tone}
+                          </p>
+                          <p>
+                            Style:{" "}
+                            {response.metadata.elementalAdjustments.style}
+                          </p>
+                          <p>
+                            Emphasis:{" "}
+                            {response.metadata.elementalAdjustments.emphasis?.join(
+                              ", ",
+                            )}
                           </p>
                         </div>
                       )}
                     </div>
 
                     <FeedbackWidget
-                      responseId={response.metadata.responseId || ''}
+                      responseId={response.metadata.responseId || ""}
                       response={response.content}
-                      element={response.metadata.elementalAdjustments?.emphasis?.[0] || 'aether'}
+                      element={
+                        response.metadata.elementalAdjustments?.emphasis?.[0] ||
+                        "aether"
+                      }
                     />
                   </div>
                 </div>

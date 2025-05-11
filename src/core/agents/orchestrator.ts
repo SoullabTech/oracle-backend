@@ -8,18 +8,19 @@ export async function runLangChain(query: string): Promise<string> {
     throw new Error("OPENAI_API_KEY environment variable is not set");
   }
 
-  const model = new ChatOpenAI({ 
+  const model = new ChatOpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
     temperature: 0.7,
-    modelName: "gpt-3.5-turbo"
+    modelName: "gpt-3.5-turbo",
   });
 
-  const template = "You are a wise oracle. Provide a poetic and thoughtful response to: {query}";
+  const template =
+    "You are a wise oracle. Provide a poetic and thoughtful response to: {query}";
   const promptTemplate = PromptTemplate.fromTemplate(template);
 
   const chain = new LLMChain({
     llm: model,
-    prompt: promptTemplate
+    prompt: promptTemplate,
   });
 
   try {
@@ -32,13 +33,15 @@ export async function runLangChain(query: string): Promise<string> {
 }
 
 export async function triggerPrefectFlow(payload: any): Promise<any> {
-  const prefectApiUrl = process.env.PREFECT_API_URL || 'https://your-prefect-server/api/flows/trigger';
-  
+  const prefectApiUrl =
+    process.env.PREFECT_API_URL ||
+    "https://your-prefect-server/api/flows/trigger";
+
   try {
     const response = await axios.post(prefectApiUrl, payload);
     return response.data;
   } catch (error) {
-    console.error('Error triggering Prefect flow:', error);
+    console.error("Error triggering Prefect flow:", error);
     throw error;
   }
 }

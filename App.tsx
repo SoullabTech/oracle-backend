@@ -1,4 +1,4 @@
-import FacilitatorDashboard from './components/FacilitatorDashboard';
+import FacilitatorDashboard from "./components/FacilitatorDashboard";
 
 function App() {
   return (

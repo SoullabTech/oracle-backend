@@ -1,18 +1,21 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getRelevantMemories } from '../../services/memoryService';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getRelevantMemories } from "../../services/memoryService";
 
 export function MemoryExplorer() {
-  const [selectedElement, setSelectedElement] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedElement, setSelectedElement] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data: memories, isLoading } = useQuery({
-    queryKey: ['memories', selectedElement, searchTerm],
-    queryFn: () => getRelevantMemories(selectedElement === 'all' ? undefined : selectedElement),
+    queryKey: ["memories", selectedElement, searchTerm],
+    queryFn: () =>
+      getRelevantMemories(
+        selectedElement === "all" ? undefined : selectedElement,
+      ),
   });
 
-  const filteredMemories = memories?.filter(memory =>
-    memory.content.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMemories = memories?.filter((memory) =>
+    memory.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -51,7 +54,7 @@ export function MemoryExplorer() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredMemories?.map(memory => (
+          {filteredMemories?.map((memory) => (
             <div
               key={memory.id}
               className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"

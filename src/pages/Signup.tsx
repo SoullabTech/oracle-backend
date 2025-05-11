@@ -1,21 +1,22 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export function Signup() {
-  const [email, setEmail] = useState<string>('');  // Added explicit type
-  const [password, setPassword] = useState<string>('');  // Added explicit type
-  const [error, setError] = useState<string>('');  // Added explicit type
+  const [email, setEmail] = useState<string>(""); // Added explicit type
+  const [password, setPassword] = useState<string>(""); // Added explicit type
+  const [error, setError] = useState<string>(""); // Added explicit type
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  // Specified event type
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Specified event type
     e.preventDefault();
     try {
       await signUp(email, password);
-      navigate('/survey');
+      navigate("/survey");
     } catch (err) {
-      setError('Error creating account');
+      setError("Error creating account");
     }
   };
 
@@ -23,18 +24,21 @@ export function Signup() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
-        
+
         {/* Error display */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email input */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -46,10 +50,13 @@ export function Signup() {
               required
             />
           </div>
-          
+
           {/* Password input */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -73,7 +80,7 @@ export function Signup() {
 
         {/* Link to login */}
         <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:text-blue-500">
             Sign in
           </Link>

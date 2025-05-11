@@ -30,18 +30,29 @@ describe('Feedback Service', () => {
 
   describe('submitFeedback', () => {
     it('should submit feedback successfully', async () => {
-      const mockSupabaseResponse = { error: null };
+      const mockSupabaseResponse = { data: [{ id: 1 }], error: null }; // Simulating a successful response
       supabase.from().insert.mockResolvedValue(mockSupabaseResponse);
 
-      await expect(submitFeedback(mockUserId, mockFeedback)).resolves.not.toThrow();
+      await expect(submitFeedback(mockUserId, mockFeedback)).resolves.toEqual({
+        success: true,
+        message: 'Feedback submitted successfully',
+      });
+
       expect(supabase.from).toHaveBeenCalledWith('feedback_metrics');
+      expect(supabase.from().insert).toHaveBeenCalledWith([
+        expect.objectContaining({
+          responseId: mockFeedback.responseId,
+          rating: mockFeedback.rating,
+          comment: mockFeedback.comment,
+        }),
+      ]);
     });
 
     it('should handle submission errors', async () => {
-      const mockSupabaseResponse = { error: new Error('Submission failed') };
+      const mockSupabaseResponse = { data: null, error: new Error('Submission failed') };
       supabase.from().insert.mockResolvedValue(mockSupabaseResponse);
 
-      await expect(submitFeedback(mockUserId, mockFeedback)).rejects.toThrow('Failed to submit feedback');
+      await expect(submitFeedback(mockUserId, mockFeedback)).rejects.toThrowError('Failed to submit feedback');
     });
   });
 
@@ -70,4 +81,12 @@ describe('Feedback Service', () => {
       const stats = await getFeedbackStats(mockUserId);
       expect(stats).toBeNull();
     });
+
+    it('should handle error during stats retrieval', async () => {
+      const mockResponse = { data: null, error: new Error('Database error') };
+      supabase.from().select().eq.mockResolvedValue(mockResponse);
+
+      await expect(getFeedbackStats(mockUserId)).rejects.toThrow('Database error');
+    });
   });
+});

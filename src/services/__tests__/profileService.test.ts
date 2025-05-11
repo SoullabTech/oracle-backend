@@ -2,12 +2,12 @@ import {
   getUserProfile,
   updateUserProfile,
   getProfileStats,
-} from '../profileService';
-import { supabase } from '../../lib/supabase';
-import type { ElementalProfile } from '../../types/survey';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+} from "../profileService";
+import { supabase } from "../../lib/supabase";
+import type { ElementalProfile } from "../../types/survey";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock('../../lib/supabase', () => ({
+vi.mock("../../lib/supabase", () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
@@ -19,8 +19,8 @@ vi.mock('../../lib/supabase', () => ({
   },
 }));
 
-describe('Profile Service', () => {
-  const mockUserId = 'test-user-123';
+describe("Profile Service", () => {
+  const mockUserId = "test-user-123";
   const mockProfile: ElementalProfile = {
     fire: 80,
     water: 60,
@@ -28,9 +28,9 @@ describe('Profile Service', () => {
     air: 50,
     aether: 40,
     crystal_focus: {
-      type: 'spiritual',
-      challenges: 'Finding inner peace',
-      aspirations: 'Deeper connection with self',
+      type: "spiritual",
+      challenges: "Finding inner peace",
+      aspirations: "Deeper connection with self",
     },
     user_id: mockUserId,
     created_at: new Date().toISOString(),
@@ -41,8 +41,8 @@ describe('Profile Service', () => {
     vi.clearAllMocks();
   });
 
-  describe('getUserProfile', () => {
-    it('should fetch user profile successfully', async () => {
+  describe("getUserProfile", () => {
+    it("should fetch user profile successfully", async () => {
       (supabase.from().select().eq().single as any).mockResolvedValue({
         data: mockProfile,
         error: null,
@@ -50,13 +50,13 @@ describe('Profile Service', () => {
 
       const result = await getUserProfile(mockUserId);
       expect(result).toEqual(mockProfile);
-      expect(supabase.from).toHaveBeenCalledWith('elemental_profiles');
+      expect(supabase.from).toHaveBeenCalledWith("elemental_profiles");
     });
 
-    it('should handle errors gracefully', async () => {
+    it("should handle errors gracefully", async () => {
       (supabase.from().select().eq().single as any).mockResolvedValue({
         data: null,
-        error: new Error('Database error'),
+        error: new Error("Database error"),
       });
 
       const result = await getUserProfile(mockUserId);
@@ -64,8 +64,8 @@ describe('Profile Service', () => {
     });
   });
 
-  describe('updateUserProfile', () => {
-    it('should update profile successfully', async () => {
+  describe("updateUserProfile", () => {
+    it("should update profile successfully", async () => {
       (supabase.from().upsert().select().single as any).mockResolvedValue({
         data: mockProfile,
         error: null,
@@ -73,13 +73,13 @@ describe('Profile Service', () => {
 
       const result = await updateUserProfile(mockUserId, mockProfile);
       expect(result).toEqual(mockProfile);
-      expect(supabase.from).toHaveBeenCalledWith('elemental_profiles');
+      expect(supabase.from).toHaveBeenCalledWith("elemental_profiles");
     });
 
-    it('should handle update errors gracefully', async () => {
+    it("should handle update errors gracefully", async () => {
       (supabase.from().upsert().select().single as any).mockResolvedValue({
         data: null,
-        error: new Error('Update failed'),
+        error: new Error("Update failed"),
       });
 
       const result = await updateUserProfile(mockUserId, mockProfile);
@@ -87,8 +87,8 @@ describe('Profile Service', () => {
     });
   });
 
-  describe('getProfileStats', () => {
-    it('should fetch profile stats successfully', async () => {
+  describe("getProfileStats", () => {
+    it("should fetch profile stats successfully", async () => {
       const mockStats = {
         fire: mockProfile.fire,
         water: mockProfile.water,
@@ -104,13 +104,13 @@ describe('Profile Service', () => {
 
       const result = await getProfileStats(mockUserId);
       expect(result).toEqual(mockStats);
-      expect(supabase.from).toHaveBeenCalledWith('elemental_profiles');
+      expect(supabase.from).toHaveBeenCalledWith("elemental_profiles");
     });
 
-    it('should handle stats fetch errors gracefully', async () => {
+    it("should handle stats fetch errors gracefully", async () => {
       (supabase.from().select().eq().single as any).mockResolvedValue({
         data: null,
-        error: new Error('Stats fetch failed'),
+        error: new Error("Stats fetch failed"),
       });
 
       const result = await getProfileStats(mockUserId);

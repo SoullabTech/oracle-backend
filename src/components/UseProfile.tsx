@@ -1,6 +1,6 @@
 // src/components/UserProfile.tsx
-import React, { useEffect, useState } from 'react';
-import { fetchUserProfile } from '../services/profileService';
+import React, { useEffect, useState } from "react";
+import { fetchUserProfile } from "../services/profileService";
 
 const UserProfile = ({ userId }: { userId: string }) => {
   const [profile, setProfile] = useState<any>(null);
@@ -11,7 +11,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
         const data = await fetchUserProfile(userId);
         setProfile(data);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
       }
     };
 

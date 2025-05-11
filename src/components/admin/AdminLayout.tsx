@@ -1,5 +1,5 @@
-import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Fragment, useState } from "react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   ChartPieIcon,
@@ -7,15 +7,15 @@ import {
   DocumentTextIcon,
   HomeIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+} from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const navigation = [
-  { name: 'Overview', href: '/admin', icon: HomeIcon },
-  { name: 'Oracle Insights', href: '/admin/insights', icon: ChartPieIcon },
-  { name: 'Memory Explorer', href: '/admin/memory', icon: DocumentTextIcon },
-  { name: 'Configuration', href: '/admin/config', icon: CogIcon },
+  { name: "Overview", href: "/admin", icon: HomeIcon },
+  { name: "Oracle Insights", href: "/admin/insights", icon: ChartPieIcon },
+  { name: "Memory Explorer", href: "/admin/memory", icon: DocumentTextIcon },
+  { name: "Configuration", href: "/admin/config", icon: CogIcon },
 ];
 
 interface AdminLayoutProps {
@@ -29,7 +29,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
   const renderSidebarMenu = () => (
@@ -59,7 +59,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     <div>
       {/* Mobile Sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
+        <Dialog
+          as="div"
+          className="relative z-50 lg:hidden"
+          onClose={setSidebarOpen}
+        >
           <Transition.Child
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
@@ -85,9 +89,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
-                    <img className="h-8 w-auto" src="/vite.svg" alt="Your Company" />
+                    <img
+                      className="h-8 w-auto"
+                      src="/vite.svg"
+                      alt="Your Company"
+                    />
                   </div>
-                  <nav className="flex flex-1 flex-col">{renderSidebarMenu()}</nav>
+                  <nav className="flex flex-1 flex-col">
+                    {renderSidebarMenu()}
+                  </nav>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -146,7 +156,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         <button
                           onClick={handleSignOut}
                           className={`${
-                            active ? 'bg-gray-50' : ''
+                            active ? "bg-gray-50" : ""
                           } block px-3 py-1 text-sm leading-6 text-gray-900 w-full text-left`}
                         >
                           Sign out

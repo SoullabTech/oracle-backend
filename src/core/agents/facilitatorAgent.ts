@@ -1,6 +1,6 @@
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
+import { OracleAgent } from "./oracleAgent";
 import type { AgentResponse } from "./types;
 import { getUserProfile } from "../services/profileService;
 import logger from "../utils/logger;

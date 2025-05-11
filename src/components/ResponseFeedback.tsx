@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface ResponseFeedbackProps {
   responseId: string;
   onFeedback: (feedback: { rating: number; comment?: string }) => void;
 }
 
-export function ResponseFeedback({ responseId, onFeedback }: ResponseFeedbackProps) {
+export function ResponseFeedback({
+  responseId,
+  onFeedback,
+}: ResponseFeedbackProps) {
   const [rating, setRating] = useState<number | null>(null);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,7 +38,9 @@ export function ResponseFeedback({ responseId, onFeedback }: ResponseFeedbackPro
     <form onSubmit={handleSubmit} className="space-y-4 mt-4">
       {/* Rating selection */}
       <div>
-        <p className="text-sm text-gray-600 mb-2">How helpful was this response?</p>
+        <p className="text-sm text-gray-600 mb-2">
+          How helpful was this response?
+        </p>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -44,8 +49,8 @@ export function ResponseFeedback({ responseId, onFeedback }: ResponseFeedbackPro
               onClick={() => setRating(value)} // Set rating on click
               className={`w-10 h-10 rounded-full ${
                 rating === value
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-100 hover:bg-gray-200'
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
               {value}

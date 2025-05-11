@@ -1,6 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const elementalThemeSchema = z.enum(['fire', 'water', 'earth', 'air', 'aether']);
+export const elementalThemeSchema = z.enum([
+  "fire",
+  "water",
+  "earth",
+  "air",
+  "aether",
+]);
 export type ElementalTheme = z.infer<typeof elementalThemeSchema>;
 
 export interface StoryRequest {

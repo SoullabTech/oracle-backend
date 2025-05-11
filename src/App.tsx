@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
-import './App.css';
+import { useState, useCallback } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState<number>(0);  // Type is already set for count
+  const [count, setCount] = useState<number>(0); // Type is already set for count
 
   const incrementCount = useCallback(() => {
     setCount((prevCount) => prevCount + 1);
@@ -16,22 +16,21 @@ function App() {
 
       <main>
         <div className="counter-card">
-          <button 
-            onClick={incrementCount} 
-            className="increment-button" 
-            aria-label="Increment count"  // Added aria-label for accessibility
+          <button
+            onClick={incrementCount}
+            className="increment-button"
+            aria-label="Increment count" // Added aria-label for accessibility
           >
             Count is {count}
           </button>
           <p>
-            Edit <code>src/App.tsx</code> and save to test Hot Module Replacement (HMR)
+            Edit <code>src/App.tsx</code> and save to test Hot Module
+            Replacement (HMR)
           </p>
         </div>
 
         <footer>
-          <p>
-            Click on the Vite and React logos to learn more.
-          </p>
+          <p>Click on the Vite and React logos to learn more.</p>
         </footer>
       </main>
     </div>

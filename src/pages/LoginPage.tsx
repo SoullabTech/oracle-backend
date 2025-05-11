@@ -1,11 +1,11 @@
 // src/pages/LoginPage.tsx (or src/components/LoginPage.tsx)
-import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth'; // Adjust path based on your project structure
+import { useState } from "react";
+import { useAuth } from "../hooks/useAuth"; // Adjust path based on your project structure
 
 const LoginPage = () => {
   const { signIn, error, loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ const LoginPage = () => {
             className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300"
             disabled={loading}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 

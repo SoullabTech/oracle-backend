@@ -1,27 +1,51 @@
-// src/app.ts
+import { Request, Response, NextFunction } from "express";
+import {
+  AppError,
+  ValidationError,
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+} from "../utils/errors";
+import logger from "../utils/logger";
+import { config } from "../config";
 
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
+export const errorHandler = (
+  error: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  logger.error("Error:", {
+    name: error.name,
+    message: error.message,
+    stack: config.server.env === "development" ? error.stack : undefined,
+  });
 
-import { authenticate } from './middleware/authenticate;
-import userProfileRouter from './routes/userProfile.routes;
-// ... import other routers as needed
+  if (error instanceof ValidationError) {
+    return res.status(400).json({ error: error.message });
+  }
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+  if (error instanceof AuthenticationError) {
+    return res.status(401).json({ error: error.message });
+  }
 
-// Mount the user profile route at /update-profile
-app.use('/', userProfileRouter);
+  if (error instanceof AuthorizationError) {
+    return res.status(403).json({ error: error.message });
+  }
 
-// (Optional) Swagger, health-check, and other routes here
+  if (error instanceof NotFoundError) {
+    return res.status(404).json({ error: error.message });
+  }
 
-// Example health-check
-app.get('/', (_req, res) => {
-  res.send('API is up and running');
-});
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({ error: error.message });
+  }
 
-export { app };
+  // Default error
+  res.status(500).json({
+    error:
+      config.server.env === "production"
+        ? "Internal Server Error"
+        : error.message,
+  });
+};

@@ -1,23 +1,228 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, ChartPieIcon, CogIcon, DocumentTextIcon, HomeIcon, } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { Fragment, useState } from "react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+import {
+  Bars3Icon,
+  ChartPieIcon,
+  CogIcon,
+  DocumentTextIcon,
+  HomeIcon,
+} from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 const navigation = [
-    { name: 'Overview', href: '/admin', icon: HomeIcon },
-    { name: 'Oracle Insights', href: '/admin/insights', icon: ChartPieIcon },
-    { name: 'Memory Explorer', href: '/admin/memory', icon: DocumentTextIcon },
-    { name: 'Configuration', href: '/admin/config', icon: CogIcon },
+  { name: "Overview", href: "/admin", icon: HomeIcon },
+  { name: "Oracle Insights", href: "/admin/insights", icon: ChartPieIcon },
+  { name: "Memory Explorer", href: "/admin/memory", icon: DocumentTextIcon },
+  { name: "Configuration", href: "/admin/config", icon: CogIcon },
 ];
 export function AdminLayout({ children }) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { user, signOut } = useAuth();
-    const navigate = useNavigate();
-    const handleSignOut = async () => {
-        await signOut();
-        navigate('/login');
-    };
-    const renderSidebarMenu = () => (_jsx("ul", { role: "list", className: "flex flex-1 flex-col gap-y-7", children: _jsx("li", { children: _jsx("ul", { role: "list", className: "-mx-2 space-y-1", children: navigation.map((item) => (_jsx("li", { children: _jsxs("a", { href: item.href, className: "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600", children: [_jsx(item.icon, { className: "h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600", "aria-hidden": "true" }), item.name] }) }, item.name))) }) }) }));
-    return (_jsxs("div", { children: [_jsx(Transition.Root, { show: sidebarOpen, as: Fragment, children: _jsxs(Dialog, { as: "div", className: "relative z-50 lg:hidden", onClose: setSidebarOpen, children: [_jsx(Transition.Child, { as: Fragment, enter: "transition-opacity ease-linear duration-300", enterFrom: "opacity-0", enterTo: "opacity-100", leave: "transition-opacity ease-linear duration-300", leaveFrom: "opacity-100", leaveTo: "opacity-0", children: _jsx("div", { className: "fixed inset-0 bg-gray-900/80" }) }), _jsx("div", { className: "fixed inset-0 flex", children: _jsx(Transition.Child, { as: Fragment, enter: "transition ease-in-out duration-300 transform", enterFrom: "-translate-x-full", enterTo: "translate-x-0", leave: "transition ease-in-out duration-300 transform", leaveFrom: "translate-x-0", leaveTo: "-translate-x-full", children: _jsx(Dialog.Panel, { className: "relative mr-16 flex w-full max-w-xs flex-1", children: _jsxs("div", { className: "flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4", children: [_jsx("div", { className: "flex h-16 shrink-0 items-center", children: _jsx("img", { className: "h-8 w-auto", src: "/vite.svg", alt: "Your Company" }) }), _jsx("nav", { className: "flex flex-1 flex-col", children: renderSidebarMenu() })] }) }) }) })] }) }), _jsx("div", { className: "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col", children: _jsxs("div", { className: "flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4", children: [_jsx("div", { className: "flex h-16 shrink-0 items-center", children: _jsx("img", { className: "h-8 w-auto", src: "/vite.svg", alt: "Your Company" }) }), _jsx("nav", { className: "flex flex-1 flex-col", children: renderSidebarMenu() })] }) }), _jsxs("div", { className: "lg:pl-72", children: [_jsxs("div", { className: "sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8", children: [_jsxs("button", { type: "button", className: "-m-2.5 p-2.5 text-gray-700 lg:hidden", onClick: () => setSidebarOpen(true), children: [_jsx("span", { className: "sr-only", children: "Open sidebar" }), _jsx(Bars3Icon, { className: "h-6 w-6", "aria-hidden": "true" })] }), _jsxs("div", { className: "flex flex-1 gap-x-4 self-stretch lg:gap-x-6", children: [_jsx("div", { className: "flex flex-1" }), _jsx("div", { className: "flex items-center gap-x-4 lg:gap-x-6", children: _jsxs(Menu, { as: "div", className: "relative", children: [_jsxs(Menu.Button, { className: "-m-1.5 flex items-center p-1.5", children: [_jsx("span", { className: "sr-only", children: "Open user menu" }), _jsx("span", { className: "hidden lg:flex lg:items-center", children: _jsx("span", { className: "ml-4 text-sm font-semibold leading-6 text-gray-900", "aria-hidden": "true", children: user?.email }) })] }), _jsx(Transition, { as: Fragment, enter: "transition ease-out duration-100", enterFrom: "transform opacity-0 scale-95", enterTo: "transform opacity-100 scale-100", leave: "transition ease-in duration-75", leaveFrom: "transform opacity-100 scale-100", leaveTo: "transform opacity-0 scale-95", children: _jsx(Menu.Items, { className: "absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none", children: _jsx(Menu.Item, { children: ({ active }) => (_jsx("button", { onClick: handleSignOut, className: `${active ? 'bg-gray-50' : ''} block px-3 py-1 text-sm leading-6 text-gray-900 w-full text-left`, children: "Sign out" })) }) }) })] }) })] })] }), _jsx("main", { className: "py-10", children: _jsx("div", { className: "px-4 sm:px-6 lg:px-8", children: children }) })] })] }));
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
+  const renderSidebarMenu = () =>
+    _jsx("ul", {
+      role: "list",
+      className: "flex flex-1 flex-col gap-y-7",
+      children: _jsx("li", {
+        children: _jsx("ul", {
+          role: "list",
+          className: "-mx-2 space-y-1",
+          children: navigation.map((item) =>
+            _jsx(
+              "li",
+              {
+                children: _jsxs("a", {
+                  href: item.href,
+                  className:
+                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                  children: [
+                    _jsx(item.icon, {
+                      className:
+                        "h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600",
+                      "aria-hidden": "true",
+                    }),
+                    item.name,
+                  ],
+                }),
+              },
+              item.name,
+            ),
+          ),
+        }),
+      }),
+    });
+  return _jsxs("div", {
+    children: [
+      _jsx(Transition.Root, {
+        show: sidebarOpen,
+        as: Fragment,
+        children: _jsxs(Dialog, {
+          as: "div",
+          className: "relative z-50 lg:hidden",
+          onClose: setSidebarOpen,
+          children: [
+            _jsx(Transition.Child, {
+              as: Fragment,
+              enter: "transition-opacity ease-linear duration-300",
+              enterFrom: "opacity-0",
+              enterTo: "opacity-100",
+              leave: "transition-opacity ease-linear duration-300",
+              leaveFrom: "opacity-100",
+              leaveTo: "opacity-0",
+              children: _jsx("div", {
+                className: "fixed inset-0 bg-gray-900/80",
+              }),
+            }),
+            _jsx("div", {
+              className: "fixed inset-0 flex",
+              children: _jsx(Transition.Child, {
+                as: Fragment,
+                enter: "transition ease-in-out duration-300 transform",
+                enterFrom: "-translate-x-full",
+                enterTo: "translate-x-0",
+                leave: "transition ease-in-out duration-300 transform",
+                leaveFrom: "translate-x-0",
+                leaveTo: "-translate-x-full",
+                children: _jsx(Dialog.Panel, {
+                  className: "relative mr-16 flex w-full max-w-xs flex-1",
+                  children: _jsxs("div", {
+                    className:
+                      "flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4",
+                    children: [
+                      _jsx("div", {
+                        className: "flex h-16 shrink-0 items-center",
+                        children: _jsx("img", {
+                          className: "h-8 w-auto",
+                          src: "/vite.svg",
+                          alt: "Your Company",
+                        }),
+                      }),
+                      _jsx("nav", {
+                        className: "flex flex-1 flex-col",
+                        children: renderSidebarMenu(),
+                      }),
+                    ],
+                  }),
+                }),
+              }),
+            }),
+          ],
+        }),
+      }),
+      _jsx("div", {
+        className:
+          "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col",
+        children: _jsxs("div", {
+          className:
+            "flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4",
+          children: [
+            _jsx("div", {
+              className: "flex h-16 shrink-0 items-center",
+              children: _jsx("img", {
+                className: "h-8 w-auto",
+                src: "/vite.svg",
+                alt: "Your Company",
+              }),
+            }),
+            _jsx("nav", {
+              className: "flex flex-1 flex-col",
+              children: renderSidebarMenu(),
+            }),
+          ],
+        }),
+      }),
+      _jsxs("div", {
+        className: "lg:pl-72",
+        children: [
+          _jsxs("div", {
+            className:
+              "sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8",
+            children: [
+              _jsxs("button", {
+                type: "button",
+                className: "-m-2.5 p-2.5 text-gray-700 lg:hidden",
+                onClick: () => setSidebarOpen(true),
+                children: [
+                  _jsx("span", {
+                    className: "sr-only",
+                    children: "Open sidebar",
+                  }),
+                  _jsx(Bars3Icon, {
+                    className: "h-6 w-6",
+                    "aria-hidden": "true",
+                  }),
+                ],
+              }),
+              _jsxs("div", {
+                className: "flex flex-1 gap-x-4 self-stretch lg:gap-x-6",
+                children: [
+                  _jsx("div", { className: "flex flex-1" }),
+                  _jsx("div", {
+                    className: "flex items-center gap-x-4 lg:gap-x-6",
+                    children: _jsxs(Menu, {
+                      as: "div",
+                      className: "relative",
+                      children: [
+                        _jsxs(Menu.Button, {
+                          className: "-m-1.5 flex items-center p-1.5",
+                          children: [
+                            _jsx("span", {
+                              className: "sr-only",
+                              children: "Open user menu",
+                            }),
+                            _jsx("span", {
+                              className: "hidden lg:flex lg:items-center",
+                              children: _jsx("span", {
+                                className:
+                                  "ml-4 text-sm font-semibold leading-6 text-gray-900",
+                                "aria-hidden": "true",
+                                children: user?.email,
+                              }),
+                            }),
+                          ],
+                        }),
+                        _jsx(Transition, {
+                          as: Fragment,
+                          enter: "transition ease-out duration-100",
+                          enterFrom: "transform opacity-0 scale-95",
+                          enterTo: "transform opacity-100 scale-100",
+                          leave: "transition ease-in duration-75",
+                          leaveFrom: "transform opacity-100 scale-100",
+                          leaveTo: "transform opacity-0 scale-95",
+                          children: _jsx(Menu.Items, {
+                            className:
+                              "absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none",
+                            children: _jsx(Menu.Item, {
+                              children: ({ active }) =>
+                                _jsx("button", {
+                                  onClick: handleSignOut,
+                                  className: `${active ? "bg-gray-50" : ""} block px-3 py-1 text-sm leading-6 text-gray-900 w-full text-left`,
+                                  children: "Sign out",
+                                }),
+                            }),
+                          }),
+                        }),
+                      ],
+                    }),
+                  }),
+                ],
+              }),
+            ],
+          }),
+          _jsx("main", {
+            className: "py-10",
+            children: _jsx("div", {
+              className: "px-4 sm:px-6 lg:px-8",
+              children: children,
+            }),
+          }),
+        ],
+      }),
+    ],
+  });
 }
