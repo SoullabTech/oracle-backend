@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
-import type { AIResponse } from '../types/ai';
-import { MemoryService } from './memoryService'; // 👈 import the service
-import logger from '../utils/logger';
+import type { AIResponse } from '../types/ai.js';
+import { MemoryService } from './memoryService.js'; // 👈 import the service
+import logger from '../utils/logger.js';
 
 export const oracleAgentConfigSchema = z.object({
   openaiApiKey: z.string(),

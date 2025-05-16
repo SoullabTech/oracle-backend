@@ -1,6 +1,6 @@
 // src/services/dreamService.ts
 
-import { openai } from '../lib/clients';
+import { openai } from '../lib/clients.js';
 
 /**
  * Interprets symbolic or recurring dream themes from a journal entry.

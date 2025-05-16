@@ -1,4 +1,4 @@
-import type { Metadata } from './metadata';
+import type { Metadata } from './metadata.js';
 
 /**
  * Represents a stored memory item, either user query or agent response.

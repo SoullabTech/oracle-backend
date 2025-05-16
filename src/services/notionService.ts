@@ -1,8 +1,8 @@
 // src/services/notionService.ts
 import { Client } from '@notionhq/client'
-import { env } from '../lib/config'
-import logger from '../utils/logger'
-import type { NotionPage, KnowledgeEntry } from '../types/knowledge'
+import { env } from '../lib/config.js'
+import logger from '../utils/logger.js'
+import type { NotionPage, KnowledgeEntry } from '../types/knowledge.js'
 
 const notion = new Client({ auth: env.NOTION_TOKEN })
 

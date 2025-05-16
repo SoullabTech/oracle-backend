@@ -1,9 +1,9 @@
 // src/services/memoryService.ts
 
-import { supabase } from '../lib/supabaseClient'
-import logger from '../utils/logger'
-import oracleLogger from '../utils/oracleLogger'
-import type { MemoryItem } from '../types/memory'
+import { supabase } from '../lib/supabaseClient.js';
+import logger from '../utils/logger.js';
+import { logOracleInsight } from '../utils/oracleLogger.js';
+import type { MemoryItem } from '../types/memory.js';
 
 /**
  * Store a memory item and log the creation event.
@@ -11,40 +11,35 @@ import type { MemoryItem } from '../types/memory'
 export async function storeMemoryItem(
   memory: Omit<MemoryItem, 'id' | 'created_at'>
 ): Promise<MemoryItem> {
-  try {
-    const { data, error } = await supabase
-      .from<MemoryItem>('memories')
-      .insert(
-        {
-          user_id: memory.clientId,
-          content: memory.content,
-          metadata: memory.metadata ?? {},
-        },
-        { returning: 'representation' }
-      )
-      .single()
-
-    if (error || !data) {
-      throw error ?? new Error('No data returned from insert')
-    }
-
-    await oracleLogger.logInsight({
-      userId: memory.clientId,
-      insightType: 'memory_creation',
-      content: `Memory created: ${data.id}`,
-      metadata: {
-        memory_id: data.id,
-        tags: memory.metadata?.tags ?? [],
-        length: memory.content.length,
+  const { data, error } = await supabase
+    .from<MemoryItem>('memories')
+    .insert(
+      {
+        user_id: memory.clientId,
+        content: memory.content,
+        metadata: memory.metadata ?? {},
       },
-    })
+      { returning: 'representation' }
+    )
+    .single();
 
-    logger.info('Memory stored successfully', { memoryId: data.id })
-    return data
-  } catch (err) {
-    logger.error('Failed to store memory', { error: err })
-    throw err
-  }
+  if (error || !data) throw error ?? new Error('No data returned from insert');
+
+  await logOracleInsight({
+    anon_id: memory.clientId,
+    archetype: 'Memory',
+    element: 'memory',
+    insight: {
+      message: `Memory created: ${data.id}`,
+      raw_input: memory.content,
+    },
+    emotion: 0.8,
+    phase: 'creation',
+    context: [],
+  });
+
+  logger.info('Memory stored successfully', { memoryId: data.id });
+  return data;
 }
 
 /**
@@ -55,40 +50,32 @@ export async function getMemoriesBySymbol(
   userId: string,
   limit = 10
 ): Promise<MemoryItem[]> {
-  try {
-    // Assuming `metadata->'tags'` is an array of strings in JSONB
-    const { data, error } = await supabase
-      .from<MemoryItem>('memories')
-      .select('*')
-      .contains('metadata', { tags: [symbol] })
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(limit)
+  const { data, error } = await supabase
+    .from<MemoryItem>('memories')
+    .select('*')
+    .contains('metadata', { tags: [symbol] })
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
-    if (error) throw error
-    return data ?? []
-  } catch (err) {
-    logger.error('Error fetching memories by symbol', { error: err, symbol, userId })
-    return []
+  if (error) {
+    logger.error('Error fetching memories by symbol', { error, symbol, userId });
+    return [];
   }
+  return data ?? [];
 }
 
 /**
  * Fetch all memories for a given user.
  */
 export async function getAllMemories(userId: string): Promise<MemoryItem[]> {
-  try {
-    const { data, error } = await supabase
-      .from<MemoryItem>('memories')
-      .select('*')
-      .eq('user_id', userId)
+  const { data, error } = await supabase
+    .from<MemoryItem>('memories')
+    .select('*')
+    .eq('user_id', userId);
 
-    if (error) throw error
-    return data ?? []
-  } catch (err) {
-    logger.error('Failed to retrieve all memories', { error: err, userId })
-    throw err
-  }
+  if (error) throw error;
+  return data ?? [];
 }
 
 /**
@@ -98,20 +85,15 @@ export async function getRelevantMemories(
   userId: string,
   limit = 10
 ): Promise<MemoryItem[]> {
-  try {
-    const { data, error } = await supabase
-      .from<MemoryItem>('memories')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(limit)
+  const { data, error } = await supabase
+    .from<MemoryItem>('memories')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
-    if (error) throw error
-    return data ?? []
-  } catch (err) {
-    logger.error('Failed to get relevant memories', { error: err, userId })
-    throw err
-  }
+  if (error) throw error;
+  return data ?? [];
 }
 
 /**
@@ -122,89 +104,87 @@ export async function updateMemory(
   newContent: string,
   userId: string
 ): Promise<MemoryItem> {
-  try {
-    const { data, error } = await supabase
-      .from<MemoryItem>('memories')
-      .update({ content: newContent })
-      .eq('id', id)
-      .eq('user_id', userId)
-      .select('*')
-      .single()
+  const { data, error } = await supabase
+    .from<MemoryItem>('memories')
+    .update({ content: newContent })
+    .eq('id', id)
+    .eq('user_id', userId)
+    .select('*')
+    .single();
 
-    if (error || !data) {
-      throw error ?? new Error('No data returned from update')
-    }
+  if (error || !data) throw error ?? new Error('No data returned from update');
 
-    await oracleLogger.logInsight({
-      userId,
-      insightType: 'memory_update',
-      content: `Memory updated: ${id}`,
-      metadata: { memory_id: id, action: 'update' },
-    })
+  await logOracleInsight({
+    anon_id: userId,
+    archetype: 'Memory',
+    element: 'memory',
+    insight: {
+      message: `Memory updated: ${id}`,
+      raw_input: newContent,
+    },
+    emotion: 0.85,
+    phase: 'update',
+    context: [],
+  });
 
-    logger.info('Memory updated successfully', { memoryId: id })
-    return data
-  } catch (err) {
-    logger.error('Failed to update memory', { error: err, memoryId: id })
-    throw err
-  }
+  logger.info('Memory updated successfully', { memoryId: id });
+  return data;
 }
 
 /**
  * Delete a memory by ID.
  */
 export async function deleteMemory(id: string, userId: string): Promise<void> {
-  try {
-    const { error } = await supabase
-      .from('memories')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId)
+  const { error } = await supabase
+    .from('memories')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
 
-    if (error) throw error
+  if (error) throw error;
 
-    await oracleLogger.logInsight({
-      userId,
-      insightType: 'memory_deletion',
-      content: `Memory deleted: ${id}`,
-      metadata: { memory_id: id, action: 'delete' },
-    })
+  await logOracleInsight({
+    anon_id: userId,
+    archetype: 'Memory',
+    element: 'memory',
+    insight: {
+      message: `Memory deleted: ${id}`,
+      raw_input: id,
+    },
+    emotion: 0.85,
+    phase: 'deletion',
+    context: [],
+  });
 
-    logger.info('Memory deleted successfully', { memoryId: id })
-  } catch (err) {
-    logger.error('Failed to delete memory', { error: err, memoryId: id })
-    throw err
-  }
+  logger.info('Memory deleted successfully', { memoryId: id });
 }
 
 /**
  * Generate simple insights from stored memories.
  */
 export async function getMemoryInsights(userId: string): Promise<string[]> {
-  try {
-    const memories = await getAllMemories(userId)
-    if (memories.length === 0) {
-      return ['No memories found for analysis']
-    }
-
-    const insights = memories.map((m, idx) => {
-      const preview = m.content.length > 50 ? `${m.content.slice(0, 50)}...` : m.content
-      return `Insight ${idx + 1}: "${preview}"`
-    })
-
-    await oracleLogger.logInsight({
-      userId,
-      insightType: 'memory_insight',
-      content: 'Generated memory insights',
-      metadata: {
-        insight_count: insights.length,
-        memory_count: memories.length,
-      },
-    })
-
-    return insights
-  } catch (err) {
-    logger.error('Failed to generate memory insights', { error: err, userId })
-    throw err
+  const memories = await getAllMemories(userId);
+  if (memories.length === 0) {
+    return ['No memories found for analysis'];
   }
+
+  const insights = memories.map((m, idx) => {
+    const preview = m.content.length > 50 ? `${m.content.slice(0, 50)}...` : m.content;
+    return `Insight ${idx + 1}: "${preview}"`;
+  });
+
+  await logOracleInsight({
+    anon_id: userId,
+    archetype: 'Memory',
+    element: 'insight',
+    insight: {
+      message: 'Generated memory insights',
+      raw_input: JSON.stringify({ count: insights.length }),
+    },
+    emotion: 0.9,
+    phase: 'analysis',
+    context: [],
+  });
+
+  return insights;
 }

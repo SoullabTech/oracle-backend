@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/index;
-import { AuthenticationError } from '../utils/errors;
-import type { AuthenticatedRequest } from '../types';
+import { AuthenticationError } from .js'../utils/errors;
+import type { AuthenticatedRequest } from '../types.js';
 import logger from '../utils/logger;
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
@@ -13,7 +13,7 @@ export async function authenticateToken(
   next: NextFunction
 ): Promise<void> {
   try {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers[.js'authorization'];
     const token = authHeader?.split(' ')[1];
 
     if (!token) {

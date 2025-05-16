@@ -1,6 +1,6 @@
-import { env } from '../lib/config';
-import logger from '../utils/logger';
-import type { AIResponse } from '../types/ai';
+import { env } from '../lib/config.js';
+import logger from '../utils/logger.js';
+import type { AIResponse } from '../types/ai.js';
 
 interface ChatGPTOracleRequest {
   query: string;

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { submitFeedback, getFeedbackStats, getUserFeedback } from '../feedbackService';
-import { supabase } from '../../lib/supabase';
+import { submitFeedback, getFeedbackStats, getUserFeedback } from '../feedbackService.js';
+import { supabase } from '../../lib/supabase.js';
 
 vi.mock('../../lib/supabase', () => ({
   supabase: {

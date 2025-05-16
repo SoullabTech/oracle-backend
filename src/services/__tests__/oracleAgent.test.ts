@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { OracleAgent } from '../OracleAgent';
+import { OracleAgent } from '../OracleAgent.js';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 

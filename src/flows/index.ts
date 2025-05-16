@@ -1,7 +1,7 @@
-import type { Session, MemoryItem, SessionStats } from '../types';
-import { SessionService } from '../services/sessionService';
-import { MemoryService } from '../services/memoryService';
-import { MetaService } from '../services/metaService';
+import type { Session, MemoryItem, SessionStats } from '../types.js';
+import { SessionService } from '../services/sessionService.js';
+import { MemoryService } from '../services/memoryService.js';
+import { MetaService } from '../services/metaService.js';
 
 export class FlowManager {
   private sessionService: SessionService;

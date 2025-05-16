@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getAIResponse } from '../aiService';
-import type { ElementalProfile } from '../../types/survey';
+import { getAIResponse } from '../aiService.js';
+import type { ElementalProfile } from '../../types/survey.js';
 
 const createMock = vi.fn();
 const anthropicCreateMock = vi.fn();

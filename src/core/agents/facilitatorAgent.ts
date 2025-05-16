@@ -1,9 +1,10 @@
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
-import type { AgentResponse } from "./types;
-import { getUserProfile } from "../services/profileService;
-import logger from "../utils/logger;
+import { OracleAgent } from "./oracleAgent.js";
+import { logOracleInsight } from "../../utils/oracleLogger.js";
+import * as MemoryModule from "../../utils/memoryModule.js";import ModelService from "../../utils/modelService.js";
+import type { AgentResponse } from "../../types/ai.js";
+
 
 /**
  * FacilitatorAgent: Proposes practical rituals, interventions, or next steps.

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getChatGPTResponse } from '../chatgptService';
+import { getChatGPTResponse } from '../chatgptService.js';
 import OpenAI from 'openai';
 
 // Mock OpenAI

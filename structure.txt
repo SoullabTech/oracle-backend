@@ -1,0 +1,397 @@
+.
+├── App.css
+├── App.tsx
+├── README.md
+├── clean-import-extensions.ts
+├── crash.log
+├── eslint.config.js
+├── eslint.config.mjs
+├── example.ts
+├── index.css
+├── index.html
+├── index.ts
+├── ingest_kb.py
+├── jest.config.js
+├── kb_schema.json
+├── logs
+│   ├── exceptions.log
+│   └── rejections.log
+├── main.tsx
+├── oracle-backend
+│   ├── __tests__
+│   ├── apps
+│   │   └── backend
+│   │       └── spiralogic
+│   ├── lib
+│   │   ├── agentPrompts.ts
+│   │   └── setupTests.ts
+│   ├── scripts
+│   │   ├── checkPromptHealth.ts
+│   │   ├── cleanOldCheckins.ts
+│   │   ├── fixAgentImports.ts
+│   │   ├── fixImports.ts
+│   │   ├── ingestKnowledge.ts
+│   │   ├── seedprompts.ts
+│   │   ├── supabaseAdmin.ts
+│   │   ├── supabaseClient.test.ts
+│   │   └── utils
+│   ├── server
+│   │   ├── data
+│   │   ├── middleware
+│   │   ├── routes
+│   │   ├── tasks
+│   │   └── types
+│   ├── slack-chat-agent
+│   ├── spiralogic_kb
+│   └── your-project-root
+│       └── _
+│           ├── applypatch-msg
+│           ├── commit-msg
+│           ├── h
+│           ├── husky.sh
+│           ├── post-applypatch
+│           ├── post-checkout
+│           ├── post-commit
+│           ├── post-merge
+│           ├── post-rewrite
+│           ├── pre-applypatch
+│           ├── pre-auto-gc
+│           ├── pre-commit
+│           ├── pre-merge-commit
+│           ├── pre-push
+│           ├── pre-rebase
+│           └── prepare-commit-msg
+├── package-lock.json
+├── package.json
+├── packages
+│   └── agents
+├── postcss.config.js
+├── public
+│   └── vite.svg
+├── scripts
+│   ├── add-js-extensions.js
+│   └── ingestKnowledge.ts
+├── server
+│   ├── data
+│   │   └── questions.ts
+│   ├── index.ts
+│   ├── middleware
+│   │   └── auth.ts
+│   ├── routes
+│   │   ├── adminRoutes.ts
+│   │   ├── index.ts
+│   │   ├── oracleRoutes.ts
+│   │   ├── profileRoutes.ts
+│   │   └── surveyRoutes.ts
+│   ├── tasks
+│   │   ├── scheduledAnalysis.ts
+│   │   ├── scheduledTasks.ts
+│   │   └── someTaskFunction.ts
+│   └── types
+│       └── express.d.ts
+├── spiralogic_kb
+│   └── shadow_evolution.json
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── app.ts
+│   ├── assets
+│   │   └── react.svg
+│   ├── components
+│   │   ├── AdminRoute.js
+│   │   ├── AdminRoute.tsx
+│   │   ├── CrystalFocusMenu.js
+│   │   ├── CrystalFocusMenu.tsx
+│   │   ├── ElementalProfile.js
+│   │   ├── ElementalProfile.tsx
+│   │   ├── ElementalProfileDisplay.js
+│   │   ├── ElementalProfileDisplay.tsx
+│   │   ├── FacilitatorDashboard.js
+│   │   ├── FacilitatorDashboard.tsx
+│   │   ├── FeedbackForm.js
+│   │   ├── FeedbackForm.tsx
+│   │   ├── FeedbackStats.js
+│   │   ├── FeedbackStats.tsx
+│   │   ├── FeedbackWidget.js
+│   │   ├── FeedbackWidget.tsx
+│   │   ├── Layout.js
+│   │   ├── Layout.tsx
+│   │   ├── LoginPage.js
+│   │   ├── LoginPage.tsx
+│   │   ├── Navigation.js
+│   │   ├── Navigation.tsx
+│   │   ├── OracleDashboard.js
+│   │   ├── OracleDashboard.tsx
+│   │   ├── PreferenceAdjustment.js
+│   │   ├── PreferenceAdjustment.tsx
+│   │   ├── ProfileDashboard.js
+│   │   ├── ProfileDashboard.tsx
+│   │   ├── ProfilePage.js
+│   │   ├── ProfilePage.tsx
+│   │   ├── ProfileUpdateForm.js
+│   │   ├── ProfileUpdateForm.tsx
+│   │   ├── ResponseFeedback.js
+│   │   ├── ResponseFeedback.tsx
+│   │   ├── SurveyQuestion.js
+│   │   ├── SurveyQuestion.tsx
+│   │   ├── UseProfile.js
+│   │   ├── UseProfile.tsx
+│   │   └── admin
+│   │       ├── AdminLayout.js
+│   │       ├── AdminLayout.tsx
+│   │       ├── AskOracle.js
+│   │       ├── AskOracle.tsx
+│   │       ├── ConfigurationPanel.js
+│   │       ├── ConfigurationPanel.tsx
+│   │       ├── DashboardOverview.js
+│   │       ├── DashboardOverview.tsx
+│   │       ├── FeedbackAnalytics.js
+│   │       ├── FeedbackAnalytics.tsx
+│   │       ├── MemoryExplorer.js
+│   │       ├── MemoryExplorer.tsx
+│   │       ├── OracleInsights.js
+│   │       ├── OracleInsights.tsx
+│   │       ├── SystemMetrics.js
+│   │       └── SystemMetrics.tsx
+│   ├── config
+│   │   └── index.ts
+│   ├── constants
+│   │   ├── elementalFacetMap.ts
+│   │   └── feedbackPrompts.ts
+│   ├── controllers
+│   │   ├── memory.controller.ts
+│   │   └── survey.controller.ts
+│   ├── core
+│   │   ├── ArchetypeFramework.ts
+│   │   ├── HumanPacedLearning.ts
+│   │   ├── SOUL.ts
+│   │   ├── SpiralogicJourney.ts
+│   │   ├── agent
+│   │   │   ├── memoryManager.js
+│   │   │   └── memoryManager.ts
+│   │   ├── agents
+│   │   │   ├── AgentCollaboration.ts
+│   │   │   ├── DreamAgent.ts
+│   │   │   ├── ShadowAgent.ts
+│   │   │   ├── SpiralogicAgent.ts
+│   │   │   ├── aetherAgent.ts
+│   │   │   ├── airAgent.ts
+│   │   │   ├── baseAgent.ts
+│   │   │   ├── clean-import-extensions.ts
+│   │   │   ├── clientAgent.ts
+│   │   │   ├── dualLLMRouting.ts
+│   │   │   ├── earthAgent.ts
+│   │   │   ├── elementalAgent.ts
+│   │   │   ├── elementalFramework.ts
+│   │   │   ├── facilitatorAgent.ts
+│   │   │   ├── fireAgent.ts
+│   │   │   ├── guideAgent.ts
+│   │   │   ├── index.ts
+│   │   │   ├── innerGuideAgent.ts
+│   │   │   ├── journalingAgent.ts
+│   │   │   ├── mainOracleAgent.ts
+│   │   │   ├── mentorAgent.ts
+│   │   │   ├── oracleAgent.ts
+│   │   │   ├── orchestrator.ts
+│   │   │   ├── persistentMemory.ts
+│   │   │   ├── shadowAgents.ts
+│   │   │   ├── spiralogic_kb
+│   │   │   │   └── shadow_evolution.json
+│   │   │   ├── types.ts
+│   │   │   ├── unifiedMemory.ts
+│   │   │   └── waterAgent.ts
+│   │   ├── oracle.openai.ts
+│   │   └── types.ts
+│   ├── docs
+│   │   ├── oracle.openapi.yaml
+│   │   └── swagger.ts
+│   ├── flows
+│   │   ├── index.ts
+│   │   ├── learningFlow.ts
+│   │   └── types.ts
+│   ├── hooks
+│   │   └── useAuth.ts
+│   ├── index.css
+│   ├── integration
+│   │   └── _tests_
+│   │       ├── mainOracleAgent.integration.test.js
+│   │       ├── mainOracleAgent.integration.test.ts
+│   │       ├── oracleService.integration.test.js
+│   │       └── oracleService.integration.test.ts
+│   ├── lib
+│   │   ├── config.ts
+│   │   ├── database.types.ts
+│   │   ├── openaiClient.js
+│   │   ├── schemas
+│   │   │   └── elemental.ts
+│   │   ├── supabase.ts
+│   │   ├── supabase.types.ts
+│   │   ├── supabaseClient.ts
+│   │   └── utils
+│   │       ├── faceUtil.ts
+│   │       └── validateProfile.ts
+│   ├── main
+│   │   ├── CollaborationSession.js
+│   │   └── CollaborationSession.ts
+│   ├── main.tsx
+│   ├── middleware
+│   │   ├── auth.ts
+│   │   ├── authenticate.ts
+│   │   ├── authenticateToken.ts
+│   │   ├── errorHandler.ts
+│   │   ├── index.ts
+│   │   ├── isAdmin.ts
+│   │   └── validate.ts
+│   ├── modules
+│   │   ├── elementalOracleService.ts
+│   │   ├── shadow
+│   │   │   └── index.ts
+│   │   └── shadowWorkModule.js
+│   ├── pages
+│   │   ├── About.tsx
+│   │   ├── AdminDashboard.tsx
+│   │   ├── Home.tsx
+│   │   ├── Login.tsx
+│   │   ├── LoginPage.tsx
+│   │   ├── Oracle.tsx
+│   │   ├── ProfilePage.tsx
+│   │   ├── Signup.tsx
+│   │   └── Survey.tsx
+│   ├── routes
+│   │   ├── authRoutes.ts
+│   │   ├── chatRoutes.ts
+│   │   ├── facet.routes.ts
+│   │   ├── facetMap.routes.ts
+│   │   ├── facilitatorRoutes.ts
+│   │   ├── feedback.routes.ts
+│   │   ├── flowRoutes.ts
+│   │   ├── index.ts
+│   │   ├── insightHistory.routes.ts
+│   │   ├── memory.routes.ts
+│   │   ├── memoryRoutes.ts
+│   │   ├── meta.ts
+│   │   ├── notionIngest.routes.ts
+│   │   ├── notionROutes.ts
+│   │   ├── oracle.routes.ts
+│   │   ├── sessionRoutes.ts
+│   │   ├── sessions.ts
+│   │   ├── storyGenerator.routes.ts
+│   │   ├── survey.routes.ts
+│   │   ├── symbolicTrends.routes.ts
+│   │   ├── userProfile.routes.ts
+│   │   └── userProfile.ts
+│   ├── server.ts
+│   ├── services
+│   │   ├── OracleAgent.ts
+│   │   ├── __tests__
+│   │   │   ├── aiService.test.ts
+│   │   │   ├── chatgptService.test.ts
+│   │   │   ├── collectiveWisdomService.test.ts
+│   │   │   ├── feedbackService.test.ts
+│   │   │   ├── integrationService.test.ts
+│   │   │   ├── knowledgeBaseService.test.ts
+│   │   │   ├── mainOracleAgent.test.ts
+│   │   │   ├── memoryService.test.ts
+│   │   │   ├── monitoringService.test.ts
+│   │   │   ├── notionService.test.ts
+│   │   │   ├── oracleAgent.test.ts
+│   │   │   ├── oracleAgentCLaude.test.ts
+│   │   │   ├── oracleAgentErrorHandling.test.ts
+│   │   │   ├── oracleAgentInitialization.test.ts
+│   │   │   ├── oracleAgentTaskExecution.test.ts
+│   │   │   ├── oracleService.test.ts
+│   │   │   └── profileService.test.ts
+│   │   ├── adminService.ts
+│   │   ├── aiService.ts
+│   │   ├── chatgptOracleService.ts
+│   │   ├── chatgptService.ts
+│   │   ├── collectiveWisdomService.ts
+│   │   ├── divinationService.ts
+│   │   ├── dreamservice.ts
+│   │   ├── earthAgentMock.ts
+│   │   ├── elementalOracleService.ts
+│   │   ├── facetService.ts
+│   │   ├── feedbackAnalysisService.ts
+│   │   ├── feedbackLoopService.ts
+│   │   ├── feedbackService.ts
+│   │   ├── guideAgent.ts
+│   │   ├── ingestService.ts
+│   │   ├── ingestionService.ts
+│   │   ├── innerGuideAgent.ts
+│   │   ├── integrationService.ts
+│   │   ├── knowledgeBaseService.ts
+│   │   ├── memoryService.ts
+│   │   ├── metaService.ts
+│   │   ├── monitoringService.ts
+│   │   ├── notionLogger.ts
+│   │   ├── notionService.ts
+│   │   ├── oracleApi.ts
+│   │   ├── oracleMetricsService.ts
+│   │   ├── oraclePatternService.ts
+│   │   ├── profileService.ts
+│   │   ├── questionService.ts
+│   │   ├── relationshipAgent.ts
+│   │   ├── sessionService.ts
+│   │   ├── shadowAgent.ts
+│   │   ├── somedependency.ts
+│   │   └── surveyService.ts
+│   ├── setupTests.ts
+│   ├── tasks
+│   │   └── scheduledTasks.ts
+│   ├── types
+│   │   ├── agent.ts
+│   │   ├── ai.ts
+│   │   ├── auth.ts
+│   │   ├── feedback.ts
+│   │   ├── index.d.ts
+│   │   ├── index.ts
+│   │   ├── knowledge.ts
+│   │   ├── memory.ts
+│   │   ├── metadata.ts
+│   │   ├── middleware.ts
+│   │   ├── oracle.ts
+│   │   ├── session.ts
+│   │   └── survey.ts
+│   ├── utils
+│   │   ├── __tests__
+│   │   │   └── personalityMapping.test.ts
+│   │   ├── agentScoreUtil.ts
+│   │   ├── auth.ts
+│   │   ├── cringeFilterService.ts
+│   │   ├── errors.ts
+│   │   ├── facetMapping.ts
+│   │   ├── facetUtil.ts
+│   │   ├── index.ts
+│   │   ├── localizationService.ts
+│   │   ├── logger.ts
+│   │   ├── memoryModule.ts
+│   │   ├── memoryStore.ts
+│   │   ├── mockSupabase.ts
+│   │   ├── modelService.ts
+│   │   ├── oracleLogger.ts
+│   │   ├── persistentMemory.ts
+│   │   ├── personalityMapping.ts
+│   │   ├── supabase.ts
+│   │   ├── symbolParser.ts
+│   │   ├── toneService.ts
+│   │   └── validateProfile.ts
+│   └── vite-env.d.ts
+├── structure.txt
+├── supabase
+│   └── migrations
+│       └── 20250418_create_insight_history.sql
+├── tailwind.config.js
+├── test-env.ts
+├── test.ts
+├── testServer.ts
+├── tsconfig-paths-loader.mjs
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── tsconfig.server.json
+├── tsconfig.tsbuildinfo
+├── vite.config.ts
+├── vitest.config.js
+└── vitest.config.ts
+
+64 directories, 331 files

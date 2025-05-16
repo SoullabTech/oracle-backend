@@ -1,8 +1,12 @@
 // src/routes/userProfile.routes.ts
 
-import { Router } from 'express';
-import { authenticate } from '../middleware/authenticate';
-import { getUserProfile, updateUserProfile, getProfileStats } from '../services/profileService';
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.js";
+import {
+  getUserProfile,
+  updateUserProfile,
+  getProfileStats,
+} from "../services/profileService.js";
 
 const router = Router();
 
@@ -14,25 +18,34 @@ router.use(authenticate);
  * Body should include:
  *   { userId, fire, water, earth, air, aether, crystal_focus }
  */
-router.post('/update-profile', async (req, res) => {
+router.post("/update-profile", async (req, res) => {
   try {
     const { userId, fire, water, earth, air, aether, crystal_focus } = req.body;
 
     if (
-      typeof userId !== 'string' ||
-      [fire, water, earth, air, aether].some(n => typeof n !== 'number' || n < 0 || n > 100)
+      typeof userId !== "string" ||
+      [fire, water, earth, air, aether].some(
+        (n) => typeof n !== "number" || n < 0 || n > 100
+      )
     ) {
-      return res.status(400).json({ message: 'Profile validation failed' });
+      return res.status(400).json({ message: "Profile validation failed" });
     }
 
     const updatedProfile = await updateUserProfile(userId, {
-      fire, water, earth, air, aether, crystal_focus
+      user_id: userId,
+      fire,
+      water,
+      earth,
+      air,
+      aether,
+      crystal_focus,
+      updated_at: new Date().toISOString(),
     });
 
     res.status(200).json(updatedProfile);
   } catch (err: any) {
-    console.error('❌ Error in /update-profile:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("❌ Error in /update-profile:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

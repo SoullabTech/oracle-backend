@@ -1,4 +1,4 @@
-import type { AuthResponse } from '../types';
+import type { AuthResponse } from '../types.js';
 
 export const supabase = {
   auth: {

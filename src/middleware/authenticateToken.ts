@@ -2,9 +2,9 @@
 import { Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/index;
-import { AuthenticationError } from '../utils/errors;
+import { AuthenticationError } from .js'../utils/errors;
 import type { AuthenticatedRequest } from '../types/index;
-import logger from '../utils/logger;
+import logger from .js'../utils/logger;
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 

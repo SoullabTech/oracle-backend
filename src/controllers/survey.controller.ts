@@ -1,9 +1,9 @@
 // src/controllers/survey.controller.ts
 import type { Response } from 'express';
 import { supabase } from '../lib/supabase;
-import { elementalProfileSchema } from '../lib/schemas/elemental;
+import { elementalProfileSchema } from .js'../lib/schemas/elemental;
 import { crystalFocusSchema } from '../types/survey;
-import type { AuthenticatedRequest } from '../types';
+import type { AuthenticatedRequest } from .js'../types';
 import type { SurveySubmission } from '../types/survey;
 
 export async function handleSurveySubmission(
@@ -20,7 +20,7 @@ export async function handleSurveySubmission(
     if (!focusParsed.success) {
       return res
         .status(400)
-        .json({ error: 'Invalid crystal focus', details: focusParsed.error.format() });
+        .json({ error: .js'Invalid crystal focus', details: focusParsed.error.format() });
     }
 
     // 2️⃣ Load survey questions

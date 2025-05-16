@@ -1,7 +1,7 @@
 // src/routes/survey.routes.ts
 
 import { Router } from 'express';
-import { processSurveySubmission } from '../services/surveyService';
+import { processSurveySubmission } from '../services/surveyService.js';
 import { z } from 'zod';
 
 const router = Router();

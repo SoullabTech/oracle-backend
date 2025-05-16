@@ -1,5 +1,5 @@
-import { computePersonalityAdjustment, getElementalGuidance } from '../personalityMapping';
-import type { ElementalProfile } from '../../types/survey';
+import { computePersonalityAdjustment, getElementalGuidance } from '../personalityMapping.js';
+import type { ElementalProfile } from '../../types/survey.js';
 
 describe('Personality Mapping', () => {
   const createProfile = (

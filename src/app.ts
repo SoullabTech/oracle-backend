@@ -7,7 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
 import { authenticate } from './middleware/authenticate;
-import userProfileRouter from './routes/userProfile.routes;
+import userProfileRouter from .js'./routes/userProfile.routes;
 // ... import other routers as needed
 
 const app = express();

@@ -1,11 +1,11 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { env } from '../lib/config';
-import { queryChatGPTOracle } from './chatgptOracleService';
-import logger from '../utils/logger';
+import { env } from '../lib/config.js';
+import { queryChatGPTOracle } from './chatgptOracleService.js';
+import logger from '../utils/logger.js';
 import { z } from 'zod';
-import type { AIModelConfig, RoutingCriteria, AIResponse } from '../types/ai';
-import type { ElementalProfile } from '../types/survey';
+import type { AIModelConfig, RoutingCriteria, AIResponse } from '../types/ai.js';
+import type { ElementalProfile } from '../types/survey.js';
 
 const openai = new OpenAI({
   apiKey: env.VITE_OPENAI_API_KEY,

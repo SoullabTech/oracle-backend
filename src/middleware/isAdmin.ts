@@ -10,7 +10,7 @@ export async function isAdmin(
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: 'No authorization header' });
+      return res.status(401).json({ error: .js'No authorization header' });
     }
 
     const token = authHeader.replace(/^Bearer\s+/, '');

@@ -1,8 +1,8 @@
 // src/utils/modelService.ts
 
-import { openai } from '../lib/openaiClient; // adjust if using other clients
-import logger from './logger;
-import type { AgentResponse } from '../core/agents/types;
+import { openai } from "../lib/openaiClient.js"; // adjust if using other clients
+import logger from "./logger.js";
+import type { AgentResponse } from "../core/agents/types.js";
 
 class ModelService {
   /**
@@ -17,17 +17,17 @@ class ModelService {
     const { input, userId, context = {} } = query;
 
     try {
-      logger.info('🔮 Sending query to model', { userId, input });
+      logger.info("🔮 Sending query to model", { userId, input });
 
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4', // or 'gpt-3.5-turbo' / 'claude' depending on your setup
+        model: "gpt-4", // or 'gpt-3.5-turbo' / 'claude' depending on your setup
         messages: [
           {
-            role: 'system',
-            content: 'You are an insightful Oracle. Offer reflective and transformative guidance.',
+            role: "system",
+            content: "You are an insightful Oracle. Offer reflective and transformative guidance.",
           },
           {
-            role: 'user',
+            role: "user",
             content: input,
           },
         ],
@@ -35,12 +35,13 @@ class ModelService {
         max_tokens: 800,
       });
 
-      const responseText = completion.choices[0]?.message?.content?.trim() ?? '';
+      const responseText =
+        completion.choices[0]?.message?.content?.trim() ?? "";
 
       const response: AgentResponse = {
         response: responseText,
-        provider: 'openai',
-        model: 'gpt-4',
+        provider: "openai",
+        model: "gpt-4",
         confidence: 0.9,
         metadata: {
           timestamp: new Date().toISOString(),
@@ -48,11 +49,18 @@ class ModelService {
         },
       };
 
-      logger.info('✅ Model response received', { userId, model: 'gpt-4' });
+      logger.info("✅ Model response received", {
+        userId,
+        model: "gpt-4",
+      });
 
       return response;
     } catch (error) {
-      logger.error('❌ ModelService failed to get a response', { error, userId, input });
+      logger.error("❌ ModelService failed to get a response", {
+        error,
+        userId,
+        input,
+      });
       throw error;
     }
   }

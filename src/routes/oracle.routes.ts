@@ -1,8 +1,6 @@
-// src/routes/oracle.routes.ts
-
 import { Router } from 'express';
-import { oracle } from '../core/agents/MainOracleAgent';
-import { logInsightToNotion } from '@/services/notionLogger';
+import { oracle } from '../core/agents/MainOracleAgent.js';
+import { logInsightToNotion } from '../services/notionLogger.js';
 import { z } from 'zod';
 
 const router = Router();

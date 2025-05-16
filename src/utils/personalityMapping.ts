@@ -1,4 +1,4 @@
-import type { ElementalProfile } from '../types/survey';
+import type { ElementalProfile } from '../types/survey.js';
 
 interface PersonalityAdjustment {
   tone: string;

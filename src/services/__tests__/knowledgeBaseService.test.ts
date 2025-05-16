@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { storeKnowledge, queryKnowledge, validateKnowledge } from '../knowledgeBaseService';
-import { supabase } from '../../lib/supabase';
+import { storeKnowledge, queryKnowledge, validateKnowledge } from '../knowledgeBaseService.js';
+import { supabase } from '../../lib/supabase.js';
 
 vi.mock('../../lib/supabase', () => ({
   supabase: {

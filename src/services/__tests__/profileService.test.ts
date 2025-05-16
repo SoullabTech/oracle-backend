@@ -2,9 +2,9 @@ import {
   getUserProfile,
   updateUserProfile,
   getProfileStats,
-} from '../profileService';
-import { supabase } from '../../lib/supabase';
-import type { ElementalProfile } from '../../types/survey';
+} from '../profileService.js';
+import { supabase } from '../../lib/supabase.js';
+import type { ElementalProfile } from '../../types/survey.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 vi.mock('../../lib/supabase', () => ({

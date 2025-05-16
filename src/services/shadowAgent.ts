@@ -1,7 +1,7 @@
-import type { AIResponse } from '../types/ai';
-import type { QueryInput } from '../types/oracle';
+import type { AIResponse } from '../types/ai.js';
+import type { QueryInput } from '../types/oracle.js';
 import { extractSymbolsFromJournal } from '../utils/symbolParser;
-import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
+import { detectFacetFromInput, getFacetDescription } from .js'../utils/facetUtil;
 import { logOracleInsight } from ../utils/oracleLogger';
 
 export class ShadowAgent {

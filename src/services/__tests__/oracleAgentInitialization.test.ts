@@ -1,6 +1,6 @@
 // src/services/__tests__/oracleAgentInitialization.test.ts
 import { describe, it, expect } from 'vitest';
-import { OracleAgent } from '../OracleAgent';
+import { OracleAgent } from '../OracleAgent.js';
 
 describe('Oracle Agent Initialization Tests', () => {
   const validConfig = {

@@ -1,4 +1,4 @@
-import { analyzeFeedbackTrends, updatePersonalityWeights } from '../services/monitoringService';
+import { analyzeFeedbackTrends, updatePersonalityWeights } from '../services/monitoringService.js';
 
 const ANALYSIS_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
 

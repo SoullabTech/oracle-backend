@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/index;
-import { validate } from '../middleware/validate;
+import { validate } from .js'../middleware/validate;
 import { loginSchema, refreshTokenSchema } from '../schemas/auth;
-import logger from '../utils/logger;
+import logger from .js'../utils/logger;
 
 const router = Router();
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);

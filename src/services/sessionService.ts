@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import { config } from '../config';
-import logger from '../utils/logger';
-import type { Session, SessionStats } from '../types';
-import { NotFoundError } from '../utils/errors';
+import { config } from '../config.js';
+import logger from '../utils/logger.js';
+import type { Session, SessionStats } from '../types.js';
+import { NotFoundError } from '../utils/errors.js';
 
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 

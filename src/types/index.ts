@@ -47,6 +47,6 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export * from './auth';
-export * from './memory';
-export * from './session';
+export * from './auth.js';
+export * from './memory.js';
+export * from './session.js';

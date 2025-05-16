@@ -1,86 +1,80 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as profileService from './profileService';
-import { supabase } from '../lib/supabase';
-import { elementalProfileSchema } from '../lib/schemas/elemental';
+// src/services/profileService.ts
+import { supabase } from '../lib/supabaseClient.js';
+import { elementalProfileSchema } from '../lib/schemas/elemental.js';
 
-vi.mock('../lib/supabase', () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-      upsert: vi.fn(() => ({
-        select: vi.fn(() => ({
-          single: vi.fn(),
-        })),
-      })),
-    })),
-  },
-}));
-
-const mockUserId = 'user123';
-const mockProfile = {
-  user_id: mockUserId,
-  fire: 80,
-  water: 70,
-  earth: 60,
-  air: 90,
-  aether: 75,
+export interface Profile {
+  user_id: string;
+  fire: number;
+  water: number;
+  earth: number;
+  air: number;
+  aether: number;
   crystal_focus: {
-    type: 'career',
-    challenges: 'Balancing creative work and structure',
-    aspirations: 'Integrate success with soulful service',
-  },
-  updated_at: new Date().toISOString(),
-};
+    type: string;
+    challenges: string;
+    aspirations: string;
+  };
+  updated_at: string;
+}
 
-describe('profileService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+export interface ProfileStats {
+  fire: number;
+  water: number;
+  earth: number;
+  air: number;
+  aether: number;
+}
 
-  it('should get user profile successfully', async () => {
-    supabase.from().single.mockResolvedValue({ data: mockProfile });
+/**
+ * Fetches a user's full profile.
+ */
+export async function getUserProfile(userId: string): Promise<Profile | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
 
-    const result = await profileService.getUserProfile(mockUserId);
-    expect(result).toMatchObject(mockProfile);
-  });
+  if (error || !data) return null;
+  const parsed = elementalProfileSchema.parse(data);
+  return parsed;
+}
 
-  it('should return null if getUserProfile fails', async () => {
-    supabase.from().single.mockResolvedValue({ error: { message: 'Not found' } });
+/**
+ * Inserts or updates a user's profile.
+ */
+export async function updateUserProfile(
+  userId: string,
+  profile: Profile
+): Promise<Profile | null> {
+  const toUpsert = { ...profile, user_id: userId };
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert(toUpsert)
+    .select('*')
+    .single();
 
-    const result = await profileService.getUserProfile(mockUserId);
-    expect(result).toBeNull();
-  });
+  if (error || !data) return null;
+  const parsed = elementalProfileSchema.parse(data);
+  return parsed;
+}
 
-  it('should update user profile successfully', async () => {
-    const upsertMock = supabase.from().upsert().select().single;
-    upsertMock.mockResolvedValue({ data: mockProfile });
+/**
+ * Retrieves only the elemental score fields for a user.
+ */
+export async function getProfileStats(userId: string): Promise<ProfileStats | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('fire, water, earth, air, aether')
+    .eq('user_id', userId)
+    .single();
 
-    const result = await profileService.updateUserProfile(mockUserId, mockProfile);
-    expect(result).toMatchObject(mockProfile);
-  });
-
-  it('should return null if updateUserProfile fails', async () => {
-    const upsertMock = supabase.from().upsert().select().single;
-    upsertMock.mockResolvedValue({ error: { message: 'Insert failed' } });
-
-    const result = await profileService.updateUserProfile(mockUserId, mockProfile);
-    expect(result).toBeNull();
-  });
-
-  it('should return only elemental scores from getProfileStats', async () => {
-    const mockStats = {
-      fire: 80,
-      water: 70,
-      earth: 60,
-      air: 90,
-      aether: 75,
-    };
-
-    supabase.from().select().eq().single.mockResolvedValue({ data: mockStats });
-
-    const result = await profileService.getProfileStats(mockUserId);
-    expect(result).toMatchObject(mockStats);
-  });
-});
+  if (error || !data) return null;
+  return {
+    fire: data.fire,
+    water: data.water,
+    earth: data.earth,
+    air: data.air,
+    aether: data.aether,
+  };
+}

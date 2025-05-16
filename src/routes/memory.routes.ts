@@ -1,8 +1,14 @@
 // src/routes/memory.routes.ts
 
 import { Router } from 'express';
-import { authenticate } from '../middleware/authenticate';
-import memoryService from '../services/memoryService';
+import { authenticate } from '../middleware/authenticate.js';
+import {
+  storeMemoryItem,
+  getAllMemories,
+  updateMemory,
+  deleteMemory,
+  getMemoryInsights
+} from '../services/memoryService.js';
 
 const router = Router();
 
@@ -15,7 +21,7 @@ router.use(authenticate);
  */
 router.post('/', async (req, res) => {
   try {
-    const memory = await memoryService.storeMemory({
+    const memory = await storeMemoryItem({
       clientId:    req.user.id,
       content:     req.body.content,
       element:     req.body.element,
@@ -36,7 +42,7 @@ router.post('/', async (req, res) => {
  */
 router.get('/', async (req, res) => {
   try {
-    const memories = await memoryService.retrieveMemories(req.user.id);
+    const memories = await getAllMemories(req.user.id);
     res.json({ success: true, memories });
   } catch (err: any) {
     console.error('❌ Error fetching memories:', err);
@@ -50,7 +56,7 @@ router.get('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
   try {
-    const updated = await memoryService.updateMemory(
+    const updated = await updateMemory(
       req.params.id,
       req.body.content,
       req.user.id
@@ -67,7 +73,7 @@ router.put('/:id', async (req, res) => {
  */
 router.delete('/:id', async (req, res) => {
   try {
-    await memoryService.deleteMemory(req.params.id, req.user.id);
+    await deleteMemory(req.params.id, req.user.id);
     res.json({ success: true });
   } catch (err: any) {
     console.error('❌ Error deleting memory:', err);
@@ -81,7 +87,7 @@ router.delete('/:id', async (req, res) => {
  */
 router.get('/insights', async (req, res) => {
   try {
-    const insights = await memoryService.getMemoryInsights(req.user.id);
+    const insights = await getMemoryInsights(req.user.id);
     res.json({ success: true, insights });
   } catch (err: any) {
     console.error('❌ Error generating memory insights:', err);

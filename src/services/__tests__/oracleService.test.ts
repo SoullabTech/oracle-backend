@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getOracleResponse } from '../oracleService';
-import { getUserProfile } from '../profileService';
-import { getPersonalityWeights } from '../monitoringService';
-import { getAggregatedWisdom } from '../memoryService';
-import { oracle } from '../OracleAgent';
-import type { ElementalProfile } from '../../types/survey';
+import { getOracleResponse } from '../oracleService.js';
+import { getUserProfile } from '../profileService.js';
+import { getPersonalityWeights } from '../monitoringService.js';
+import { getAggregatedWisdom } from '../memoryService.js';
+import { oracle } from '../OracleAgent.js';
+import type { ElementalProfile } from '../../types/survey.js';
 
 // Mock dependencies
 vi.mock('../profileService');

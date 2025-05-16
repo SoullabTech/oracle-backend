@@ -1,6 +1,6 @@
-import { supabase } from '../lib/supabase';
-import logger from '../utils/logger';
-import type { FeedbackInput, FeedbackStats } from '../types/feedback';
+import { supabase } from '../lib/supabase.js';
+import logger from '../utils/logger.js';
+import type { FeedbackInput, FeedbackStats } from '../types/feedback.js';
 
 export async function submitFeedback(userId: string, feedback: FeedbackInput): Promise<void> {
   try {

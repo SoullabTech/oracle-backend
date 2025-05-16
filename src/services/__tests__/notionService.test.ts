@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Client } from '@notionhq/client';
-import { fetchNotionPages, transformToKnowledgeEntry } from '../notionService';
+import { fetchNotionPages, transformToKnowledgeEntry } from '../notionService.js';
 
 vi.mock('@notionhq/client');
 

@@ -2,8 +2,8 @@ import {
   analyzeFeedbackTrends,
   updatePersonalityWeights,
   getPersonalityWeights,
-} from '../monitoringService';
-import { supabase } from '../../lib/supabase';
+} from '../monitoringService.js';
+import { supabase } from '../../lib/supabase.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 vi.mock('../../lib/supabase', () => ({

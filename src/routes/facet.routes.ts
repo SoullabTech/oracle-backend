@@ -1,7 +1,7 @@
 // src/routes/facet.routes.ts
 
 import { Router } from 'express';
-import facetService from '../services/facetService';
+import { getAllFacetMappings as getAllFacets } from '../services/facetService.js';
 
 const router = Router();
 
@@ -11,7 +11,7 @@ const router = Router();
  */
 router.get('/', async (_req, res) => {
   try {
-    const facets = await facetService.getAllFacets();
+    const facets = await getAllFacets();
     return res.status(200).json({ success: true, facets });
   } catch (err: any) {
     console.error('❌ Error fetching facets:', err.message || err);

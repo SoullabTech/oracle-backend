@@ -1,7 +1,7 @@
 // src/routes/symbolicTrends.routes.ts
 
 import { Router } from 'express';
-import memoryModule from '../utils/memoryModule';
+import memoryModule from '../utils/memoryModule.js';
 
 const router = Router();
 

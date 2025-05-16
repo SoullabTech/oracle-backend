@@ -1,7 +1,7 @@
 // src/routes/notionIngest.routes.ts
 import { Router } from 'express'
-import logger from '../utils/logger'
-import { ingestNotion, ingestLocalJson } from '../services/ingestService'
+import logger from '../utils/logger.js'
+import { ingestNotion, ingestLocalJson } from '../services/ingestService.js'
 
 const router = Router()
 

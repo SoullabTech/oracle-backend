@@ -1,6 +1,6 @@
-import { supabase } from '../lib/supabase';
-import logger from '../utils/logger';
-import type { FeedbackAnalysis } from '../types/feedback';
+import { supabase } from '../lib/supabase.js';
+import logger from '../utils/logger.js';
+import type { FeedbackAnalysis } from '../types/feedback.js';
 
 export async function analyzeFeedback(timeframe: { start: Date; end: Date }): Promise<FeedbackAnalysis> {
   try {

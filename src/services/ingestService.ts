@@ -1,14 +1,14 @@
 // src/services/ingestService.ts
 import fs from 'fs'
 import path from 'path'
-import logger from '../utils/logger'
+import logger from '../utils/logger.js'
 import {
   fetchNotionPages,
   transformToKnowledgeEntry,
   updateNotionStatus,
-} from './notionService'
-import { storeKnowledge } from './knowledgeBaseService'
-import { env } from '../lib/config'
+} from './notionService.js'
+import { storeKnowledge } from './knowledgeBaseService.js'
+import { env } from '../lib/config.js'
 
 export async function ingestNotion() {
   logger.info('⏳ Starting Notion ingestion')

@@ -1,8 +1,9 @@
 // src/routes/insightHistory.routes.ts
 
 import { Router } from 'express';
-import oracleLogger from '../utils/oracleLogger';
-import { authenticate } from '../middleware/authenticate';
+import { logOracleInsight } from '../utils/oracleLogger.js';
+
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 

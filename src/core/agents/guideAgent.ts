@@ -1,10 +1,10 @@
 "use strict";
 
-import { OracleAgent } from "./oracleAgent;
-import { logOracleInsight } from ../utils/oracleLogger";
-import MemoryModule from "../../utils/memoryModule";
-import ModelService from "../../utils/modelService;
-import type { AgentResponse } from "./types;
+import { OracleAgent } from "./oracleAgent.js";
+import { logOracleInsight } from "../../utils/oracleLogger.js";
+import * as MemoryModule from "../../utils/memoryModule.js";import ModelService from "../../utils/modelService.js";
+import type { AgentResponse } from "../../types/ai.js";
+
 
 /**
  * GuideAgent: Embodies reflective mentorship and wise encouragement.

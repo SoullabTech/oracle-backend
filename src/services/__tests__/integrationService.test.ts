@@ -2,7 +2,7 @@ import {
   registerIntegration,
   getIntegrationConfig,
   updateIntegrationStatus,
-} from '../integrationService';
+} from '../integrationService.js';
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -24,7 +24,7 @@ vi.mock('../../lib/supabase', () => {
   };
 });
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase.js';
 
 describe('Integration Service', () => {
   beforeEach(() => {

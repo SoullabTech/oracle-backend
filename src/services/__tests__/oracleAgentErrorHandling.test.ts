@@ -1,6 +1,6 @@
 // src/services/__tests__/oracleAgentErrorHandling.test.ts
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { OracleAgent } from '../OracleAgent';
+import { OracleAgent } from '../OracleAgent.js';
 import OpenAI from 'openai';
 
 // Mock OpenAI properly

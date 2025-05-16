@@ -1,6 +1,6 @@
 // src/routes/userProfile.test.ts
 import request from 'supertest';
-import app from '../app'; // or adjust path/export if needed
+import app from '../app.js'; // or adjust path/export if needed
 
 describe('POST /update-profile', () => {
   it('should update user profile successfully', async () => {

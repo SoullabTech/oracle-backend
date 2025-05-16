@@ -1,7 +1,8 @@
 // src/services/facetService.ts
-import { supabase } from '../lib/supabaseClient'
-import logger from '../utils/logger'
-import type { FacetMapping } from '../types/facet'
+
+import { supabase } from '../lib/supabaseClient.js'
+import logger from '../utils/logger.js'
+import { FacetMapping } from '../types/facet.js'
 
 /**
  * Simple utility to detect which elemental facet is most prominent
@@ -47,7 +48,7 @@ export async function getAllFacetMappings(): Promise<FacetMapping[]> {
 
     if (error) throw error
     return data ?? []
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Failed to fetch facet mappings', { error: err })
     throw new Error('Could not load facet mappings')
   }

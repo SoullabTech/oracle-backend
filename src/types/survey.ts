@@ -1,4 +1,4 @@
-import type { Database } from '../lib/database.types';
+import type { Database } from '../lib/database.types.js';
 import { z } from 'zod';
 
 // 🔢 Supabase row types

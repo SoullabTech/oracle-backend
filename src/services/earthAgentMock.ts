@@ -1,11 +1,11 @@
 // src/services/earthAgent.ts
 
-import { OracleAgent } from './oracleAgent';
-import type { AIResponse } from '../types/ai';
+import { OracleAgent } from './oracleAgent.js';
+import type { AIResponse } from '../types/ai.js';
 import { logOracleInsight } from '../utils/oracleLogger;
 
 export class EarthAgent extends OracleAgent {
-  element = 'earth';
+  element = .js'earth';
 
   async processQuery(query: { input: string; userId: string }): Promise<AIResponse> {
     const response: AIResponse = {

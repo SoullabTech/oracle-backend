@@ -1,6 +1,6 @@
 // src/services/divinationService.ts
 
-import { openai } from '../lib/clients';
+import { openai } from '../lib/clients.js';
 
 /**
  * Generates a divinatory-style insight for a journal entry.

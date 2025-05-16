@@ -1,9 +1,8 @@
 // src/routes/feedback.routes.ts
 
 import { Router } from 'express';
-import memoryModule from '../utils/memoryModule';
-import { storeMemoryItem } from '../services/memoryService';
-import type { QueryInput } from '../core/types/ai';
+import * as memoryModule from '../utils/memoryModule.js';
+import { storeMemoryItem } from '../services/memoryService.js';
 
 const router = Router();
 
@@ -49,7 +48,7 @@ router.post('/', async (req, res) => {
     });
 
     res.json({ success: true });
-  } catch (err) {
+  } catch (err: any) {
     console.error('❌ /api/feedback', err);
     res.status(500).json({ success: false, error: 'Failed to record feedback' });
   }

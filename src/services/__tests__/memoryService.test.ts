@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MemoryService } from '../memoryService';
+import { MemoryService } from '../memoryService.js';
 import { createClient } from '@supabase/supabase-js';
 
 vi.mock('@supabase/supabase-js', () => {

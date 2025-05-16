@@ -1,4 +1,6 @@
-import type { AgentResponse, Metadata } from './types;
+// src/core/agents/oracleAgent.ts
+
+import type { AgentResponse, Metadata } from "../../types/ai.js";
 
 export class OracleAgent {
   debug: boolean;

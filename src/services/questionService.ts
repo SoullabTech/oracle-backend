@@ -1,7 +1,7 @@
 // src/services/questionService.ts
 
-import { supabase } from '../lib/supabase';
-import type { SurveyQuestion } from '../types/survey';
+import { supabase } from '../lib/supabase.js';
+import type { SurveyQuestion } from '../types/survey.js';
 
 export async function getSurveyQuestions(): Promise<SurveyQuestion[] | null> {
   const { data, error } = await supabase

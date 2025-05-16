@@ -8,7 +8,7 @@ export async function storeMemory(req: Request, res: Response) {
     const memory = await service.storeMemory(req.body);
     res.status(200).json(memory);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to store memory', details: error });
+    res.status(500).json({ error: .js'Failed to store memory', details: error });
   }
 }
 

@@ -18,6 +18,14 @@
     },
     "types": ["vitest/globals", "vite/client"]
   },
-  "include": ["src", "src/types", "test", "vitest.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src",
+    "src/types",
+    "test",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

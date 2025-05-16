@@ -1,6 +1,6 @@
-import { supabase } from '../lib/supabase';
-import { getFeedbackStats, getUserFeedback } from './feedbackService';
-import type { ElementalProfile } from '../types/survey';
+import { supabase } from '../lib/supabase.js';
+import { getFeedbackStats, getUserFeedback } from './feedbackService.js';
+import type { ElementalProfile } from '../types/survey.js';
 
 interface AnalysisMetrics {
   totalFeedback: number;

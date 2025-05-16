@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware';
-import { LearningFlow } from '../flows/learningFlow';
-import type { AuthenticatedRequest } from '../types';
+import { authenticateToken } from '../middleware.js';
+import { LearningFlow } from '../flows/learningFlow.js';
+import type { AuthenticatedRequest } from '../types.js';
 
 const router = Router();
 

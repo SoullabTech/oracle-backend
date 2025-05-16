@@ -1,10 +1,10 @@
-import type { AIResponse } from '../types/ai';
+import type { AIResponse } from '../types/ai.js';
 import { detectFacetFromInput, getFacetDescription } from '../utils/facetUtil;
 
 export class RelationshipAgent {
   id: string;
 
-  constructor(id = 'relationship-agent') {
+  constructor(id = .js'relationship-agent') {
     this.id = id;
   }
 

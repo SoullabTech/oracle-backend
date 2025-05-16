@@ -1,9 +1,9 @@
 // /src/agents/SpiralogicAgent.ts
 
 import { Agent, AgentContext } from '@singularitynet/sdk';
-import { SOUL } from '../core/SOUL';
-import { HumanPacedLearning } from '../core/HumanPacedLearning';
-import { ArchetypeFramework } from '../core/ArchetypeFramework';
+import { SOUL } from '../core/SOUL.js';
+import { HumanPacedLearning } from '../core/HumanPacedLearning.js';
+import { ArchetypeFramework } from '../core/ArchetypeFramework.js';
 
 class SpiralogicAgent {
   private soul: SOUL;

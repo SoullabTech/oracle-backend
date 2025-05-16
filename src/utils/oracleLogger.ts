@@ -1,44 +1,47 @@
 // src/utils/oracleLogger.ts
-import { supabase } from '../lib/supabaseClient'
-import logger from './logger'
-
-type InsightMetadata = Record<string, unknown>
+import { supabase } from '../lib/supabaseClient.js';
+import logger from './logger.js';
 
 export interface InsightLogEntry {
-  userId: string
-  insightType: string
-  content: string
-  metadata?: InsightMetadata
+  anon_id: string | null;
+  archetype: string;
+  element: string;
+  insight: {
+    message: string;
+    raw_input: string;
+  };
+  emotion: number;
+  phase: string;
+  context?: unknown[];
 }
 
-/**
- * Logs an insight both to the database and to the console.
- * Inserts into the `insight_history` table and writes a log entry.
- */
-export async function logInsight(
+export async function logOracleInsight(
   entry: InsightLogEntry
-): Promise<void> {
-  const { userId, insightType, content, metadata } = entry
+): Promise<{ id: string }> {
   try {
-    // Persist to Supabase
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('insight_history')
       .insert({
-        user_id: userId,
-        insight_type: insightType,
-        content,
-        metadata: metadata || {},
+        anon_id: entry.anon_id,
+        archetype: entry.archetype,
+        element: entry.element,
+        content: entry.insight.message,
+        metadata: {
+          raw_input: entry.insight.raw_input,
+          emotion: entry.emotion,
+          phase: entry.phase,
+          context: entry.context || []
+        }
       })
-    if (error) throw error
+      .select('id')
+      .single();
 
-    // Log locally
-    logger.info('[OracleLog] Insight logged', {
-      userId,
-      insightType,
-      content,
-      metadata,
-    })
+    if (error || !data) throw error || new Error('No data returned');
+
+    logger.info('[OracleLog] Insight logged', { id: data.id, ...entry });
+    return { id: data.id };
   } catch (err: any) {
-    logger.error('Failed to log insight:', { error: err.message || err })
+    logger.error('Failed to log Oracle insight:', { error: err.message || err });
+    throw err;
   }
 }

@@ -1,10 +1,10 @@
 // src/services/ingestionService.ts
 import fs from 'fs'
 import path from 'path'
-import logger from '../utils/logger'
-import { fetchNotionPages, transformToKnowledgeEntry, updateNotionStatus } from '../services/notionService'
-import { storeKnowledge } from '../services/knowledgeBaseService'
-import { env } from '../lib/config'
+import logger from '../utils/logger.js'
+import { fetchNotionPages, transformToKnowledgeEntry, updateNotionStatus } from '../services/notionService.js'
+import { storeKnowledge } from '../services/knowledgeBaseService.js'
+import { env } from '../lib/config.js'
 
 interface Result<T> {
   source: string
@@ -70,8 +70,8 @@ export async function ingestFromLocal(): Promise<{ processed: number; results: R
 
 // src/routes/notionIngest.routes.ts
 import { Router } from 'express'
-import { ingestFromNotion, ingestFromLocal } from '../services/ingestionService'
-import logger from '../utils/logger'
+import { ingestFromNotion, ingestFromLocal } from '../services/ingestionService.js'
+import logger from '../utils/logger.js'
 
 const router = Router()
 

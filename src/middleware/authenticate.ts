@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { createClient, User } from '@supabase/supabase-js';
-import { config } from '../config/index';
-import { AuthenticationError } from '../utils/errors';
-import logger from '../utils/logger';
+import { config } from '../config/index.js';
+import { AuthenticationError } from '../utils/errors.js';
+import logger from '../utils/logger.js';
 
 // Supabase client setup
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);

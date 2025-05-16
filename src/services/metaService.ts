@@ -1,4 +1,4 @@
-import type { Metadata } from '../types';
+import type { Metadata } from '../types.js';
 
 export class MetaService {
   static createMeta(): Metadata {

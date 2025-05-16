@@ -1,11 +1,12 @@
 // src/routes/storyGenerator.routes.ts
 
 import { Router } from 'express';
-import { elementalOracle } from '../services/elementalOracleService';
-import oracleLogger from '../utils/oracleLogger';
-import { authenticate } from '../middleware/authenticate';
-import { getUserProfile } from '../services/profileService';
-import { getRelevantMemories, storeMemoryItem } from '../services/memoryService';
+import { elementalOracle } from '../services/elementalOracleService.js';
+import { logOracleInsight } from '../utils/oracleLogger.js';
+
+import { authenticate } from '../middleware/authenticate.js';
+import { getUserProfile } from '../services/profileService.js';
+import { getRelevantMemories, storeMemoryItem } from '../services/memoryService.js';
 
 const router = Router();
 

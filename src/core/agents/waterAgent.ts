@@ -1,61 +1,60 @@
+// src/core/agents/waterAgent.ts
+
 "use strict";
 
-import { OracleAgent } from './oracleAgent;
-import { logOracleInsight } from '../../utils/oracleLogger;
-import MemoryModule from "../../utils/memoryModule";
-import ModelService from '../../utils/modelService;
-import type { AgentResponse } from './types;
-
+import { OracleAgent } from "./oracleAgent.js";
+import { logOracleInsight } from "../../utils/oracleLogger.js";
+import * as MemoryModule from "../../utils/memoryModule.js";
+import ModelService from "../../utils/modelService.js";
+import type { AgentResponse } from "../../types/ai.js";
 
 /**
- * WaterAgent: Embodies emotional depth, reflection, and intuitive flow.
+ * WaterAgent: Embodies flow, healing, and reflection.
  */
 export class WaterAgent extends OracleAgent {
-  constructor() {
-    super({ debug: false });
-  }
-
-  public async processQuery(query: { input: string; userId?: string }): Promise<AgentResponse> {
+  public async processQuery(query: {
+    input: string;
+    userId?: string;
+  }): Promise<AgentResponse> {
+    // 💧 Retrieve recent water memories
     const contextMemory = MemoryModule.getRecentEntries(3);
 
     const contextHeader = contextMemory.length
-      ? `⟳ Ripples of past reflection:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}\n\n`
+      ? `🌊 Echoes of flow:\n${contextMemory
+          .map((e) => `- ${e.response}`)
+          .join("\n")}\n\n`
       : "";
 
     const augmentedInput = `${contextHeader}${query.input}`;
-    const augmentedQuery = {
-      ...query,
-      input: augmentedInput,
-    };
-
-    const baseResponse: AgentResponse = await ModelService.getResponse(augmentedQuery);
-
-    const personalityFlair = `\n\n💧 Let stillness reveal your truth beneath the surface.`;
+    const baseResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
+    const personalityFlair = "\n\n💧 Let your emotions ripple with clarity.";
     const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
 
+    // 🧠 Save Water memory
     MemoryModule.addEntry({
       timestamp: new Date().toISOString(),
       query: query.input,
       response: enhancedResponse,
     });
 
+    // 🔍 Log Water insight
     await logOracleInsight({
       anon_id: query.userId || null,
       archetype: baseResponse.metadata?.archetype || "Water",
-      element: "Water",
+      element: "water",
       insight: {
         message: enhancedResponse,
         raw_input: query.input,
       },
-      emotion: baseResponse.metadata?.emotion_score ?? 0.87,
-      phase: baseResponse.metadata?.phase || "Water Phase",
+      emotion: baseResponse.metadata?.emotion_score ?? 0.88,
+      phase: baseResponse.metadata?.phase || "flow",
       context: contextMemory,
     });
 
     return {
       ...baseResponse,
       response: enhancedResponse,
-      confidence: baseResponse.confidence ?? 0.87,
+      confidence: baseResponse.confidence ?? 0.90,
       routingPath: [...(baseResponse.routingPath || []), "water-agent"],
     };
   }

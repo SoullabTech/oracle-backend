@@ -1,10 +1,11 @@
 // src/services/surveyService.ts
 
-import { supabase } from '../lib/supabaseClient';
-import { createSurvey, getSurveyResults } from './surveyDao';
-import { updateUserProfile } from './profileService';
-import oracleLogger from '../utils/oracleLogger';
-import type { SurveySubmission } from '../types/survey';
+import { supabase } from '../lib/supabaseClient.js';
+import { createSurvey, getSurveyResults } from './surveyDao.js';
+import { updateUserProfile } from './profileService.js';
+import { logOracleInsight } from '../utils/oracleLogger.js';
+
+import type { SurveySubmission } from '../types/survey.js';
 
 /**
  * Process a survey submission:

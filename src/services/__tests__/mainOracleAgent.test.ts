@@ -5,8 +5,8 @@ import {
   getWisdomByElements,
   getPatternsByFacets,
   getConnectedWisdom,
-} from '../collectiveWisdomService';
-import { supabase } from '../../lib/supabase';
+} from '../collectiveWisdomService.js';
+import { supabase } from '../../lib/supabase.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../lib/supabase', () => ({
