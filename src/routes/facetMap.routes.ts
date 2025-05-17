@@ -1,9 +1,9 @@
 // src/routes/facetMap.routes.ts
 
 import { Router } from 'express';
-import { detectFacetFromInput } from '../services/facetService.js';
+import { detectFacetFromInput } from '../services/facetService';
 // after
-import { elementalFacetMap } from '../constants/elementalFacetMap.js'
+import { elementalFacetMap } from '../constants/elementalFacetMap'
 
 
 const router = Router();

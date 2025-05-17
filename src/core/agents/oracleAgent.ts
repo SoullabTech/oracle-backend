@@ -1,21 +1,25 @@
 // src/core/agents/oracleAgent.ts
 
-import type { AgentResponse, Metadata } from "../../types/ai.js";
+import type { AgentResponse, Metadata } from "../../types/ai";
 
+/**
+ * Base class for all Oracle agents.
+ * Provides default behavior and utility methods for subclassed elemental agents.
+ */
 export class OracleAgent {
-  debug: boolean;
+  protected debug: boolean;
 
   constructor(options: { debug?: boolean } = {}) {
     this.debug = options.debug ?? false;
   }
 
   /**
-   * Processes a basic query with simulated output.
-   * Subclasses should override this method with specialized behavior.
+   * Main query processor for the agent.
+   * Should be overridden by subclasses to implement specialized responses.
    */
   async processQuery(query: string): Promise<AgentResponse> {
     if (this.debug) {
-      console.log('[OracleAgent] Processing query:', query);
+      console.log("[OracleAgent] Processing query:", query);
     }
 
     const detectedElement = this.detectElement(query);
@@ -25,28 +29,32 @@ export class OracleAgent {
       timestamp: new Date().toISOString(),
       element: detectedElement,
       processedAt: new Date().toISOString(),
-      prefect: { task: 'simulate', status: 'success' },
+      prefect: {
+        task: "simulate",
+        status: "success",
+      },
     };
 
     return {
       response: simulatedResponse,
       confidence: 0.9,
       metadata,
-      routingPath: [detectedElement, 'oracle-agent'],
+      routingPath: [detectedElement.toLowerCase(), "oracle-agent"],
     };
   }
 
   /**
-   * Detects which elemental archetype the query relates to.
+   * Determines which elemental archetype the text relates to.
+   * Can be overridden by subclasses with more advanced heuristics.
    */
   protected detectElement(text: string): string {
     const lower = text.toLowerCase();
 
-    if (lower.includes('fire')) return 'Fire';
-    if (lower.includes('water')) return 'Water';
-    if (lower.includes('earth')) return 'Earth';
-    if (lower.includes('air')) return 'Air';
+    if (lower.includes("fire")) return "Fire";
+    if (lower.includes("water")) return "Water";
+    if (lower.includes("earth")) return "Earth";
+    if (lower.includes("air")) return "Air";
 
-    return 'Aether';
+    return "Aether"; // Default to Aether if no element is detected
   }
 }

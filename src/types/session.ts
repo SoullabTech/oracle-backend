@@ -1,4 +1,4 @@
-import type { Metadata } from './metadata.js';
+import type { Metadata } from './metadata';
 
 export interface Session {
   id: string;

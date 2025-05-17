@@ -1,136 +1,68 @@
+// src/routes/memoryRoutes.ts
+
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth.js';
-import { validate } from '../middleware/validate.js';
-import { MemoryService } from '../services/memoryService.js';
-import { createMemorySchema, updateMemorySchema, deleteMemorySchema } from '../schemas/memory.js';
-import type { AuthenticatedRequest } from '../types.js';
-import logger from '../utils/logger.js';
+import { authenticateToken } from '../middleware/auth';
+import { validate } from '../middleware/validate';
+import { memoryService } from '../services/memoryService';
+import type { AuthenticatedRequest } from '../types';
+import logger from '../utils/logger';
 
 const router = Router();
-const memoryService = new MemoryService();
 
-router.post(
-  '/',
-  authenticateToken,
-  validate(createMemorySchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { content, metadata } = req.body;
-      const clientId = req.user?.id;
-
-      if (!clientId) {
-        return res.status(400).json({ error: 'Client ID is required.' });
-      }
-
-      const memory = await memoryService.storeMemory({
-        content,
-        clientId,
-        metadata
-      });
-
-      res.json(memory);
-    } catch (error) {
-      logger.error('Failed to store memory', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to store memory' 
-      });
-    }
-  }
-);
-
-router.get('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
+// POST /api/oracle/memory
+router.post('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
+    const { content, metadata } = req.body;
     const clientId = req.user?.id;
+
     if (!clientId) {
       return res.status(400).json({ error: 'Client ID is required.' });
     }
 
-    const memories = await memoryService.retrieveMemories(clientId);
-    res.json(memories);
+    const memory = memoryService.store(clientId, content);
+    res.json(memory);
   } catch (error) {
-    logger.error('Failed to retrieve memories', { error });
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to retrieve memories' 
-    });
+    logger.error('Failed to store memory', { error });
+    res.status(500).json({ error: 'Failed to store memory' });
   }
 });
 
-router.put(
-  '/:id',
-  authenticateToken,
-  validate(updateMemorySchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { id } = req.params;
-      const { content } = req.body;
-      const clientId = req.user?.id;
+// GET /api/oracle/memory
+router.get('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    const clientId = req.user?.id;
 
-      if (!clientId) {
-        return res.status(400).json({ error: 'Client ID is required.' });
-      }
-
-      const success = await memoryService.updateMemory(id, content, clientId);
-      if (success) {
-        res.json({ message: 'Memory updated successfully' });
-      } else {
-        res.status(404).json({ error: 'Memory not found' });
-      }
-    } catch (error) {
-      logger.error('Failed to update memory', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to update memory' 
-      });
+    if (!clientId) {
+      return res.status(400).json({ error: 'Client ID is required.' });
     }
+
+    const memories = memoryService.recall(clientId);
+    res.json(memories);
+  } catch (error) {
+    logger.error('Failed to retrieve memories', { error });
+    res.status(500).json({ error: 'Failed to retrieve memories' });
   }
-);
+});
 
-router.delete(
-  '/:id',
-  authenticateToken,
-  validate(deleteMemorySchema),
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { id } = req.params;
-      const clientId = req.user?.id;
-
-      if (!clientId) {
-        return res.status(400).json({ error: 'Client ID is required.' });
-      }
-
-      const success = await memoryService.deleteMemory(id, clientId);
-      if (success) {
-        res.json({ message: 'Memory deleted successfully' });
-      } else {
-        res.status(404).json({ error: 'Memory not found' });
-      }
-    } catch (error) {
-      logger.error('Failed to delete memory', { error });
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'Failed to delete memory' 
-      });
-    }
-  }
-);
-
-// GET /api/memory/by-symbol?symbol=fire&userId=abc123
-import { getMemoriesBySymbol } from '@/services/memoryService';
-
+// GET /api/oracle/memory/by-symbol?symbol=fire&userId=abc123
 router.get('/by-symbol', async (req, res) => {
   const symbol = req.query.symbol as string;
   const userId = req.query.userId as string;
 
-  if (!symbol) {
-    return res.status(400).json({ error: 'Missing symbol in query.' });
+  if (!symbol || !userId) {
+    return res.status(400).json({ error: 'Missing symbol or userId in query.' });
   }
 
   try {
-    const results = await getMemoriesBySymbol(symbol, userId);
-    return res.status(200).json({ memories: results });
+    // Stubbed logic for filtering by symbol
+    const results = memoryService
+      .recall(userId)
+      .filter(m => m.content.includes(symbol));
+    res.status(200).json({ memories: results });
   } catch (error) {
-    console.error('❌ Failed to fetch memories by symbol:', error);
-    return res.status(500).json({ error: 'Server error retrieving symbolic memories.' });
+    logger.error('Failed to fetch memories by symbol', { error });
+    res.status(500).json({ error: 'Server error retrieving symbolic memories.' });
   }
 });
-
 
 export default router;

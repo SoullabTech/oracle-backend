@@ -1,7 +1,7 @@
 // src/routes/facet.routes.ts
 
 import { Router } from 'express';
-import { getAllFacetMappings as getAllFacets } from '../services/facetService.js';
+import { getAllFacetMappings as getAllFacets } from '../services/facetService';
 
 const router = Router();
 

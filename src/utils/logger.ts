@@ -1,7 +1,7 @@
 // src/utils/logger.ts
 import winston, { format, transports } from 'winston'
 import 'winston-daily-rotate-file'
-import { env } from '../lib/config.js'    // <-- import env, not config
+import { env } from '../lib/config'    // <-- import env, not config
 
 const { combine, timestamp, colorize, printf, json, errors } = format
 

@@ -1,9 +1,9 @@
 // src/core/agents/persistentMemory.ts
 
-import { OracleAgent } from './oracleAgent.js';
-import { getRelevantMemories, storeMemoryItem } from '../services/memoryService.js';
-import type { MemoryItem } from '../types/memory.js';
-import logger from '../utils/logger.js';
+import { OracleAgent } from './oracleAgent';
+import { getRelevantMemories, storeMemoryItem } from '../services/memoryService';
+import type { MemoryItem } from '../types/memory';
+import logger from '../utils/logger';
 
 /**
  * PersistentMemoryAgent extends OracleAgent to incorporate user memory context into queries

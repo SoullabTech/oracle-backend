@@ -1,9 +1,7 @@
-// src/routes/insightHistory.routes.ts
-
 import { Router } from 'express';
-import { logOracleInsight } from '../utils/oracleLogger.js';
-
-import { authenticate } from '../middleware/authenticate.js';
+import { oracleLogger } from '../utils/oracleLogger';
+import { authenticate } from '../middleware/authenticate';
+import type { AuthenticatedRequest } from '../types';
 
 const router = Router();
 
@@ -14,7 +12,7 @@ router.use(authenticate);
  * GET /api/oracle/insight-history
  * Optional query params: type, limit, offset
  */
-router.get('/', async (req, res) => {
+router.get('/', async (req: AuthenticatedRequest, res) => {
   try {
     const userId = req.user.id;
     const { type, limit = '50', offset = '0' } = req.query;
@@ -36,7 +34,7 @@ router.get('/', async (req, res) => {
  * GET /api/oracle/insight-history/stats
  * Returns aggregate stats for insights
  */
-router.get('/stats', async (req, res) => {
+router.get('/stats', async (req: AuthenticatedRequest, res) => {
   try {
     const stats = await oracleLogger.getInsightStats(req.user.id);
     return res.status(200).json({ success: true, stats });

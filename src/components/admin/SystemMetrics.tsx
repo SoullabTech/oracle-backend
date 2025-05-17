@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from 'chart';
 import { getSystemMetrics } from '../../services/adminService';
 
 ChartJS.register(

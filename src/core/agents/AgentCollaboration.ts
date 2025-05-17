@@ -1,6 +1,6 @@
 // /src/agents/AgentCollaboration.ts
 
-import { SpiralogicAgent } from './SpiralogicAgent.js';
+import { SpiralogicAgent } from './SpiralogicAgent';
 
 class AgentCollaboration {
   private agents: SpiralogicAgent[];

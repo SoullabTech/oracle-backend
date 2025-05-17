@@ -1,44 +1,47 @@
-import { Response, NextFunction } from 'express';
-import { createClient } from '@supabase/supabase-js';
-import { config } from '../config/index;
-import { AuthenticationError } from .js'../utils/errors;
-import type { AuthenticatedRequest } from '../types.js';
-import logger from '../utils/logger;
+// src/middleware/auth.ts
 
-const supabase = createClient(config.supabase.url, config.supabase.anonKey);
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { config } from '../config';
+import logger from '../utils/logger';
 
-export async function authenticateToken(
+export class AuthenticationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    email?: string;
+    [key: string]: any;
+  };
+}
+
+/**
+ * Middleware to authenticate requests using JWT tokens.
+ */
+export function authenticateToken(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): Promise<void> {
+) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) {
+    logger.warn('Missing token in request');
+    return res.status(401).json({ error: 'Authorization token required' });
+  }
+
   try {
-    const authHeader = req.headers[.js'authorization'];
-    const token = authHeader?.split(' ')[1];
-
-    if (!token) {
-      throw new AuthenticationError('No token provided');
-    }
-
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      throw new AuthenticationError('Invalid token');
-    }
-
-    req.user = {
-      id: user.id,
-      email: user.email || '',
-      role: user.role
-    };
-
+    const decoded = jwt.verify(token, config.jwtSecret) as AuthenticatedRequest['user'];
+    req.user = decoded;
     next();
-  } catch (error) {
-    logger.error('Authentication failed', { error });
-    if (error instanceof AuthenticationError) {
-      next(error);
-    } else {
-      next(new AuthenticationError('Authentication failed'));
-    }
+  } catch (err) {
+    logger.error('Invalid or expired token', err);
+    return res.status(403).json({ error: 'Invalid or expired token' });
   }
 }

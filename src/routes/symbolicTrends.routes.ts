@@ -1,47 +1,50 @@
-// src/routes/symbolicTrends.routes.ts
-
 import { Router } from 'express';
-import memoryModule from '../utils/memoryModule.js';
+import memoryModule from '../utils/memoryModule';
+import logger from '../utils/logger';
 
 const router = Router();
 
 /**
  * GET /api/symbolic-trends
- * Query Params:
- *   - symbol? (string): filter tags by specific symbol
- *   - agent?  (string): filter tags by specific agent
- *   - since?  (ISO date string): only return tags after this timestamp
+ * Optional Query Params:
+ *   - symbol (string): filter by symbol tag
+ *   - agent (string): filter by agent source
+ *   - since (ISO date string): filter by timestamp cutoff
  */
 router.get('/', (req, res) => {
   try {
-    let tags = memoryModule.getAllSymbolicTags();
     const { symbol, agent, since } = req.query as Record<string, string>;
 
+    let tags = memoryModule.getAllSymbolicTags();
+
     if (symbol) {
-      tags = memoryModule.getEntriesBySymbol(symbol);
+      tags = tags.filter(t => t.symbol === symbol);
     }
     if (agent) {
-      tags = memoryModule.getEntriesByAgent(agent);
+      tags = tags.filter(t => t.agent === agent);
     }
     if (since) {
       const cutoff = new Date(since).toISOString();
       tags = tags.filter(t => (t.timestamp ?? '') >= cutoff);
     }
 
-    // Aggregate counts by day
+    // Aggregate by day
     const countsByDate: Record<string, number> = {};
     tags.forEach(tag => {
-      const day = tag.timestamp!.slice(0, 10); // YYYY-MM-DD
+      const day = tag.timestamp?.slice(0, 10) ?? 'unknown';
       countsByDate[day] = (countsByDate[day] || 0) + 1;
     });
 
     res.json({
-      meta: { totalTags: tags.length, days: Object.keys(countsByDate).length },
+      meta: {
+        totalTags: tags.length,
+        days: Object.keys(countsByDate).length
+      },
       countsByDate,
       tags,
     });
   } catch (err) {
-    console.error('❌ /api/symbolic-trends error', err);
+    logger.error('❌ Failed to fetch symbolic trends', { error: err });
     res.status(500).json({ error: 'Failed to fetch symbolic trends' });
   }
 });

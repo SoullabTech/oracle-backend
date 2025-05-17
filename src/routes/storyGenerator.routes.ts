@@ -1,21 +1,18 @@
-// src/routes/storyGenerator.routes.ts
-
 import { Router } from 'express';
-import { elementalOracle } from '../services/elementalOracleService.js';
-import { logOracleInsight } from '../utils/oracleLogger.js';
-
-import { authenticate } from '../middleware/authenticate.js';
-import { getUserProfile } from '../services/profileService.js';
-import { getRelevantMemories, storeMemoryItem } from '../services/memoryService.js';
+import { elementalOracle } from '../services/elementalOracleService';
+import { logOracleInsight } from '../utils/oracleLogger';
+import { authenticate } from '../middleware/authenticate';
+import { getUserProfile } from '../services/profileService';
+import { getRelevantMemories, storeMemoryItem } from '../services/memoryService';
 
 const router = Router();
 
-// 🔒 All story-generation routes require authentication
+// 🔒 All routes below require authentication
 router.use(authenticate);
 
 /**
  * POST /api/oracle/story-generator
- * Generates a symbolic story based on user profile, memories, and request
+ * Generates a symbolic narrative based on user's elemental profile and memories.
  */
 router.post('/', async (req, res) => {
   try {
@@ -27,20 +24,21 @@ router.post('/', async (req, res) => {
       depthLevel = 3,
     } = req.body;
 
-    // 1) Validate & fetch profile
+    // Step 1: Validate inputs
     if (!userId || !elementalTheme || !archetype) {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
+    // Step 2: Fetch user profile
     const profile = await getUserProfile(userId);
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found.' });
     }
 
-    // 2) Gather memories
+    // Step 3: Fetch symbolic memories
     const memories = await getRelevantMemories(userId, elementalTheme, 5);
 
-    // 3) Build context
+    // Step 4: Build generation context
     const context = {
       userId,
       elementalProfile: {
@@ -55,19 +53,19 @@ router.post('/', async (req, res) => {
       phase: 'story',
     };
 
-    // 4) Generate story
+    // Step 5: Generate story via Oracle engine
     const story = await elementalOracle.generateStory(
       { elementalTheme, archetype, focusArea, depthLevel },
       context
     );
 
-    // 5) Format output
+    // Step 6: Format story output
     const content = [
       story.narrative.trim(),
       '\nReflections:',
       ...story.reflections.map(r => `- ${r}`),
       '\nSymbols:',
-      ...story.symbols.map(s => `- ${s}`)
+      ...story.symbols.map(s => `- ${s}`),
     ].join('\n');
 
     const response = {
@@ -86,7 +84,7 @@ router.post('/', async (req, res) => {
       },
     };
 
-    // 6) Persist memory
+    // Step 7: Persist in memory log
     await storeMemoryItem({
       content,
       element: elementalTheme,
@@ -96,15 +94,14 @@ router.post('/', async (req, res) => {
       metadata: response.metadata,
     });
 
-    // 7) Log insight
-    await oracleLogger.logInsight({
+    // Step 8: Log in insight history
+    await logOracleInsight({
       userId,
       insightType: 'story_generation',
       content,
       metadata: response.metadata,
     });
 
-    // ✅ Return response
     return res.json({ success: true, response });
   } catch (err: any) {
     console.error('❌ Error in story-generator:', err.message || err);

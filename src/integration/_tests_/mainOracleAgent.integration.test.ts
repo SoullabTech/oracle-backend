@@ -1,8 +1,8 @@
 // tests/mainoracleagent.integration.test.ts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { MainOracleAgent } from '../src/core/agents/mainOracleAgent.js';
-import { supabase } from '../src/lib/supabaseClient.js';
-import { storeMemoryItem, getRelevantMemories } from '../src/services/memoryService.js';
+import { MainOracleAgent } from '../src/core/agents/mainOracleAgent';
+import { supabase } from '../src/lib/supabaseClient';
+import { storeMemoryItem, getRelevantMemories } from '../src/services/memoryService';
 
 const testUserId = 'integration-test-user';
 let agent: MainOracleAgent;

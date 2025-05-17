@@ -1,6 +1,6 @@
 // src/utils/facetUtil.ts
 
-import { elementalFacetMap } from './elementalFacetMap.js';
+import { elementalFacetMap } from './elementalFacetMap';
 
 export type ElementalFacet = {
   facet: string;

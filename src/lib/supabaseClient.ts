@@ -1,6 +1,6 @@
 // src/lib/supabaseClient.ts
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { env } from './config.js';
+import { env } from './config';
 
 const { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY } = env;
 // … rest as before …

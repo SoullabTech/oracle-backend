@@ -35,3 +35,4 @@ export default defineConfig({
         },
     },
 });
+//# sourceMappingURL=vitest.config.js.map

@@ -1,4 +1,4 @@
-import type { Database } from '../lib/database.types.js';
+import type { Database } from '../lib/database.types';
 import { z } from 'zod';
 
 // 🔢 Supabase row types
@@ -45,10 +45,9 @@ export const CRYSTAL_FOCUS_OPTIONS = [
   },
 ] as const;
 
-// 🧬 Crystal Focus Type
+// 🧬 Core Types
 export type CrystalFocusType = typeof CRYSTAL_FOCUS_OPTIONS[number]['type'];
 
-// 🧠 Core Types
 export interface CrystalFocus {
   type: CrystalFocusType;
   customDescription?: string;
@@ -67,10 +66,28 @@ export interface SurveySubmission {
   crystalFocus: CrystalFocus;
 }
 
-// ✅ Zod Schema for Validation
+// ✅ Zod Schemas
 export const crystalFocusSchema = z.object({
-  type: z.enum(['career', 'spiritual', 'relational', 'health', 'creative', 'other']),
+  type: z.enum([
+    'career',
+    'spiritual',
+    'relational',
+    'health',
+    'creative',
+    'other',
+  ]),
   customDescription: z.string().optional(),
-  challenges: z.string(),
-  aspirations: z.string(),
+  challenges: z.string().min(1, 'Please describe a challenge.'),
+  aspirations: z.string().min(1, 'Please describe an aspiration.'),
+});
+
+export const surveyResponseSchema = z.object({
+  questionId: z.string(),
+  answer: z.number().int().min(1).max(5),
+});
+
+export const surveySubmissionSchema = z.object({
+  userId: z.string().min(3),
+  responses: z.array(surveyResponseSchema).min(1),
+  crystalFocus: crystalFocusSchema,
 });

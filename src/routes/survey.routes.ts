@@ -1,15 +1,26 @@
 // src/routes/survey.routes.ts
 
 import { Router } from 'express';
-import { processSurveySubmission } from '../services/surveyService.js';
+import { handleSurveySubmission } from '../controllers/survey.controller';
 import { z } from 'zod';
 
 const router = Router();
 
 // Define the expected shape of the survey submission
 const SurveySubmissionSchema = z.object({
-  userId: z.string(),
-  crystalFocus: z.record(z.any()),
+  crystalFocus: z.object({
+    type: z.enum([
+      'career',
+      'spiritual',
+      'relational',
+      'health',
+      'creative',
+      'other',
+    ]),
+    customDescription: z.string().optional(),
+    challenges: z.string(),
+    aspirations: z.string(),
+  }),
   responses: z.array(
     z.object({
       questionId: z.string(),
@@ -20,25 +31,21 @@ const SurveySubmissionSchema = z.object({
 
 // POST /api/oracle/survey
 router.post('/', async (req, res) => {
-  const parseResult = SurveySubmissionSchema.safeParse(req.body);
-
-  if (!parseResult.success) {
-    return res.status(400).json({
-      success: false,
-      error: 'Invalid survey submission data',
-      details: parseResult.error.flatten(),
-    });
-  }
-
   try {
-    const submission = parseResult.data;
-    const result = await processSurveySubmission(submission);
+    const result = SurveySubmissionSchema.safeParse(req.body);
 
-    if (!result) {
-      return res.status(500).json({ success: false, error: 'Processing failed' });
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid submission',
+        details: result.error.flatten(),
+      });
     }
 
-    return res.status(200).json({ success: true, data: result });
+    // Attach to request object for controller
+    req.body = { ...result.data };
+
+    return handleSurveySubmission(req as any, res);
   } catch (err) {
     console.error('❌ Survey processing error:', err);
     return res.status(500).json({

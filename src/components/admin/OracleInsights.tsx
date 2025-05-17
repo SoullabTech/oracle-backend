@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from 'chart';
 import { getTopPatterns } from '../../services/oraclePatternService';
 import { getAggregatedWisdom } from '../../services/memoryService';
 

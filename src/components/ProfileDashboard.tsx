@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
   TooltipItem,
-} from 'chart.js';
+} from 'chart';
 import { Radar } from 'react-chartjs-2';
 import { getProfileStats } from '../services/profileService';
 import { getPersonalityWeights } from '../services/monitoringService';

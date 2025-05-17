@@ -1,3 +1,3 @@
-export * from './logger.js';
-export * from './mockSupabase.js';
-export * from '../core/agent/memoryManager.js';
+export * from './logger';
+export * from './mockSupabase';
+export * from '../core/agent/memoryManager';

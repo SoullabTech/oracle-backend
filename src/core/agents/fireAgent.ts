@@ -2,54 +2,64 @@
 
 "use strict";
 
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService.js";
-import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
-import * as MemoryModule from "../../utils/memoryModule.js";
-/**
- * FireAgent: Embodies bold, transformative energy.
- */
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService";
+import ModelService from "../../utils/modelService";
+import type { AIResponse } from "../../types/ai";
+
 export class FireAgent extends OracleAgent {
   public async processQuery(query: {
     input: string;
-    userId?: string;
-  }): Promise<AgentResponse> {
-    const contextMemory = await getRelevantMemories(query.userId || "", 3);
+    userId: string;
+  }): Promise<AIResponse> {
+    const { input, userId } = query;
+    const contextMemory = await getRelevantMemories(userId, 3);
 
     const contextHeader = contextMemory.length
       ? `⟳ Sparks of recent fire:\n${contextMemory
-          .map((e) => `- ${e.response}`)
+          .map((e) => `- ${e.response || e.content || ''}`)
           .join("\n")}\n\n`
       : "";
 
-    const augmentedInput = `${contextHeader}${query.input}`;
-    const enhancedResponse = `${(
-      await ModelService.getResponse({ ...query, input: augmentedInput })
-    ).response}\n\n🔥 Like a blazing comet, let your vision ignite.`;
+    const augmentedInput = `${contextHeader}${input}`;
+    const rawResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
+
+    const content = `${rawResponse.response}\n\n🔥 Like a blazing comet, let your vision ignite.`;
 
     await storeMemoryItem({
-      clientId: query.userId || "",
-      content: enhancedResponse,
-      metadata: {},
+      clientId: userId,
+      content,
+      element: "fire",
+      sourceAgent: "fire-agent",
+      confidence: 0.95,
+      metadata: { role: "oracle", phase: "ignition", archetype: "Fire" },
     });
 
     await logOracleInsight({
-      anon_id: query.userId || null,
+      anon_id: userId,
       archetype: "Fire",
       element: "fire",
-      insight: { message: enhancedResponse, raw_input: query.input },
+      insight: { message: content, raw_input: input },
       emotion: 0.9,
       phase: "ignition",
       context: contextMemory,
     });
 
-    return {
-      response: enhancedResponse,
+    const response: AIResponse = {
+      content,
+      provider: "fire-agent",
+      model: rawResponse.model || "gpt-4",
       confidence: 0.95,
-      metadata: {},
-      routingPath: ["fire-agent"],
+      metadata: {
+        element: "fire",
+        archetype: "Fire",
+        phase: "ignition",
+        symbols: [], // Optional: add symbol extraction here
+        reflections: [], // Optional
+      },
     };
+
+    return response;
   }
 }

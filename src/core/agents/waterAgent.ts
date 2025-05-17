@@ -2,11 +2,11 @@
 
 "use strict";
 
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import * as MemoryModule from "../../utils/memoryModule.js";
-import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService";
+import ModelService from "../../utils/modelService";
+import type { AIResponse } from "../../types/ai";
 
 /**
  * WaterAgent: Embodies flow, healing, and reflection.
@@ -14,48 +14,69 @@ import type { AgentResponse } from "../../types/ai.js";
 export class WaterAgent extends OracleAgent {
   public async processQuery(query: {
     input: string;
-    userId?: string;
-  }): Promise<AgentResponse> {
-    // 💧 Retrieve recent water memories
-    const contextMemory = MemoryModule.getRecentEntries(3);
+    userId: string;
+  }): Promise<AIResponse> {
+    const { input, userId } = query;
 
+    // 1️⃣ Retrieve symbolic + session memory
+    const contextMemory = await getRelevantMemories(userId, 3);
+
+    // 2️⃣ Compose input with memory echo
     const contextHeader = contextMemory.length
-      ? `🌊 Echoes of flow:\n${contextMemory
-          .map((e) => `- ${e.response}`)
-          .join("\n")}\n\n`
+      ? `🌊 Echoes of flow:\n${contextMemory.map((e) => `- ${e.response || e.content || ''}`).join("\n")}\n\n`
       : "";
 
-    const augmentedInput = `${contextHeader}${query.input}`;
-    const baseResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
-    const personalityFlair = "\n\n💧 Let your emotions ripple with clarity.";
-    const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
+    const augmentedInput = `${contextHeader}${input}`;
 
-    // 🧠 Save Water memory
-    MemoryModule.addEntry({
-      timestamp: new Date().toISOString(),
-      query: query.input,
-      response: enhancedResponse,
+    // 3️⃣ Get model response
+    const rawResponse = await ModelService.getResponse({
+      ...query,
+      input: augmentedInput,
     });
 
-    // 🔍 Log Water insight
+    const content = `${rawResponse.response}\n\n💧 Let your emotions ripple with clarity.`;
+
+    // 4️⃣ Store to memory system
+    await storeMemoryItem({
+      clientId: userId,
+      content,
+      element: "water",
+      sourceAgent: "water-agent",
+      confidence: 0.9,
+      metadata: {
+        role: "oracle",
+        phase: "flow",
+        archetype: "Water",
+      },
+    });
+
+    // 5️⃣ Log Oracle Insight
     await logOracleInsight({
-      anon_id: query.userId || null,
-      archetype: baseResponse.metadata?.archetype || "Water",
+      anon_id: userId,
+      archetype: "Water",
       element: "water",
       insight: {
-        message: enhancedResponse,
-        raw_input: query.input,
+        message: content,
+        raw_input: input,
       },
-      emotion: baseResponse.metadata?.emotion_score ?? 0.88,
-      phase: baseResponse.metadata?.phase || "flow",
+      emotion: 0.88,
+      phase: "flow",
       context: contextMemory,
     });
 
+    // 6️⃣ Return final response in standard format
     return {
-      ...baseResponse,
-      response: enhancedResponse,
-      confidence: baseResponse.confidence ?? 0.90,
-      routingPath: [...(baseResponse.routingPath || []), "water-agent"],
+      content,
+      provider: "water-agent",
+      model: rawResponse.model || "gpt-4",
+      confidence: 0.9,
+      metadata: {
+        element: "water",
+        phase: "flow",
+        archetype: "Water",
+        reflections: [],
+        symbols: [],
+      },
     };
   }
 }

@@ -1,8 +1,12 @@
+// src/core/agents/earthAgent.ts
+
 "use strict";
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import * as MemoryModule from "../../utils/memoryModule.js";import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
+
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService";
+import ModelService from "../../utils/modelService";
+import type { AIResponse } from "../../types/ai";
 
 /**
  * EarthAgent: Embodies grounded stability, practicality, and nurturing wisdom.
@@ -12,48 +16,63 @@ export class EarthAgent extends OracleAgent {
     super({ debug: false });
   }
 
-  public async processQuery(query: { input: string; userId?: string }): Promise<AgentResponse> {
-    const contextMemory = MemoryModule.getRecentEntries(3);
+  public async processQuery(query: { input: string; userId: string }): Promise<AIResponse> {
+    const { input, userId } = query;
+
+    // 1️⃣ Get context from memory
+    const contextMemory = await getRelevantMemories(userId, 3);
 
     const contextHeader = contextMemory.length
-      ? `⟳ Footprints of grounded thought:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}\n\n`
+      ? `⟳ Footprints of grounded thought:\n${contextMemory.map(e => `- ${e.response || e.content}`).join("\n")}\n\n`
       : "";
 
-    const augmentedInput = `${contextHeader}${query.input}`;
-    const augmentedQuery = {
-      ...query,
-      input: augmentedInput,
-    };
+    // 2️⃣ Augment input with context
+    const augmentedInput = `${contextHeader}${input}`;
+    const baseResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
 
-    const baseResponse: AgentResponse = await ModelService.getResponse(augmentedQuery);
+    const content = `${baseResponse.response}\n\n🌱 Root your path in presence and let wisdom grow from the soil of experience.`;
 
-    const personalityFlair = `\n\n🌱 Root your path in presence and let wisdom grow from the soil of experience.`;
-    const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
-
-    MemoryModule.addEntry({
-      timestamp: new Date().toISOString(),
-      query: query.input,
-      response: enhancedResponse,
+    // 3️⃣ Store enhanced memory
+    await storeMemoryItem({
+      clientId: userId,
+      content,
+      element: "earth",
+      sourceAgent: "earth-agent",
+      confidence: 0.89,
+      metadata: {
+        role: "oracle",
+        phase: "earth",
+        archetype: "Earth",
+      },
     });
 
+    // 4️⃣ Log insight
     await logOracleInsight({
-      anon_id: query.userId || null,
-      archetype: baseResponse.metadata?.archetype || "Earth",
-      element: "Earth",
+      anon_id: userId,
+      archetype: "Earth",
+      element: "earth",
       insight: {
-        message: enhancedResponse,
-        raw_input: query.input,
+        message: content,
+        raw_input: input,
       },
       emotion: baseResponse.metadata?.emotion_score ?? 0.89,
-      phase: baseResponse.metadata?.phase || "Earth Phase",
+      phase: baseResponse.metadata?.phase || "earth",
       context: contextMemory,
     });
 
+    // 5️⃣ Return response in unified format
     return {
-      ...baseResponse,
-      response: enhancedResponse,
+      content,
+      provider: "earth-agent",
+      model: baseResponse.model || "gpt-4",
       confidence: baseResponse.confidence ?? 0.89,
-      routingPath: [...(baseResponse.routingPath || []), "earth-agent"],
+      metadata: {
+        element: "earth",
+        phase: "earth",
+        archetype: "Earth",
+        reflections: [],
+        symbols: [],
+      },
     };
   }
 }

@@ -1,10 +1,12 @@
+// src/core/agents/airAgent.ts
+
 "use strict";
 
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import * as MemoryModule from "../../utils/memoryModule.js";import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
-
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService";
+import ModelService from "../../utils/modelService";
+import type { AIResponse } from "../../types/ai";
 
 /**
  * AirAgent: Embodies intellectual clarity, higher perspective, and swift understanding.
@@ -14,48 +16,62 @@ export class AirAgent extends OracleAgent {
     super({ debug: false });
   }
 
-  public async processQuery(query: { input: string; userId?: string }): Promise<AgentResponse> {
-    const contextMemory = MemoryModule.getRecentEntries(3);
+  public async processQuery(query: { input: string; userId: string }): Promise<AIResponse> {
+    const { input, userId } = query;
 
+    // 1️⃣ Gather context memories
+    const contextMemory = await getRelevantMemories(userId, 3);
     const contextHeader = contextMemory.length
-      ? `⟳ Whispers on the wind:\n${contextMemory.map(e => `- ${e.response}`).join("\n")}\n\n`
+      ? `⟳ Whispers on the wind:\n${contextMemory.map(e => `- ${e.response || e.content}`).join("\n")}\n\n`
       : "";
 
-    const augmentedInput = `${contextHeader}${query.input}`;
-    const augmentedQuery = {
-      ...query,
-      input: augmentedInput,
-    };
+    // 2️⃣ Build augmented prompt
+    const augmentedInput = `${contextHeader}${input}`;
+    const baseResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
 
-    const baseResponse: AgentResponse = await ModelService.getResponse(augmentedQuery);
+    const content = `${baseResponse.response}\n\n🌬️ Let ideas soar—your thoughts shape the horizon.`;
 
-    const personalityFlair = `\n\n🌬️ Let ideas soar—your thoughts shape the horizon.`;
-    const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
-
-    MemoryModule.addEntry({
-      timestamp: new Date().toISOString(),
-      query: query.input,
-      response: enhancedResponse,
+    // 3️⃣ Store memory
+    await storeMemoryItem({
+      clientId: userId,
+      content,
+      element: "air",
+      sourceAgent: "air-agent",
+      confidence: baseResponse.confidence ?? 0.86,
+      metadata: {
+        role: "oracle",
+        phase: "air",
+        archetype: "Air",
+      },
     });
 
+    // 4️⃣ Log symbolic insight
     await logOracleInsight({
-      anon_id: query.userId || null,
-      archetype: baseResponse.metadata?.archetype || "Air",
-      element: "Air",
+      anon_id: userId,
+      archetype: "Air",
+      element: "air",
       insight: {
-        message: enhancedResponse,
-        raw_input: query.input,
+        message: content,
+        raw_input: input,
       },
       emotion: baseResponse.metadata?.emotion_score ?? 0.86,
-      phase: baseResponse.metadata?.phase || "Air Phase",
+      phase: baseResponse.metadata?.phase || "air",
       context: contextMemory,
     });
 
+    // 5️⃣ Return standard AIResponse
     return {
-      ...baseResponse,
-      response: enhancedResponse,
+      content,
+      provider: "air-agent",
+      model: baseResponse.model || "gpt-4",
       confidence: baseResponse.confidence ?? 0.86,
-      routingPath: [...(baseResponse.routingPath || []), "air-agent"],
+      metadata: {
+        element: "air",
+        phase: "air",
+        archetype: "Air",
+        reflections: [],
+        symbols: [],
+      },
     };
   }
 }

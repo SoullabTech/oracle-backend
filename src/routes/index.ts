@@ -1,12 +1,38 @@
+// src/routes/index.ts
+
 import { Router } from 'express';
-import authRoutes from './authRoutes;
-import memoryRoutes from .js'./memoryRoutes;
-import sessionRoutes from './sessionRoutes;
+
+import authRoutes from './authRoutes';
+import memoryRoutes from './memoryRoutes';
+import journalRoutes from './journal.routes';
+import surveyRoutes from './survey.routes';
+import sessionRoutes from './session.routes';
+import storyRoutes from './storyGenerator.routes';
+import symbolicTrendsRoutes from './symbolicTrends.routes';
+import learningRoutes from './learning.routes';
+import facilitatorRoutes from './facilitator.routes';
+import symbolicMemoryRoutes from './symbolicMemory.routes';
+import personalOracleRoutes from './personalOracle.routes';
+import personalGuideRoutes from './personalGuide.routes';
+
+
 
 const router = Router();
 
-router.use(.js'/auth', authRoutes);
+/**
+ * Central router to aggregate all route modules under base paths.
+ */
+router.use('/auth', authRoutes);
 router.use('/memory', memoryRoutes);
+router.use('/personal-guide', personalGuideRoutes);
+router.use('/oracle/personal', personalOracleRoutes);
+router.use('/symbolic-tags', symbolicMemoryRoutes);
+router.use('/journal', journalRoutes);
+router.use('/survey', surveyRoutes);
 router.use('/session', sessionRoutes);
+router.use('/oracle/story-generator', storyRoutes);
+router.use('/symbolic-trends', symbolicTrendsRoutes);
+router.use('/learning', learningRoutes);
+router.use('/facilitator', facilitatorRoutes);
 
 export default router;

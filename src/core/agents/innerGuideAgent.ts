@@ -1,9 +1,9 @@
 // src/agents/innerGuideAgent.ts
 
 import { z } from "zod";
-import { generateDivinatoryInsight } from "../services/divinationService.js";
-import { interpretDreamSymbols } from "../services/dreamService.js";
-import { extractSymbolsFromJournal } from "../utils/symbolParser.js";
+import { generateDivinatoryInsight } from "../services/divinationService";
+import { interpretDreamSymbols } from "../services/dreamService";
+import { extractSymbolsFromJournal } from "../utils/symbolParser";
 
 export const journalEntrySchema = z.object({
   userId: z.string(),
@@ -18,7 +18,9 @@ export interface InnerGuideInsight {
   integrationPrompt: string;
 }
 
-export async function processJournalEntry(input: z.infer<typeof journalEntrySchema>): Promise<InnerGuideInsight> {
+export async function processJournalEntry(
+  input: z.infer<typeof journalEntrySchema>
+): Promise<InnerGuideInsight> {
   const { userId, entry } = input;
 
   // Step 1: Extract symbols from journal
@@ -31,8 +33,8 @@ export async function processJournalEntry(input: z.infer<typeof journalEntrySche
   const divination = await generateDivinatoryInsight({ userId, entry });
 
   // Step 4: Integration suggestion
-  const integrationPrompt = `Reflect on the symbol(s): ${symbols.join(.js', ') || 'none'}${
-    dreamThemes.length ? ` and dream theme(s): ${dreamThemes.join(', ')}` : ''
+  const integrationPrompt = `Reflect on the symbol(s): ${symbols.length > 0 ? symbols.join(', ') : 'none'}${
+    dreamThemes && dreamThemes.length > 0 ? ` and dream theme(s): ${dreamThemes.join(', ')}` : ''
   }. What do they reveal about your inner process?`;
 
   return {

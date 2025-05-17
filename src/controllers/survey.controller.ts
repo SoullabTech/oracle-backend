@@ -1,37 +1,44 @@
 // src/controllers/survey.controller.ts
+
 import type { Response } from 'express';
-import { supabase } from '../lib/supabase;
-import { elementalProfileSchema } from .js'../lib/schemas/elemental;
-import { crystalFocusSchema } from '../types/survey;
-import type { AuthenticatedRequest } from .js'../types';
-import type { SurveySubmission } from '../types/survey;
+import { supabase } from '../lib/supabaseClient';
+import { elementalProfileSchema } from '../lib/schemas/elemental';
+import {
+  surveySubmissionSchema,
+  type SurveySubmission
+} from '../types/survey';
+import type { AuthenticatedRequest } from '../types';
 
 export async function handleSurveySubmission(
   req: AuthenticatedRequest,
   res: Response
 ) {
   try {
-    // Use authenticated user ID instead of trusting client payload
-    const userId = req.user!.id;
-    const { responses, crystalFocus } = req.body as SurveySubmission;
+    // 1️⃣ Full schema validation using Zod
+    const parsed = surveySubmissionSchema.safeParse({
+      ...req.body,
+      userId: req.user!.id,
+    });
 
-    // 1️⃣ Validate crystalFocus
-    const focusParsed = crystalFocusSchema.safeParse(crystalFocus);
-    if (!focusParsed.success) {
-      return res
-        .status(400)
-        .json({ error: .js'Invalid crystal focus', details: focusParsed.error.format() });
+    if (!parsed.success) {
+      return res.status(400).json({
+        error: 'Invalid survey submission',
+        details: parsed.error.format(),
+      });
     }
 
-    // 2️⃣ Load survey questions
+    const { responses, crystalFocus, userId } = parsed.data;
+
+    // 2️⃣ Load questions from Supabase
     const { data: questions, error: qError } = await supabase
       .from('survey_questions')
       .select('*');
+
     if (qError || !questions) {
       return res.status(500).json({ error: 'Failed to load questions' });
     }
 
-    // 3️⃣ Aggregate weighted responses
+    // 3️⃣ Aggregate scores per element
     const totals: Record<string, { total: number; count: number }> = {
       fire: { total: 0, count: 0 },
       water: { total: 0, count: 0 },
@@ -48,7 +55,7 @@ export async function handleSurveySubmission(
       }
     }
 
-    // 4️⃣ Build normalized profile payload
+    // 4️⃣ Normalize scores to 0–100 scale
     const profile = {
       user_id: userId,
       fire: Math.round((totals.fire.total / Math.max(totals.fire.count, 1)) * 20),
@@ -57,21 +64,22 @@ export async function handleSurveySubmission(
       air: Math.round((totals.air.total / Math.max(totals.air.count, 1)) * 20),
       aether: Math.round((totals.aether.total / Math.max(totals.aether.count, 1)) * 20),
       updated_at: new Date().toISOString(),
-      crystal_focus: focusParsed.data,
+      crystal_focus: crystalFocus,
     };
 
-    // 5️⃣ Validate full elemental profile
-    const parsed = elementalProfileSchema.safeParse(profile);
-    if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ error: 'Profile validation failed', details: parsed.error.format() });
+    // 5️⃣ Validate the resulting profile
+    const profileParsed = elementalProfileSchema.safeParse(profile);
+    if (!profileParsed.success) {
+      return res.status(400).json({
+        error: 'Profile validation failed',
+        details: profileParsed.error.format(),
+      });
     }
 
-    // 6️⃣ Upsert into Supabase
+    // 6️⃣ Save profile to database
     const { data, error } = await supabase
       .from('elemental_profiles')
-      .upsert(parsed.data)
+      .upsert(profileParsed.data)
       .select()
       .single();
 
@@ -79,7 +87,7 @@ export async function handleSurveySubmission(
       return res.status(500).json({ error: 'Failed to save elemental profile' });
     }
 
-    // 7️⃣ Respond with the computed stats
+    // ✅ Return processed stats
     return res.status(200).json({
       message: 'Survey processed successfully',
       stats: {
@@ -90,8 +98,8 @@ export async function handleSurveySubmission(
         aether: profile.aether,
       },
     });
-  } catch (err) {
-    console.error('❌ Survey submission error:', err);
+  } catch (err: any) {
+    console.error('❌ Survey submission error:', err.message || err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

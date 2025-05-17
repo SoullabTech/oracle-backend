@@ -9,6 +9,14 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+
+    // ─── Project Layout ──────────────────────────────────────────────
+    "rootDir": "src",          // <-- TS sources live here
+    "outDir": "dist",          // <-- compiled JS/D.ts go here
+    "declaration": true,       // <-- generate .d.ts files
+    "sourceMap": true,         // <-- generate .map files
+
+    // ─── Path Aliases ───────────────────────────────────────────────
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -16,14 +24,20 @@
       "@utils/*": ["src/utils/*"],
       "@lib/*": ["src/lib/*"]
     },
+
+    // ─── Types for Test Runners & Vite ─────────────────────────────
     "types": ["vitest/globals", "vite/client"]
   },
+
+  // Only compile your TS source, not the emitted JS in `dist/`
   "include": [
     "src",
     "src/types",
     "test",
     "vitest.config.ts"
   ],
+
+  // Exclude build outputs and deps
   "exclude": [
     "node_modules",
     "dist"

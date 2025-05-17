@@ -1,10 +1,10 @@
 // src/core/agents/unifiedMemory.ts
 
-import { OracleAgent } from './oracleAgent.js';
-import { getRelevantMemories, storeMemoryItem } from '../services/memoryService.js';
-import { getAggregatedWisdom } from '../services/memoryService.js';
-import type { MemoryItem } from '../types/memory.js';
-import logger from '../utils/logger.js';
+import { OracleAgent } from './oracleAgent';
+import { getRelevantMemories, storeMemoryItem } from '../services/memoryService';
+import { getAggregatedWisdom } from '../services/memoryService';
+import type { MemoryItem } from '../types/memory';
+import logger from '../utils/logger';
 
 /**
  * UnifiedMemoryAgent extends OracleAgent to both read and write from memory,

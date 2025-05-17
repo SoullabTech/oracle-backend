@@ -1,9 +1,9 @@
 // src/core/agents/elementalAgent.ts
-import { FireAgent } from './fireAgent.js';
-import { WaterAgent } from './waterAgent.js';
-import { EarthAgent } from './earthAgent.js';
-import { AirAgent } from './airAgent.js';
-import { AetherAgent } from './aetherAgent.js';
+import { FireAgent } from './fireAgent';
+import { WaterAgent } from './waterAgent';
+import { EarthAgent } from './earthAgent';
+import { AirAgent } from './airAgent';
+import { AetherAgent } from './aetherAgent';
 import { detectFacetFromInput } from '@/utils/facetUtil';
 import MemoryModule from '@/utils/memoryModule';
 import type { AIResponse } from '@/core/types/ai';

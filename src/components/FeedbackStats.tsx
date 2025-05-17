@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from 'chart';
 import { getFeedbackStats } from '../services/feedbackService';
 import { useAuth } from '../hooks/useAuth';
 

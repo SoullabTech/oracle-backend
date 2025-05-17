@@ -2,60 +2,71 @@
 
 "use strict";
 
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import * as MemoryModule from "../../utils/memoryModule.js";
-import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import { getRelevantMemories, storeMemoryItem } from "../../services/memoryService";
+import ModelService from "../../utils/modelService";
+import type { AIResponse } from "../../types/ai";
 
 /**
  * AetherAgent: Embodies integration of all elements and subtle synthesis.
  */
 export class AetherAgent extends OracleAgent {
-  public async processQuery(query: {
-    input: string;
-    userId?: string;
-  }): Promise<AgentResponse> {
-    // 🔮 Retrieve recent aether (integrative) memories
-    const contextMemory = MemoryModule.getRecentEntries(3);
+  public async processQuery(query: { input: string; userId: string }): Promise<AIResponse> {
+    const { input, userId } = query;
 
+    // 1️⃣ Fetch integrative context memories
+    const contextMemory = await getRelevantMemories(userId, 3);
     const contextHeader = contextMemory.length
-      ? `✨ Weaving threads of past insights:\n${contextMemory
-          .map((e) => `- ${e.response}`)
-          .join("\n")}\n\n`
+      ? `✨ Weaving threads of past insights:\n${contextMemory.map(e => `- ${e.response || e.content}`).join("\n")}\n\n`
       : "";
 
-    const augmentedInput = `${contextHeader}${query.input}`;
+    // 2️⃣ Prepare the query
+    const augmentedInput = `${contextHeader}${input}`;
     const baseResponse = await ModelService.getResponse({ ...query, input: augmentedInput });
-    const personalityFlair = "\n\n🌟 Let the harmonies of the elements guide your path.";
-    const enhancedResponse = `${baseResponse.response}${personalityFlair}`;
+    const content = `${baseResponse.response}\n\n🌟 Let the harmonies of the elements guide your path.`;
 
-    // 🧠 Save Aether memory
-    MemoryModule.addEntry({
-      timestamp: new Date().toISOString(),
-      query: query.input,
-      response: enhancedResponse,
+    // 3️⃣ Persist the exchange in memory
+    await storeMemoryItem({
+      clientId: userId,
+      content,
+      element: "aether",
+      sourceAgent: "aether-agent",
+      confidence: baseResponse.confidence ?? 0.93,
+      metadata: {
+        role: "oracle",
+        phase: "integration",
+        archetype: "Aether",
+      },
     });
 
-    // 🔍 Log Aether insight
+    // 4️⃣ Log insight to history
     await logOracleInsight({
-      anon_id: query.userId || null,
-      archetype: baseResponse.metadata?.archetype || "Aether",
+      anon_id: userId,
+      archetype: "Aether",
       element: "aether",
       insight: {
-        message: enhancedResponse,
-        raw_input: query.input,
+        message: content,
+        raw_input: input,
       },
-      emotion: baseResponse.metadata?.emotion_score ?? 0.9,
+      emotion: baseResponse.metadata?.emotion_score ?? 0.93,
       phase: baseResponse.metadata?.phase || "integration",
       context: contextMemory,
     });
 
+    // 5️⃣ Return standardized AIResponse
     return {
-      ...baseResponse,
-      response: enhancedResponse,
+      content,
+      provider: "aether-agent",
+      model: baseResponse.model || "gpt-4",
       confidence: baseResponse.confidence ?? 0.93,
-      routingPath: [...(baseResponse.routingPath || []), "aether-agent"],
+      metadata: {
+        element: "aether",
+        phase: "integration",
+        archetype: "Aether",
+        reflections: [],
+        symbols: [],
+      },
     };
   }
 }

@@ -1,25 +1,25 @@
 // src/core/agents/MainOracleAgent.ts
 
-import { elementalOracle } from '../../services/elementalOracleService.js';
-import { getUserProfile } from '../../services/profileService.js';
-import { getPersonalityWeights } from '../../services/monitoringService.js';
+import { elementalOracle } from '../../services/elementalOracleService';
+import { getUserProfile } from '../../services/profileService';
+import { getPersonalityWeights } from '../../services/monitoringService';
 import {
   storeMemoryItem,
   getRelevantMemories,
-} from '../../services/memoryService.js';
-import { logOracleInsight } from '../../utils/oracleLogger.js';
-import { runShadowWork } from '../../modules/shadowWorkModule.js';
-import { detectFacetFromInput } from '../../utils/facetUtil.js';
-import { FireAgent } from './fireAgent.js';
-import { WaterAgent } from './waterAgent.js';
-import { EarthAgent } from './earthAgent.js';
-import { AirAgent } from './airAgent.js';
-import { AetherAgent } from './aetherAgent.js';
-import { FacilitatorAgent } from './facilitatorAgent.js';
-import logger from '../../utils/logger.js';
-import { feedbackPrompts } from '../../constants/feedbackPrompts.js';
-import type { AIResponse } from '../../types/ai.js';
-import type { StoryRequest, OracleContext } from '../../types/oracle.js';
+} from '../../services/memoryService';
+import { logOracleInsight } from '../../utils/oracleLogger';
+import { runShadowWork } from '../../modules/shadowWorkModule';
+import { detectFacetFromInput } from '../../utils/facetUtil';
+import { FireAgent } from './fireAgent';
+import { WaterAgent } from './waterAgent';
+import { EarthAgent } from './earthAgent';
+import { AirAgent } from './airAgent';
+import { AetherAgent } from './aetherAgent';
+import { FacilitatorAgent } from './facilitatorAgent';
+import logger from '../../utils/logger';
+import { feedbackPrompts } from '../../constants/feedbackPrompts';
+import type { AIResponse } from '../../types/ai';
+import type { StoryRequest, OracleContext } from '../../types/oracle';
 
 interface QueryInput {
   input: string;

@@ -1,16 +1,21 @@
 // src/middleware/isAdmin.ts
-import { Request, Response, NextFunction } from 'express';
-import { supabase } from '../lib/supabase;
 
+import { Request, Response, NextFunction } from 'express';
+import { supabase } from '../lib/supabase';
+import type { AuthenticatedRequest } from '../types';
+
+/**
+ * Middleware to check if the authenticated user has an 'admin' role.
+ */
 export async function isAdmin(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: .js'No authorization header' });
+      return res.status(401).json({ error: 'No authorization header' });
     }
 
     const token = authHeader.replace(/^Bearer\s+/, '');
@@ -23,7 +28,6 @@ export async function isAdmin(
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Check the user's role in your `user_roles` / `role_types` tables
     const { data: userRole, error: roleErr } = await supabase
       .from('user_roles')
       .select('role_id')
@@ -31,7 +35,7 @@ export async function isAdmin(
       .single();
 
     if (roleErr || !userRole) {
-      return res.status(403).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: 'Unauthorized - No role' });
     }
 
     const { data: roleType, error: typeErr } = await supabase
@@ -41,11 +45,16 @@ export async function isAdmin(
       .single();
 
     if (typeErr || !roleType || roleType.name !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: 'Unauthorized - Not admin' });
     }
 
-    // Attach the full user object for downstream handlers
-    req.user = user;
+    // Attach user to request for downstream middleware
+    req.user = {
+      id: user.id,
+      email: user.email || '',
+      role: roleType.name
+    };
+
     next();
   } catch (err) {
     console.error('Auth middleware error:', err);

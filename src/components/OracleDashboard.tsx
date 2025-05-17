@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from 'chart';
 
 import { getPersonalityWeights } from '../services/monitoringService';
 import { getAggregatedWisdom } from '../services/memoryService';

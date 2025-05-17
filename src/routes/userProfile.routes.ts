@@ -1,12 +1,12 @@
 // src/routes/userProfile.routes.ts
 
 import { Router } from "express";
-import { authenticate } from "../middleware/authenticate.js";
+import { authenticate } from "../middleware/authenticate";
 import {
   getUserProfile,
   updateUserProfile,
   getProfileStats,
-} from "../services/profileService.js";
+} from "../services/profileService";
 
 const router = Router();
 

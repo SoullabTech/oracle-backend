@@ -1,77 +1,109 @@
-// src/types/ai.ts
+// src/utils/memoryModule.ts
 
-/**
- * Enumerates all supported AI response providers.
- */
-export type AIProvider =
-  | 'openai'
-  | 'claude'
-  | 'chatgpt-oracle'
-  | 'elemental-oracle'
-  | 'dream-agent'
-  | 'guide-agent'
-  | 'mentor-agent'
-  | 'relationship-agent'
-  | 'shadow-agent';
+import { supabase } from '../lib/supabaseClient';
+import type { AIResponse } from '../types/ai';
 
-/**
- * Standard AI response envelope with extended metadata for routing, analysis, and form generation.
- */
-export interface AIResponse {
-  /** Main textual content returned by the agent */
-  content: string;
-  /** Identifier for which provider or agent created this response */
-  provider: AIProvider;
-  /** Underlying model or engine name (e.g., 'gpt-4', 'claude-v1') */
-  model: string;
-  /** Confidence score (0-1) representing response certainty */
-  confidence: number;
-
-  metadata: {
-    // ⏱️ Performance Metrics
-    /** Number of tokens consumed */
-    tokens?: number;
-    /** Total processing time in ms */
-    processingTime?: number;
-
-    // 🔮 Elemental Mapping
-    element?: string;
-    facet?: string;
-    phase?: string;
-
-    // 🧙 Archetypal / Symbolic
-    archetype?: string;
-    symbols?: string[];
-    reflections?: string[];
-
-    // 🎯 Response Adjustments & Focus
-    elementalAdjustments?: {
-      tone?: string;
-      style?: string;
-      emphasis?: string[];
-    };
-
-    // 🪞 Routing Markers
-    /** Where the request was routed from: 'dream', 'shadow', 'elemental', etc. */
-    routedFrom?: string;
-    /** Type of query, used for downstream logic */
-    queryType?: 'dream' | 'mentor' | 'relationship' | 'story' | 'default';
-
-    // 📚 Embedded Payloads
-    /** For story requests */
-    storyRequest?: {
-      focusArea: string;
-      elementalTheme: string;
-      archetype: string;
-      depthLevel: number;
-    };
-    /** For form generation triggers */
-    formRequest?: {
-      type: 'new-client' | 'transcript' | 'maintenance' | 'reading';
-      clientId?: string;
-      context?: Record<string, any>;
-    };
-
-    [key: string]: any; // Allow for future extensions
-  };
+export interface SymbolicMemoryTag {
+  userId: string;
+  symbol: string;
+  agent: string;
+  timestamp?: string; // ISO string
+  metadata?: Record<string, any>;
+  aiResponse?: AIResponse;
 }
+
+class MemoryModule {
+  /**
+   * Stores a symbolic tag in Supabase.
+   */
+  async storeTag(tag: SymbolicMemoryTag): Promise<void> {
+    const { error } = await supabase.from('symbolic_tags').insert({
+      user_id: tag.userId,
+      symbol: tag.symbol,
+      agent: tag.agent,
+      timestamp: tag.timestamp ?? new Date().toISOString(),
+      metadata: tag.metadata ?? {},
+      ai_response: tag.aiResponse ?? null,
+    });
+
+    if (error) {
+      console.error('❌ Failed to store symbolic tag:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves all symbolic tags for a user.
+   */
+  async getAllSymbolicTags(userId: string): Promise<SymbolicMemoryTag[]> {
+    const { data, error } = await supabase
+      .from('symbolic_tags')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false });
+
+    if (error) {
+      console.error('❌ Failed to fetch all symbolic tags:', error);
+      throw error;
+    }
+
+    return (data ?? []) as SymbolicMemoryTag[];
+  }
+
+  /**
+   * Filters tags by symbol name.
+   */
+  async getEntriesBySymbol(userId: string, symbol: string): Promise<SymbolicMemoryTag[]> {
+    const { data, error } = await supabase
+      .from('symbolic_tags')
+      .select('*')
+      .eq('user_id', userId)
+      .ilike('symbol', symbol);
+
+    if (error) {
+      console.error('❌ Error fetching entries by symbol:', error);
+      throw error;
+    }
+
+    return data as SymbolicMemoryTag[];
+  }
+
+  /**
+   * Filters tags by agent name.
+   */
+  async getEntriesByAgent(userId: string, agent: string): Promise<SymbolicMemoryTag[]> {
+    const { data, error } = await supabase
+      .from('symbolic_tags')
+      .select('*')
+      .eq('user_id', userId)
+      .ilike('agent', agent);
+
+    if (error) {
+      console.error('❌ Error fetching entries by agent:', error);
+      throw error;
+    }
+
+    return data as SymbolicMemoryTag[];
+  }
+
+  /**
+   * Filters tags after a specific timestamp.
+   */
+  async getEntriesSince(userId: string, dateISO: string): Promise<SymbolicMemoryTag[]> {
+    const { data, error } = await supabase
+      .from('symbolic_tags')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('timestamp', dateISO);
+
+    if (error) {
+      console.error('❌ Error fetching entries since:', error);
+      throw error;
+    }
+
+    return data as SymbolicMemoryTag[];
+  }
+}
+
+const memoryModule = new MemoryModule();
+export default memoryModule;

@@ -1,3 +1,10 @@
+openapi: 3.0.1
+info:
+  title: Spiralogic Oracle API
+  version: 1.0.0
+  description: >
+    API for interacting with the Spiralogic Oracle system, including elemental story generation, symbolic processing, and memory/insight management.
+
 paths:
   /api/oracle/facet-lookup:
     post:
@@ -25,7 +32,6 @@ paths:
                   detected:
                     type: string
                     example: fire2
-                    description: Canonical ID of the facet
                   name:
                     type: string
                     example: Expression
@@ -150,3 +156,81 @@ paths:
           description: Missing required fields
         '500':
           description: Failed to generate story
+
+  /api/notion/ingest/notion:
+    post:
+      summary: Trigger ingestion of content from Notion pages
+      tags:
+        - Ingestion
+      responses:
+        '200':
+          description: Notion ingestion successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  importedPages:
+                    type: integer
+                    example: 2
+                  successes:
+                    type: integer
+                    example: 2
+                  failures:
+                    type: integer
+                    example: 0
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      description: Detailed result for each ingested page
+        '500':
+          description: Server error during Notion ingestion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/notion/ingest/local:
+    post:
+      summary: Trigger ingestion of local knowledge base JSON files
+      tags:
+        - Ingestion
+      responses:
+        '200':
+          description: Local KB ingestion successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loadedFiles:
+                    type: integer
+                    example: 3
+                  successes:
+                    type: integer
+                    example: 3
+                  failures:
+                    type: integer
+                    example: 0
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      description: Detailed result for each file
+        '500':
+          description: Server error during local KB ingestion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+tags:
+  - name: Ingestion
+    description: Routes that trigger content import from Notion or local files

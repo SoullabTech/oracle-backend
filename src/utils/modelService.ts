@@ -1,8 +1,8 @@
 // src/utils/modelService.ts
 
-import { openai } from "../lib/openaiClient.js"; // adjust if using other clients
-import logger from "./logger.js";
-import type { AgentResponse } from "../core/agents/types.js";
+import { openai } from "../lib/openaiClient"; // adjust if using other clients
+import logger from "./logger";
+import type { AgentResponse } from "../core/agents/types";
 
 class ModelService {
   /**

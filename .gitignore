@@ -18,3 +18,4 @@ node_modules/
 # Never commit compiled JS or maps from src
 src/**/*.js
 src/**/*.js.map
+echo ".env" >> .gitignore

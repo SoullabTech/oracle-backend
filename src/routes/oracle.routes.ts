@@ -1,28 +1,25 @@
+// src/routes/oracle.routes.ts
+
 import { Router } from 'express';
-import { oracle } from '../core/agents/MainOracleAgent.js';
-import { logInsightToNotion } from '../services/notionLogger.js';
+import { oracle } from '../core/agents/MainOracleAgent';
+import { notionLogger } from '../services/notionLogger';
 import { z } from 'zod';
 
 const router = Router();
 
-// 🧠 Schema for validating incoming Oracle queries
 const oracleQuerySchema = z.object({
   input: z.string().min(1, 'Input is required'),
   userId: z.string(),
-  context: z.record(z.any()).optional()
+  context: z.record(z.any()).optional(),
 });
 
-/**
- * POST /query
- * Handles incoming Oracle queries with optional context and userId
- */
 router.post('/query', async (req, res) => {
   const parseResult = oracleQuerySchema.safeParse(req.body);
 
   if (!parseResult.success) {
     return res.status(400).json({
       error: 'Invalid request',
-      details: parseResult.error.flatten()
+      details: parseResult.error.flatten(),
     });
   }
 
@@ -32,31 +29,34 @@ router.post('/query', async (req, res) => {
     const response = await oracle.processQuery({ input, userId, context });
     return res.status(200).json({ success: true, data: response });
   } catch (err: any) {
-    console.error('❌ Oracle query failed:', err.message || err);
+    notionLogger.error(`❌ Oracle query failed: ${err.message || err}`);
     return res.status(500).json({
       success: false,
-      error: 'Oracle processing error'
+      error: 'Oracle processing error',
     });
   }
 });
 
-/**
- * GET /test-log
- * Simple route to test Notion integration
- */
+// Optional: Feedback endpoint
+router.post('/feedback', async (req, res) => {
+  const { userId, messageId, rating, emotion } = req.body;
+
+  try {
+    await oracle.handleFeedback({ userId, messageId, rating, emotion });
+    return res.status(200).json({ success: true });
+  } catch (error: any) {
+    notionLogger.error(`❌ Feedback handling failed: ${error.message}`);
+    return res.status(500).json({ success: false, error: 'Feedback error' });
+  }
+});
+
 router.get('/test-log', async (_req, res) => {
   try {
-    const result = await logInsightToNotion({
-      title: 'Test Insight',
-      content: 'This is a test insight from the Oracle backend.'
-    });
-    return res.status(200).json({ success: true, id: result.id });
+    notionLogger.info('Test Insight: This is a test insight from the Oracle backend.');
+    return res.status(200).json({ success: true, message: 'Logged to console' });
   } catch (error: any) {
-    console.error('❌ Notion logging failed:', error.message);
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to log test insight to Notion'
-    });
+    notionLogger.error(`❌ Logging failed: ${error.message}`);
+    return res.status(500).json({ success: false, error: 'Logging error' });
   }
 });
 

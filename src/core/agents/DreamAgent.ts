@@ -1,9 +1,9 @@
 "use strict";
 
-import { OracleAgent } from "./oracleAgent.js";
-import { logOracleInsight } from "../../utils/oracleLogger.js";
-import * as MemoryModule from "../../utils/memoryModule.js";import ModelService from "../../utils/modelService.js";
-import type { AgentResponse } from "../../types/ai.js";
+import { OracleAgent } from "./oracleAgent";
+import { logOracleInsight } from "../../utils/oracleLogger";
+import * as MemoryModule from "../../utils/memoryModule";import ModelService from "../../utils/modelService";
+import type { AgentResponse } from "../../types/ai";
 
 /**
  * DreamAgent: Embodies symbolic guidance, imagination, and messages from the subconscious.

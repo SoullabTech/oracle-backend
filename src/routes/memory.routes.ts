@@ -1,14 +1,14 @@
 // src/routes/memory.routes.ts
 
 import { Router } from 'express';
-import { authenticate } from '../middleware/authenticate.js';
+import { authenticate } from '../middleware/authenticate';
 import {
   storeMemoryItem,
   getAllMemories,
   updateMemory,
   deleteMemory,
   getMemoryInsights
-} from '../services/memoryService.js';
+} from '../services/memoryService';
 
 const router = Router();
 
