@@ -1,3 +1,5 @@
+// src/routes/sessionRoutes.ts
+
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/authenticateToken';
 import { validate } from '../middleware/validate';

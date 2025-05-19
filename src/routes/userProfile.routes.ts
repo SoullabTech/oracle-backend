@@ -1,7 +1,5 @@
-// src/routes/userProfile.routes.ts
-
 import { Router } from "express";
-import { authenticate } from "../middleware/authenticate";
+import { authenticate } from "../middleware/authenticate"; // Import the new middleware
 import {
   getUserProfile,
   updateUserProfile,
@@ -20,10 +18,17 @@ router.use(authenticate);
  */
 router.post("/update-profile", async (req, res) => {
   try {
-    const { userId, fire, water, earth, air, aether, crystal_focus } = req.body;
+    // Access the userId from the authenticated request user
+    const userId = req.user?.id; // Now using the authenticated user from Supabase
 
+    if (!userId) {
+      return res.status(400).json({ message: "No user found in token" });
+    }
+
+    const { fire, water, earth, air, aether, crystal_focus } = req.body;
+
+    // Validate the data
     if (
-      typeof userId !== "string" ||
       [fire, water, earth, air, aether].some(
         (n) => typeof n !== "number" || n < 0 || n > 100
       )

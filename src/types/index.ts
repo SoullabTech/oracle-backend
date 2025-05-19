@@ -1,36 +1,77 @@
-// src/types/index.ts - Update or create this interface
-
-import { User } from '@supabase/supabase-js';
+import { User as SupabaseUser } from '@supabase/supabase-js'; // Avoid naming conflicts
 import { Request } from 'express';
+import type { Metadata } from './metadata';
 
-export interface AuthenticatedRequest extends Request {
-  user: User;
-}
-
-export interface User {
-  id: string;
+/**
+ * Represents the authentication request payload
+ */
+export interface AuthRequest {
   email: string;
-  created_at: string;
-  last_login?: string;
+  password: string;
 }
 
-export interface Memory {
+/**
+ * Represents the authentication response including tokens and user information
+ */
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+  };
+}
+
+/**
+ * Represents a stored memory item, either user query or agent response
+ */
+export interface MemoryItem {
+  /** Unique identifier for the memory entry */
   id: string;
-  user_id: string;
+  /** The main content of the memory (query or response) */
   content: string;
-  created_at: string;
-  metadata?: Record<string, unknown>;
+  /** Timestamp in milliseconds since epoch */
+  timestamp: number;
+  /** Optional client/user identifier */
+  clientId?: string;
+  /** Optional metadata for additional context */
+  metadata?: Metadata;
 }
 
+/**
+ * Represents a symbolic tag emitted during processing
+ */
+export interface SymbolicTag {
+  /** The symbol or archetype tag */
+  symbol: string;
+  /** The agent that emitted the symbol */
+  agent: string;
+  /** Optional elemental context (e.g., 'fire', 'water') */
+  element?: string;
+  /** Optional facet context within an element */
+  facet?: string;
+  /** Optional phase or state context */
+  phase?: string;
+  /** ISO timestamp of when the tag was created */
+  timestamp?: string;
+  /** Confidence score (0-1) for the tagging */
+  confidence?: number;
+}
+
+/**
+ * Represents a session of a user interacting with the system
+ */
 export interface Session {
   id: string;
-  user_id: string;
-  started_at: string;
-  ended_at?: string;
+  clientId: string;
+  startTime: string;
+  meta: Metadata;
   status: 'active' | 'completed';
-  metadata?: Record<string, unknown>;
 }
 
+/**
+ * Represents the statistics for user sessions
+ */
 export interface SessionStats {
   totalSessions: number;
   activeSessions: number;
@@ -39,6 +80,19 @@ export interface SessionStats {
   clientId: string;
 }
 
+/**
+ * User interface for interaction with authentication systems and memory tracking
+ */
+export interface User {
+  id: string;
+  email: string;
+  created_at: string;
+  last_login?: string;
+}
+
+/**
+ * Represents the structure of the authenticated request
+ */
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
@@ -47,6 +101,9 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export * from './auth';
-export * from './memory';
-export * from './session';
+/**
+ * Re-exporting from other modules, assuming you've defined these in their respective files
+ */
+export * from './auth';   // If you have an 'auth' module
+export * from './memory';  // If you have a 'memory' module
+export * from './session'; // If you have a 'session' module

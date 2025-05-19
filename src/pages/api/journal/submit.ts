@@ -1,7 +1,7 @@
 // /pages/api/journal/submit.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createEntry } from '@/controllers/journal.controller';
-import { logJournalEntry } from '@/lib/logger';
+import { logJournalEntry } from '@lib/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

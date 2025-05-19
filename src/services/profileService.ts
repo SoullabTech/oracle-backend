@@ -6,6 +6,13 @@ export interface UserProfile {
   email: string;
   bio?: string;
   avatarUrl?: string;
+  fire: number;
+  water: number;
+  earth: number;
+  air: number;
+  aether: number;
+  crystal_focus?: string;
+  updated_at: string;
 }
 
 const mockDatabase: Record<string, UserProfile> = {
@@ -15,9 +22,17 @@ const mockDatabase: Record<string, UserProfile> = {
     email: 'kelly@example.com',
     bio: 'Author of Elemental Alchemy',
     avatarUrl: 'https://example.com/avatar.png',
+    fire: 70,
+    water: 60,
+    earth: 50,
+    air: 65,
+    aether: 80,
+    crystal_focus: 'Quartz',
+    updated_at: '2025-05-17T00:00:00Z',
   },
 };
 
+// The updateProfile method for updating the user profile
 export const profileService = {
   getProfile: (userId: string): UserProfile | null => {
     return mockDatabase[userId] || null;

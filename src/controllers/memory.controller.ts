@@ -66,7 +66,7 @@ export async function listSharedSpaces(req: Request, res: Response) {
 // src/controllers/journal.controller.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { logAdjusterInsight, logJournalEntry } from '@/lib/logger';
+import { logAdjusterInsight, logJournalEntry } from '@lib/logger';
 import { z } from 'zod';
 
 const journalSchema = z.object({

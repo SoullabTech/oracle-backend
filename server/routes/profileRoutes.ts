@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { elementalProfileSchema } from '@/lib/schemas/elemental';
+import { elementalProfileSchema } from '@lib/schemas/elemental';
 
 const router = Router();
 

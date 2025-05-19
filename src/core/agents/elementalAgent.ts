@@ -4,8 +4,8 @@ import { WaterAgent } from './waterAgent';
 import { EarthAgent } from './earthAgent';
 import { AirAgent } from './airAgent';
 import { AetherAgent } from './aetherAgent';
-import { detectFacetFromInput } from '@/utils/facetUtil';
-import MemoryModule from '@/utils/memoryModule';
+import { detectFacetFromInput } from '@utils/facetUtil';
+import MemoryModule from '@utils/memoryModule';
 import type { AIResponse } from '@/core/types/ai';
 
 interface QueryInput {

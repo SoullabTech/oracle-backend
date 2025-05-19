@@ -1,7 +1,7 @@
 // src/core/agents/AdjusterAgent.ts
 
 import { AgentContext, AgentResponse } from "@/types/agent";
-import { logAgentInteraction } from "@/lib/logger";
+import { logAgentInteraction } from "@lib/logger";
 import axios from "axios";
 
 interface AdjustmentStage {

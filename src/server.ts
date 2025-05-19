@@ -1,18 +1,19 @@
-// src/server.ts
+// 📁 File: src/server.ts
 
+import express from 'express';
 import 'tsconfig-paths/register';
 import 'dotenv/config';
-import express from 'express';
 import cors from 'cors';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import util from 'node:util';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import util from 'node:util';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { supabase } from './lib/supabaseClient';
 import { authenticate } from './middleware/authenticate';
 
+// Routes
 import userProfileRouter from './routes/userProfile.routes';
 import oracleRouter from './routes/oracle.routes';
 import facetRouter from './routes/facet.routes';
@@ -23,6 +24,8 @@ import surveyRouter from './routes/survey.routes';
 import memoryRouter from './routes/memory.routes';
 import feedbackRouter from './routes/feedback.routes';
 import notionIngestRoutes from './routes/notionIngest.routes';
+import personalRouter from './routes/oracle/personal.routes';
+import fieldpulseRouter from './routes/fieldpulse.routes';
 
 import logger from './utils/logger';
 
@@ -36,30 +39,27 @@ const PORT = Number(process.env.PORT) || 5001;
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Public Routes
 app.get('/', (_req, res) => res.send('🧠 Spiralogic Oracle backend is alive.'));
-
 app.get('/test-supabase', async (_req, res) => {
   const { data, error } = await supabase.from('insight_history').select('*').limit(1);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ sampleRow: data });
 });
 
-// Public Routes
+// Mount Routes
 app.use('/api/oracle', oracleRouter);
+app.use('/api/oracle/personal', personalRouter);
 app.use('/api/oracle/facet-lookup', facetRouter);
 app.use('/api/oracle/facet-map', facetMapRouter);
 app.use('/api/oracle/story-generator', storyGeneratorRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/user', userProfileRouter);
-
-// Ingestion
 app.use('/api/notion/ingest', notionIngestRoutes);
-
-// Protected Routes
 app.use('/api/oracle/insight-history', authenticate, insightHistoryRouter);
 app.use('/api/survey', authenticate, surveyRouter);
 app.use('/api/oracle/memory', authenticate, memoryRouter);
+app.use('/api/fieldpulse', fieldpulseRouter);
 
 // Swagger
 try {
@@ -70,7 +70,7 @@ try {
   logger.warn('⚠️ Swagger YAML could not be loaded. Skipping /docs.');
 }
 
-// Catch-all 404
+// 404
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
@@ -90,7 +90,7 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-// Bootstrap
+// Server Start
 app.listen(PORT, () => {
   logger.info(`🚀 Oracle backend running at http://localhost:${PORT}`);
 });
