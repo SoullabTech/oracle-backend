@@ -1,13 +1,8 @@
-// src/middleware/authenticateToken.ts
-
 import { Response, NextFunction } from 'express';
-import { createClient } from '@supabase/supabase-js';
-import { config } from '../config/index';
+import { supabase } from '../lib/supabase';
 import { AuthenticationError } from '../utils/errors';
 import type { AuthenticatedRequest } from '../types/index';
 import logger from '../utils/logger';
-
-const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
 /**
  * Middleware to authenticate the Bearer token from the Authorization header.

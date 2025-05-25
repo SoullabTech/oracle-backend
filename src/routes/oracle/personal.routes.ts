@@ -1,25 +1,37 @@
-// 📁 File: /routes/oracle/personal.routes.ts
+// src/routes/oracle/personal.routes.ts
 
-import express from 'express';
-import { personalOracle } from '@/agents/personalOracleAgent';
+import { Router } from 'express';
+import { authenticateToken } from '../../middleware/authenticateToken';
+import type { AuthenticatedRequest } from '../../types';
+import { PersonalOracleAgent } from '../../core/agents/PersonalOracleAgent';
+import logger from '../../utils/logger';
 
-const router = express.Router();
+const router = Router();
 
-// 🔮 POST /api/oracle/personal/query
-// Request body: { userId: string, input: string, context?: any }
-router.post('/query', async (req, res) => {
-  const { userId, input, context } = req.body;
-
-  if (!userId || !input) {
-    return res.status(400).json({ error: 'Missing userId or input' });
-  }
-
+router.post('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
-    const response = await personalOracle.process({ userId, input, context });
-    res.status(200).json(response);
-  } catch (err) {
-    console.error('[PersonalOracle Route Error]', err);
-    res.status(500).json({ error: 'Failed to process Oracle response', details: err });
+    const userId = req.user?.id;
+    const { tone = 'poetic' } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing user ID' });
+    }
+
+    const personalAgent = new PersonalOracleAgent({ userId, tone });
+
+    const intro = await personalAgent.getIntroMessage();
+    const reflection = await personalAgent.getDailyReflection();
+    const ritual = await personalAgent.suggestRitual();
+
+    res.status(200).json({
+      success: true,
+      intro,
+      reflection,
+      ritual,
+    });
+  } catch (error) {
+    logger.error('PersonalOracleAgent route error', { error });
+    res.status(500).json({ error: 'Failed to get personal oracle data' });
   }
 });
 

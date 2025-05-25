@@ -12,8 +12,9 @@ import symbolicTrendsRoutes from './symbolicTrends.routes';
 import learningRoutes from './learning.routes';
 import facilitatorRoutes from './facilitator.routes';
 import symbolicMemoryRoutes from './symbolicMemory.routes';
-import personalOracleRoutes from './personalOracle.routes';
-import personalGuideRoutes from './personalGuide.routes';
+import personalOracleRoutes from './oracle/personalOracle.routes';
+import personalGuideRoutes from './oracle/personalGuide.routes';
+import dreamRoutes from './oracle/dream.routes';
 
 
 
@@ -25,6 +26,7 @@ const router = Router();
 router.use('/auth', authRoutes);
 router.use('/memory', memoryRoutes);
 router.use('/personal-guide', personalGuideRoutes);
+router.use('/api/oracle/dream', dreamRoutes);
 router.use('/oracle/personal', personalOracleRoutes);
 router.use('/symbolic-tags', symbolicMemoryRoutes);
 router.use('/journal', journalRoutes);

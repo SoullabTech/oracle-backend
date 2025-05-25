@@ -1,18 +1,21 @@
-// src/index.ts
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
 
-// 🟢 EARLY boot log so we know this file ran first
-console.log('🟢 booting index.ts…');
+dotenv.config();
 
-import util from 'node:util';
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-// 🔍 GLOBAL ERROR TRAPS — deep‑inspect any Rejection/Exception
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('🔥 GLOBAL Unhandled Rejection at:', promise);
-  console.error('🔥 REASON:', util.inspect(reason, { depth: null, colors: true }));
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
+
+app.get('/', (_req: Request, res: Response) => {
+  res.send('🔮 Soullab Oracle API is live');
 });
-process.on('uncaughtException', (err) => {
-  console.error('💥 GLOBAL Uncaught Exception:', err.stack || err);
-});
 
-// now import your app (TS‐Node will resolve .js → .ts)
-import './server.js';
+app.listen(PORT, () => {
+  console.log(`🚀 Oracle backend is running at http://localhost:${PORT}`);
+});

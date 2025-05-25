@@ -1,142 +1,122 @@
-// src/routes/memoryRoutes.ts
+// src/services/memoryService.ts
 
-import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';  // For authentication middleware
-import { validate } from '../middleware/validate'; // For validation
-import { memoryService } from '../services/memoryService'; // Memory service with necessary functions
-import type { AuthenticatedRequest } from '../types'; // For typing
-import logger from '../utils/logger'; // Logger for debugging
+import { supabase } from '../lib/supabaseClient';
+import type { MemoryItem } from '../types';
 
-const router = Router();
+export const memoryService = {
+  store: async (
+    userId: string,
+    content: string,
+    element?: string,
+    sourceAgent?: string,
+    confidence?: number,
+    metadata?: any
+  ): Promise<MemoryItem | null> => {
+    const { data, error } = await supabase
+      .from('memories')
+      .insert([
+        {
+          user_id: userId,
+          content,
+          element,
+          source_agent: sourceAgent,
+          confidence,
+          metadata,
+          timestamp: new Date().toISOString(),
+        },
+      ])
+      .single();
 
-// 🔒 All memory routes require authentication
-router.use(authenticateToken);
+    if (error) {
+      console.error('Error storing memory:', error.message);
+      return null;
+    }
+    return data as MemoryItem;
+  },
 
-/**
- * POST /api/oracle/memory
- * Body: { content, element, sourceAgent, confidence, metadata }
- * Stores a new memory
- */
-router.post('/', async (req, res) => {
-  try {
-    const { content, element, sourceAgent, confidence, metadata } = req.body;
-    const clientId = req.user?.id;
+  recall: async (userId: string): Promise<MemoryItem[]> => {
+    const { data, error } = await supabase
+      .from('memories')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false });
 
-    if (!clientId) {
-      return res.status(400).json({ error: 'Client ID is required.' });
+    if (error) {
+      console.error('Error recalling memories:', error.message);
+      return [];
+    }
+    return data as MemoryItem[];
+  },
+
+  update: async (id: string, content: string, userId: string): Promise<MemoryItem | null> => {
+    // Verify ownership
+    const { data: existing, error: fetchErr } = await supabase
+      .from('memories')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchErr || !existing) {
+      console.error('Memory not found or unauthorized');
+      return null;
     }
 
-    // Store memory via memoryService
-    const memory = await memoryService.store(clientId, content, element, sourceAgent, confidence, metadata);
-    res.json({ success: true, memory });
-  } catch (error) {
-    logger.error('❌ Failed to store memory', { error });
-    res.status(500).json({ success: false, error: 'Failed to store memory' });
-  }
-});
+    const { data, error } = await supabase
+      .from('memories')
+      .update({ content })
+      .eq('id', id)
+      .single();
 
-/**
- * GET /api/oracle/memory
- * Returns all memories for the current user
- */
-router.get('/', async (req, res) => {
-  try {
-    const clientId = req.user?.id;
-    if (!clientId) {
-      return res.status(400).json({ error: 'Client ID is required.' });
+    if (error) {
+      console.error('Error updating memory:', error.message);
+      return null;
     }
 
-    // Retrieve all memories via memoryService
-    const memories = await memoryService.recall(clientId);
-    res.json({ success: true, memories });
-  } catch (error) {
-    logger.error('❌ Error fetching memories:', { error });
-    res.status(500).json({ success: false, error: 'Failed to fetch memories.' });
-  }
-});
+    return data as MemoryItem;
+  },
 
-/**
- * PUT /api/oracle/memory/:id
- * Body: { content }
- * Updates an existing memory
- */
-router.put('/:id', async (req, res) => {
-  try {
-    const { content } = req.body;
-    const memoryId = req.params.id;
-    const userId = req.user?.id;
+  delete: async (id: string, userId: string): Promise<boolean> => {
+    // Verify ownership
+    const { data: existing, error: fetchErr } = await supabase
+      .from('memories')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
 
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required.' });
+    if (fetchErr || !existing) {
+      console.error('Memory not found or unauthorized');
+      return false;
     }
 
-    const updatedMemory = await memoryService.update(memoryId, content, userId);
-    res.json({ success: true, memory: updatedMemory });
-  } catch (error) {
-    logger.error('❌ Error updating memory:', { error });
-    res.status(500).json({ success: false, error: 'Failed to update memory.' });
-  }
-});
+    const { error } = await supabase
+      .from('memories')
+      .delete()
+      .eq('id', id);
 
-/**
- * DELETE /api/oracle/memory/:id
- * Deletes a memory
- */
-router.delete('/:id', async (req, res) => {
-  try {
-    const memoryId = req.params.id;
-    const userId = req.user?.id;
+    if (error) {
+      console.error('Error deleting memory:', error.message);
+      return false;
+    }
+    return true;
+  },
 
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required.' });
+  getMemoryInsights: async (userId?: string) => {
+    if (!userId) return null;
+
+    // Example aggregation: count memories by element
+    const { data, error } = await supabase
+      .from('memories')
+      .select('element, count:id')
+      .eq('user_id', userId)
+      .group('element');
+
+    if (error) {
+      console.error('Error fetching memory insights:', error.message);
+      return null;
     }
 
-    const success = await memoryService.delete(memoryId, userId);
-    if (success) {
-      res.json({ success: true });
-    } else {
-      res.status(404).json({ error: 'Memory not found' });
-    }
-  } catch (error) {
-    logger.error('❌ Error deleting memory:', { error });
-    res.status(500).json({ success: false, error: 'Failed to delete memory.' });
-  }
-});
-
-/**
- * GET /api/oracle/memory/by-symbol?symbol=fire&userId=abc123
- * Fetch memories by symbol (filter memories based on a symbol, e.g., "fire")
- */
-router.get('/by-symbol', async (req, res) => {
-  try {
-    const symbol = req.query.symbol as string;
-    const userId = req.query.userId as string;
-
-    if (!symbol || !userId) {
-      return res.status(400).json({ error: 'Missing symbol or userId in query.' });
-    }
-
-    // Stubbed logic for filtering by symbol
-    const results = await memoryService.recall(userId).filter(m => m.content.includes(symbol));
-    res.status(200).json({ memories: results });
-  } catch (error) {
-    logger.error('❌ Error fetching memories by symbol', { error });
-    res.status(500).json({ error: 'Server error retrieving symbolic memories.' });
-  }
-});
-
-/**
- * GET /api/oracle/memory/insights
- * Returns insights based on the user's memory data
- */
-router.get('/insights', async (req, res) => {
-  try {
-    const insights = await memoryService.getMemoryInsights(req.user?.id);
-    res.json({ success: true, insights });
-  } catch (err: any) {
-    console.error('❌ Error generating memory insights:', err);
-    res.status(500).json({ success: false, error: 'Failed to generate insights.' });
-  }
-});
-
-export default router;
+    return data;
+  },
+};

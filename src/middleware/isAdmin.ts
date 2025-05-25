@@ -1,5 +1,3 @@
-// src/middleware/isAdmin.ts
-
 import { Request, Response, NextFunction } from 'express';
 import { supabase } from '../lib/supabase';
 import type { AuthenticatedRequest } from '../types';
@@ -21,7 +19,7 @@ export async function isAdmin(
     const token = authHeader.replace(/^Bearer\s+/, '');
     const {
       data: { user },
-      error: getUserError
+      error: getUserError,
     } = await supabase.auth.getUser(token);
 
     if (getUserError || !user) {
@@ -48,11 +46,11 @@ export async function isAdmin(
       return res.status(403).json({ error: 'Unauthorized - Not admin' });
     }
 
-    // Attach user to request for downstream middleware
+    // Attach user info to request for downstream use
     req.user = {
       id: user.id,
-      email: user.email || '',
-      role: roleType.name
+      email: user.email ?? '',
+      role: roleType.name,
     };
 
     next();

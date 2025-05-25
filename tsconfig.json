@@ -1,46 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "lib": ["DOM", "ESNext"],
-    "jsx": "react-jsx",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "allowJs": true,
-    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-
-    // ─── Project Layout ──────────────────────────────────────────────
-    "rootDir": "src",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
     "outDir": "dist",
-    "declaration": true,
-    "sourceMap": true,
-
-    // ─── Path Aliases ───────────────────────────────────────────────
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@lib/*": ["src/lib/*"],
-      "@middleware/*": ["src/middleware/*"],
-      "@routes/*": ["src/routes/*"],
-      "@agents/*": ["src/agents/*"]
-    },
-
-    // ─── Types ──────────────────────────────────────────────────────
-    "types": ["vitest/globals", "vite/client"]
+    "rootDir": "server",
+    "allowJs": false,
+    "typeRoots": ["node_modules/@types"]
   },
-
-  "include": [
-    "src",
-    "src/types",
-    "test",
-    "vitest.config.ts"
-  ],
-
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "ts-node": {
+    "esm": true,
+    "swc": false
+  },
+  "include": ["server/**/*.ts"]
 }

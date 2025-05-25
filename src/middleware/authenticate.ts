@@ -1,44 +1,52 @@
-import { Request, Response, NextFunction } from 'express';
-import { createClient, User } from '@supabase/supabase-js';
-import { config } from '../config/index'; // Ensure the config has the Supabase URL and anonKey
+import { Response, NextFunction } from 'express';
+import { createClient } from '@supabase/supabase-js';
+import { config } from '../config/index';
 import { AuthenticationError } from '../utils/errors';
+import type { AuthenticatedRequest } from '../types/index';
 import logger from '../utils/logger';
 
-// Supabase client setup
 const supabase = createClient(config.supabase.url, config.supabase.anonKey);
 
-// Augmented Request interface to include authenticated user
-export interface AuthenticatedRequest extends Request {
-  user?: User;
-}
-
-// Middleware to authenticate token and attach user to request
-export async function authenticate(
+/**
+ * Middleware to authenticate the Bearer token from the Authorization header.
+ */
+export async function authenticateToken(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader?.split(' ')[1]; // Extract the token from the Authorization header
+    const token = authHeader?.startsWith('Bearer ')
+      ? authHeader.slice(7)
+      : undefined;
 
     if (!token) {
-      throw new AuthenticationError('No token provided');
+      throw new AuthenticationError('No authorization token provided');
     }
 
-    // Verify token with Supabase
-    const { data, error } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
-    if (error || !data?.user) {
+    if (error || !user) {
       throw new AuthenticationError('Invalid or expired token');
     }
 
-    // Attach the authenticated user to the request object
-    req.user = data.user;
-    next(); // Proceed to the next middleware or route handler
-  } catch (err) {
-    logger.error('❌ Authentication failed', { error: err });
-    // Forward error to next middleware
-    next(err instanceof AuthenticationError ? err : new AuthenticationError());
+    req.user = {
+      id: user.id,
+      email: user.email ?? null,
+      role: user.role ?? null,
+    };
+
+    next();
+  } catch (err: any) {
+    logger.error('🔐 Authentication failed', { error: err });
+    const message =
+      err instanceof AuthenticationError
+        ? err.message
+        : 'Authentication error';
+    res.status(401).json({ error: message });
   }
 }

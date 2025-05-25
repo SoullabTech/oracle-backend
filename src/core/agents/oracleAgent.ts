@@ -1,11 +1,6 @@
-// src/core/agents/oracleAgent.ts
-
+import { getRitualForPhase } from "../../lib/ritualEngine";
 import type { AgentResponse, Metadata } from "../../types/ai";
 
-/**
- * Base class for all Oracle agents.
- * Provides default behavior and utility methods for subclassed elemental agents.
- */
 export class OracleAgent {
   protected debug: boolean;
 
@@ -13,16 +8,13 @@ export class OracleAgent {
     this.debug = options.debug ?? false;
   }
 
-  /**
-   * Main query processor for the agent.
-   * Should be overridden by subclasses to implement specialized responses.
-   */
   async processQuery(query: string): Promise<AgentResponse> {
     if (this.debug) {
       console.log("[OracleAgent] Processing query:", query);
     }
 
     const detectedElement = this.detectElement(query);
+    const ritual = getRitualForPhase(detectedElement);
 
     const simulatedResponse = `Processed query: ${query}`;
     const metadata: Metadata = {
@@ -33,6 +25,7 @@ export class OracleAgent {
         task: "simulate",
         status: "success",
       },
+      ritual, // 👈 New metadata field
     };
 
     return {
@@ -43,18 +36,7 @@ export class OracleAgent {
     };
   }
 
-  /**
-   * Determines which elemental archetype the text relates to.
-   * Can be overridden by subclasses with more advanced heuristics.
-   */
   protected detectElement(text: string): string {
-    const lower = text.toLowerCase();
-
-    if (lower.includes("fire")) return "Fire";
-    if (lower.includes("water")) return "Water";
-    if (lower.includes("earth")) return "Earth";
-    if (lower.includes("air")) return "Air";
-
-    return "Aether"; // Default to Aether if no element is detected
+    return getElementalPhase(text); // using spiralLogic.ts
   }
 }

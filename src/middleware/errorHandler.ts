@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError, ValidationError, AuthenticationError, AuthorizationError, NotFoundError } from '../utils/errors';
+import {
+  AppError,
+  ValidationError,
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+} from '../utils/errors';
 import logger from '../utils/logger';
 import { config } from '../config';
 
@@ -12,7 +18,7 @@ export const errorHandler = (
   logger.error('Error:', {
     name: error.name,
     message: error.message,
-    stack: config.server.env === 'development' ? error.stack : undefined
+    stack: config.server.env === 'development' ? error.stack : undefined,
   });
 
   if (error instanceof ValidationError) {
@@ -35,10 +41,11 @@ export const errorHandler = (
     return res.status(error.statusCode).json({ error: error.message });
   }
 
-  // Default error
-  res.status(500).json({ 
-    error: config.server.env === 'production' 
-      ? 'Internal Server Error' 
-      : error.message 
+  // Default fallback error handler
+  res.status(500).json({
+    error:
+      config.server.env === 'production'
+        ? 'Internal Server Error'
+        : error.message,
   });
 };

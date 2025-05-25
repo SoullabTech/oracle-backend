@@ -1,29 +1,31 @@
+// 📁 File: /routes/routes.ts
+
 import express from 'express';
 
-// Import individual route files
-import authRoutes from './authRoutes';
-import chatRoutes from './chatRoutes';
-import facetRoutes from './facet.routes';
-import facetMapRoutes from './facetMap.routes';
-import facilitatorRoutes from './facilitatorRoutes';
-import feedbackRoutes from './feedback.routes';
-import fieldpulseRoutes from './fieldpulse.routes';
-import flowRoutes from './flowRoutes';
-import insightHistoryRoutes from './insightHistory.routes';
-import journalRoutes from './journal.routes';
-import memoryRoutes from './memory.routes';
-import notionIngestRoutes from './notionIngest.routes';
-import personalGuideRoutes from './personalGuide.routes';
-import personalOracleRoutes from './personalOracle.routes';
-import profileSettingsRoutes from './profileSettings.routes';
-import sessionRoutes from './session.routes';
-import storyGeneratorRoutes from './storyGenerator.routes';
-import surveyRoutes from './survey.routes';
-import symbolicMemoryRoutes from './symbolicMemory.routes';
-import symbolicTrendsRoutes from './symbolicTrends.routes';
-import userRoutes from './user.routes';
-import userProfileRoutes from './userProfile.routes';
-import personalRoutes from './personal.routes';
+// Import individual route files with explicit '.js' extensions for ESM compatibility
+import authRoutes from './authRoutes.js';
+import chatRoutes from './chatRoutes.js';
+import facetRoutes from './facet.routes.js';
+import facetMapRoutes from './facetMap.routes.js';
+import facilitatorRoutes from './facilitatorRoutes.js';
+import feedbackRoutes from './feedback.routes.js';
+import fieldpulseRoutes from './fieldpulse.routes.js';
+import flowRoutes from './flow.routes.js';
+import insightHistoryRoutes from './insightHistory.routes.js';
+import journalRoutes from './journal.routes.js';
+import memoryRoutes from './memory.routes.js';
+import notionIngestRoutes from './notionIngest.routes.js';
+import personalGuideRoutes from './oracle/personalGuide.routes.js';
+import personalOracleRoutes from './oracle/personalOracle.routes.js';
+import profileSettingsRoutes from './profileSettings.routes.js';
+import sessionRoutes from './session.routes.js';
+import storyGeneratorRoutes from './storyGenerator.routes.js';
+import surveyRoutes from './survey.routes.js';
+import symbolicMemoryRoutes from './symbolicMemory.routes.js';
+import symbolicTrendsRoutes from './symbolicTrends.routes.js';
+import userRoutes from './user.routes.js';
+import userProfileRoutes from './userProfile.routes.js';
+import personalRoutes from './oracle/personal.routes.js'; // Corrected import path with .js extension
 
 const router = express.Router();
 
